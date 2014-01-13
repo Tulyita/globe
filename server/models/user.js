@@ -1,6 +1,5 @@
 'use strict';
 
-var _ = require('lodash');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
@@ -31,16 +30,6 @@ var validateIp = [function(val) {
 	var isIpv4 = /\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$){4}\b/.test(val);
 	return isIpv6 || isIpv4;
 }, 'Ip must be a valid ipv4 or ipv6 address.'];
-
-var validateObjectId = [function(val) {
-	console.log(val);
-	if(_.isString(val)) {
-		return val.length === 24;
-	}
-	else if(val.id) {
-		return val.toString().length === 24;
-	}
-}, 'Must ba a valid ObjectId'];
 
 
 

@@ -27,9 +27,8 @@ describe('user', function() {
 		it('should erase an invalid value', function(done) {
 			var user = new User();
 			user._id = 123;
-			user.validate(function(err) {
+			user.validate(function() {
 				expect(user._id).toBeFalsy();
-				//expect(err).toBeTruthy();
 				done();
 			});
 		});
@@ -47,7 +46,7 @@ describe('user', function() {
 			user.validate(function(err) {
 				expect(err).toBeFalsy();
 				done();
-			})
+			});
 		});
 
 		it('should not accept an invalid site', function(done) {
@@ -56,7 +55,7 @@ describe('user', function() {
 			user.validate(function(err) {
 				expect(err).toBeTruthy();
 				done();
-			})
+			});
 		});
 	});
 
@@ -188,9 +187,8 @@ describe('user', function() {
 		it('should erase an invalid value', function(done) {
 			var user = new User();
 			user.registerDate = 'way not a date';
-			user.validate(function(err) {
+			user.validate(function() {
 				expect(user.registerDate).toBeFalsy();
-				//expect(err).toBeTruthy();
 				done();
 			});
 		});
@@ -215,9 +213,8 @@ describe('user', function() {
 		it('should erase an invalid value', function(done) {
 			var user = new User();
 			user.loginDate = [1,2,3,4,5,6];
-			user.validate(function(err) {
+			user.validate(function() {
 				expect(user.loginDate).toBeFalsy();
-				//expect(err).toBeTruthy();
 				done();
 			});
 		});
@@ -242,9 +239,8 @@ describe('user', function() {
 		it('should erase an invalid value', function(done) {
 			var user = new User();
 			user.guildId = 'hie guis';
-			user.validate(function(err) {
+			user.validate(function() {
 				expect(user.guildId).toBeFalsy();
-				//expect(err).toBeTruthy();
 				done();
 			});
 		});
@@ -271,7 +267,6 @@ describe('user', function() {
 				date: date
 			}];
 			user.validate(function(err) {
-				var obj =
 				expect(user.messages.toObject()).toEqual([{
 					_id: _id,
 					fromUserId: fromUserId,
@@ -288,9 +283,8 @@ describe('user', function() {
 		it('should set an invalid value to an empty array', function(done) {
 			var user = new User();
 			user.messages = 1509;
-			user.validate(function(err) {
+			user.validate(function() {
 				expect(user.messages.toObject()).toEqual([]);
-				//expect(err).toBeTruthy();
 				done();
 			});
 		});
@@ -314,9 +308,8 @@ describe('user', function() {
 			it('should erase an invalid value', function(done) {
 				var user = new User();
 				user._id = 123;
-				user.validate(function(err) {
+				user.validate(function() {
 					expect(user.messages.toObject()).toEqual([]);
-					//expect(err).toBeTruthy();
 					done();
 				});
 			});
@@ -341,9 +334,8 @@ describe('user', function() {
 			it('should erase an invalid value', function(done) {
 				var user = new User();
 				user.messages = [{fromUserId: 'invalid'}];
-				user.validate(function(err) {
+				user.validate(function() {
 					expect(user.messages.toObject()).toEqual([null]);
-					//expect(err).toBeTruthy();
 					done();
 				});
 			});
@@ -474,9 +466,8 @@ describe('user', function() {
 			it('should erase an invalid value', function(done) {
 				var user = new User();
 				user.messages = [{date: 'this is not a date'}];
-				user.validate(function(err) {
+				user.validate(function() {
 					expect(user.messages[0].date).toBeFalsy();
-					//expect(err).toBeTruthy();
 					done();
 				});
 			});
@@ -489,7 +480,7 @@ describe('user', function() {
 
 
 
-	
+
 	describe('friends', function() {
 
 		/**
@@ -510,9 +501,8 @@ describe('user', function() {
 			it('should erase an invalid value', function(done) {
 				var user = new User();
 				user.friends = [{_id: 'yeahok'}];
-				user.validate(function(err) {
+				user.validate(function() {
 					expect(user.friends.toObject()).toEqual([null]);
-					//expect(err).toBeTruthy();
 					done();
 				});
 			});
@@ -530,7 +520,7 @@ describe('user', function() {
 				user.validate(function(err) {
 					expect(err).toBeFalsy();
 					done();
-				})
+				});
 			});
 
 			it('should not accept an invalid site', function(done) {
@@ -539,7 +529,7 @@ describe('user', function() {
 				user.validate(function(err) {
 					expect(err).toBeTruthy();
 					done();
-				})
+				});
 			});
 		});
 

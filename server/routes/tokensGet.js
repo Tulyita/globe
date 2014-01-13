@@ -10,10 +10,9 @@ function() {
 	var request = require('request');
 	var fns = require('../fns/fns');
 	var session = require('../fns/mongoSession');
-	var fndSave = require('../fns/fndSave');
 	var async = require('async');
 	var User = require('../models/user');
-	var groups = require('../../shared/groups');
+	var groups = require('../fns/groups');
 
 
 	module.exports = function(req, res) {
@@ -68,7 +67,7 @@ function() {
 			//--- save the user in the db
 			function(callback) {
 				var v = verifiedData;
-				fndSave(User, {
+				User.findByIdAndSave({
 					_id: v.user_id,
 					name: v.user_name,
 					group: powerToGroup(v.power),

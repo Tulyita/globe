@@ -1,3 +1,5 @@
+'use strict';
+
 var _ = require('lodash');
 
 /**
@@ -8,7 +10,6 @@ var _ = require('lodash');
  * @param {function} callback
  */
 module.exports = function(Model, data, callback) {
-	'use strict';
 
 	//--- defaults
 	data = data || {};
@@ -44,13 +45,12 @@ module.exports = function(Model, data, callback) {
 
 
 /**
- * Doesn't work with mockgoose
- * Extends mongoose to make the findByIdAndSave function easy to access
+ * Extends mongoose to make findByIdAndSave accessible on every document
  * example: Card.findByIdAndSave({_id:123, val:'bear'}, function(err, document){});
  * @param {object} data
  * @param {function} callback
  */
-/*var mongoose = require('mongoose');
+var mongoose = require('mongoose');
 mongoose.Model.findByIdAndSave = function(data, callback) {
 	module.exports(this, data, callback);
-};*/
+};
