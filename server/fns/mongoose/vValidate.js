@@ -17,7 +17,7 @@ var findHoles = function(obj1, obj2) {
 			holes.push(key);
 		}
 		else if(typeof val === 'object') {
-			holes.concat(findHoles(obj1[key], obj2[key]));
+			holes = holes.concat(findHoles(obj1[key], obj2[key]));
 		}
 	});
 
@@ -28,22 +28,23 @@ var findHoles = function(obj1, obj2) {
 /**
  * Mongoose sometimes just deletes values instead of returning a validation error
  * This function looks for those deleted values and returns an error if it finds one
- * @param doc
- * @param callback
+ * @param Model
+ * @param {Object} data
+ * @param {Function} callback
  */
-var vValidate = function(doc, callback) {
-	var pre = doc.toObject();
+var vValidate = function(Model, data, callback) {
+	var doc = new Model(data);
 	doc.validate(function(err) {
 		if(err) {
 			return callback(err);
 		}
 
-		var holes = findHoles(pre, doc);
+		var holes = findHoles(data, doc.toObject());
 		if(holes.length > 0) {
 			return callback('vValidation error: ' + holes.join(','));
 		}
 
-		return(null);
+		return callback(null, doc.toObject());
 	});
 };
 
@@ -51,12 +52,11 @@ var vValidate = function(doc, callback) {
 /**
  * Extends mongoose to make validatedUpdate accessible on every document
  * example: var bike = new Bike({tires: 2}); bike.vValidate(function(err) {};
- * @param Schema
+ * @param mongoose
  */
-vValidate.attach = function(Schema) {
-	console.log('Schema', Schema);
-	Schema.methods.vValidate = function(doc, callback) {
-		vValidate(this, callback);
+vValidate.attach = function(mongoose) {
+	mongoose.Model.vValidate = function(data, callback) {
+		vValidate(this, data, callback);
 	};
 };
 

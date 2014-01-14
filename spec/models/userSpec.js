@@ -14,10 +14,10 @@ describe('user', function() {
 	 */
 	describe('_id', function() {
 
-		it('should accept an objectId', function(done) {
+		/*it('should accept an objectId', function(done) {
 			var user = new User();
 			user._id = mongoose.Types.ObjectId();
-			user.validate(function(err) {
+			user.vValidate(function(err) {
 				expect(user._id).toBeTruthy();
 				expect(err).toBeFalsy();
 				done();
@@ -27,12 +27,11 @@ describe('user', function() {
 		it('should not accept an invalid value', function(done) {
 			var user = new User();
 			user._id = 123;
-			user.validate(function() {
-				expect(user._id).toBeFalsy();
-				//expect(err).toBeTruthy();
+			user.validate(function(err) {
+				expect(err).toBeTruthy();
 				done();
 			});
-		});
+		});*/
 	});
 
 

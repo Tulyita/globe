@@ -1,4 +1,4 @@
-/* global describe, it, expect, beforeEach */
+/* global describe, it, expect */
 
 'use strict';
 
@@ -8,6 +8,7 @@ mockgoose(mongoose);
 
 var Schema = mongoose.Schema;
 var vValidate = require('../../../server/fns/mongoose/vValidate');
+vValidate.attach(mongoose);
 
 
 var TestSchema = new Schema({
@@ -34,141 +35,134 @@ var TestSchema = new Schema({
 	arrayOfObjects: [{
 		objectId: Schema.Types.ObjectId,
 		number: Number,
-		string: String,
+		string: {type: String, enum: ['1', '2']},
 		array: [Number]
 	}]
 });
 
-vValidate.attach(TestSchema);
 var Test = mongoose.model('vValidateTest', TestSchema);
-var test;
-
-
-beforeEach(function() {
-	test = new Test();
-});
 
 
 describe('vValidate', function() {
 
-	it('should attach vValidate to all documents function', function() {
-		expect(test.vValidate).toBeTruthy();
+	/*it('should attach vValidate to all documents function', function() {
+		expect(Test.vValidate).toBeTruthy();
 	});
 
-	it('should accept a valid ObjectId', function() {
-		test.objectId = new Schema.Types.ObjectId();
-		vValidate(test, function(err) {
+	it('should accept a valid ObjectId', function(done) {
+		Test.vValidate({objectId: new mongoose.Types.ObjectId()}, function(err) {
 			expect(err).toBeFalsy();
+			done();
 		});
 	});
 
-	it('should return an error if an invalid ObjectId is used', function() {
-		test.objectId = 123;
-		vValidate(test, function(err) {
+	it('should return an error if an invalid ObjectId is used', function(done) {
+		Test.vValidate({objectId: 123}, function(err) {
 			expect(err).toBeTruthy();
+			done();
 		});
 	});
 
-	it('should accept a valid number', function() {
-		test.number = new Schema.Types.ObjectId();
-		vValidate(test, function(err) {
+	it('should accept a valid number', function(done) {
+		Test.vValidate({number: 11}, function(err) {
 			expect(err).toBeFalsy();
+			done();
 		});
 	});
 
-	it('should reject an invalid number', function() {
-		test.number = 'hello';
-		vValidate(test, function(err) {
+	it('should reject an invalid number', function(done) {
+		Test.vValidate({number: 'hello'}, function(err) {
 			expect(err).toBeTruthy();
+			done();
 		});
 	});
 
-	it('should accept a valid string', function() {
-		test.string = 'hi';
-		vValidate(test, function(err) {
+	it('should accept a valid string', function(done) {
+		Test.vValidate({string: 'hi'}, function(err) {
 			expect(err).toBeFalsy();
+			done();
 		});
 	});
 
-	it('should reject an invalid string', function() {
-		test.string = 'tooo looong';
-		vValidate(test, function(err) {
+	it('should reject an invalid string', function(done) {
+		Test.vValidate({string: 'tooo looong'}, function(err) {
 			expect(err).toBeTruthy();
+			done();
 		});
 	});
 
-	it('should accept a valid array', function() {
-		test.array = [1,2];
-		vValidate(test, function(err) {
+	it('should accept a valid array', function(done) {
+		Test.vValidate({array: [1,2]}, function(err) {
 			expect(err).toBeFalsy();
+			done();
 		});
 	});
 
-	it('should reject an invalid array', function() {
-		test.array = 'im a string lol';
-		vValidate(test, function(err) {
+	it('should reject an invalid array', function(done) {
+		Test.vValidate({array: [1,2,3,4]}, function(err) {
 			expect(err).toBeTruthy();
+			done();
 		});
-	});
+	});*/
 
 
 
 
-	describe('arrayOfObjects', function() {
+	describe('arrayOfObjects', function(done) {
 
-		it('should accept a valid ObjectId', function() {
-			test.arrayOfObjects = [{objectId: new Schema.Types.ObjectId()}];
-			vValidate(test, function(err) {
+		it('should accept a valid ObjectId', function(done) {
+			Test.vValidate({arrayOfObjects: [{objectId: new mongoose.Types.ObjectId()}]}, function(err) {
 				expect(err).toBeFalsy();
+				done();
 			});
 		});
 
-		it('should return an error if an invalid ObjectId is used', function() {
-			test.arrayOfObjects = [{objectId: 'hi dere'}];
-			vValidate(test, function(err) {
+		it('should return an error if an invalid ObjectId is used', function(done) {
+			Test.vValidate({arrayOfObjects: [{objectId: 'hi dere'}]}, function(err) {
 				expect(err).toBeTruthy();
+				done();
 			});
 		});
 
-		it('should accept a valid number', function() {
-			test.arrayOfObjects = [{number: 10}];
-			vValidate(test, function(err) {
+		it('should accept a valid number', function(done) {
+			Test.vValidate({arrayOfObjects: [{number: 10}]}, function(err) {
 				expect(err).toBeFalsy();
+				done();
 			});
 		});
 
-		it('should reject an invalid number', function() {
-			test.arrayOfObjects = [{number: 'not a number'}];
-			vValidate(test, function(err) {
+		it('should reject an invalid number', function(done) {
+			Test.vValidate({arrayOfObjects: [{number: 'not a number'}]}, function(err) {
 				expect(err).toBeTruthy();
+				done();
 			});
 		});
 
-		it('should accept a valid string', function() {
-			test.arrayOfObjects = [{string: 'hi'}];
-			vValidate(test, function(err) {
+		it('should accept a valid string', function(done) {
+			Test.vValidate({arrayOfObjects: [{string: '1'}]}, function(err) {
 				expect(err).toBeFalsy();
+				done();
 			});
 		});
 
-		it('should reject an invalid string', function() {
-			test.arrayOfObjects = [{string: 'toooo loooong'}];
-			vValidate(test, function(err) {
+		it('should reject an invalid string', function(done) {
+			Test.vValidate({arrayOfObjects: [{string: 'invalid string'}]}, function(err) {
 				expect(err).toBeTruthy();
+				done();
 			});
 		});
 
-		it('should accept a valid array', function() {
-			test.arrayOfObjects = [{array: [1,2]}];;
-			vValidate(test, function(err) {
+		it('should accept a valid array', function(done) {
+			Test.vValidate({arrayOfObjects: [{array: [1,2]}]}, function(err) {
 				expect(err).toBeFalsy();
+				done();
 			});
 		});
 
-		it('should reject an invalid array', function() {
-			test.arrayOfObjects = [{array: ['too', 'many', 'elements']}];
-			vValidate(test, function(err) {
+		it('should reject an invalid array', function(done) {
+			Test.vValidate({arrayOfObjects: [{array: ['not','numbers']}]}, function(err, doc) {
 				expect(err).toBeTruthy();
+				done();
 			});
 		});
 	});
