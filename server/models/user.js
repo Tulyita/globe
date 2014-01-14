@@ -49,7 +49,6 @@ var UserSchema = new Schema({
 		fromUserId: Schema.Types.ObjectId,
 		fromIp: {type: String, validate: validateIp},
 		body: {type: String, validate: validateMessageBody},
-		lastBody: {type: String, validate: validateMessageBody},
 		date: Date
 	}],
 	friends: [{

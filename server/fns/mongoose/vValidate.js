@@ -3,6 +3,12 @@
 var _ = require('lodash');
 
 
+
+var isSet = function(val) {
+	return !_.isNull(val) && !_.isUndefined(val);
+};
+
+
 /**
  * Find values that are truthy in obj1 but falsy in obj2
  * @param {Object} obj1
@@ -13,7 +19,10 @@ var findHoles = function(obj1, obj2) {
 	var holes = [];
 
 	_.each(obj1, function(val, key) {
-		if(obj1[key] && !obj2[key]) {
+		if(isSet(obj1[key]) && !isSet(obj2[key])) {
+			holes.push(key);
+		}
+		else if(typeof obj1[key] !== typeof obj2[key]) {
 			holes.push(key);
 		}
 		else if(typeof val === 'object') {

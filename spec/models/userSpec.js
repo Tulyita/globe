@@ -4,6 +4,7 @@
 
 var mongoose = require('mongoose');
 var User = require('../../server/models/user');
+require('../../server/fns/mongoose/vValidate').attach(mongoose);
 
 
 describe('user', function() {
@@ -14,24 +15,19 @@ describe('user', function() {
 	 */
 	describe('_id', function() {
 
-		/*it('should accept an objectId', function(done) {
-			var user = new User();
-			user._id = mongoose.Types.ObjectId();
-			user.vValidate(function(err) {
-				expect(user._id).toBeTruthy();
+		it('should accept an objectId', function(done) {
+			User.vValidate({_id: mongoose.Types.ObjectId()}, function(err) {
 				expect(err).toBeFalsy();
 				done();
 			});
 		});
 
 		it('should not accept an invalid value', function(done) {
-			var user = new User();
-			user._id = 123;
-			user.validate(function(err) {
+			User.vValidate({_id: 123}, function(err) {
 				expect(err).toBeTruthy();
 				done();
 			});
-		});*/
+		});
 	});
 
 
@@ -41,18 +37,14 @@ describe('user', function() {
 	describe('site', function() {
 
 		it('should accept a valid site', function(done) {
-			var user = new User();
-			user.site = 'j';
-			user.validate(function(err) {
+			User.vValidate({site: 'j'}, function(err) {
 				expect(err).toBeFalsy();
 				done();
 			});
 		});
 
 		it('should not accept an invalid site', function(done) {
-			var user = new User();
-			user.site = 'haha';
-			user.validate(function(err) {
+			User.vValidate({site: 'haha'}, function(err) {
 				expect(err).toBeTruthy();
 				done();
 			});
@@ -65,19 +57,15 @@ describe('user', function() {
 	 */
 	describe('name', function() {
 
-		it('should accept a valid name', function(done) {
-			var user = new User();
-			user.name = 'Rudu';
-			user.validate(function(err) {
+		it('should accept a valid value', function(done) {
+			User.vValidate({name: 'rudu'}, function(err) {
 				expect(err).toBeFalsy();
 				done();
 			});
 		});
 
-		it('should not accept na invalid name', function(done) {
-			var user = new User();
-			user.name = 'a';
-			user.validate(function(err) {
+		it('should not accept an invalid value', function(done) {
+			User.vValidate({site: 'a'}, function(err) {
 				expect(err).toBeTruthy();
 				done();
 			});
@@ -91,18 +79,14 @@ describe('user', function() {
 	describe('group', function() {
 
 		it('should accept a valid value', function(done) {
-			var user = new User();
-			user.group = 'g';
-			user.validate(function(err) {
+			User.vValidate({group: 'g'}, function(err) {
 				expect(err).toBeFalsy();
 				done();
 			});
 		});
 
 		it('should not accept an invalid value', function(done) {
-			var user = new User();
-			user.group = [1,2,3];
-			user.validate(function(err) {
+			User.vValidate({group: [1,2,3]}, function(err) {
 				expect(err).toBeTruthy();
 				done();
 			});
@@ -116,18 +100,14 @@ describe('user', function() {
 	describe('avatar', function() {
 
 		it('should accept a valid value', function(done) {
-			var user = new User();
-			user.avatar = 'http://site.com/avatar.jpg';
-			user.validate(function(err) {
+			User.vValidate({avatar: 'https://site.com/img.jpg'}, function(err) {
 				expect(err).toBeFalsy();
 				done();
 			});
 		});
 
 		it('should not accept an invalid value', function(done) {
-			var user = new User();
-			user.avatar = 'not a url';
-			user.validate(function(err) {
+			User.vValidate({avatar: 'not an avatar'}, function(err) {
 				expect(err).toBeTruthy();
 				done();
 			});
@@ -141,27 +121,21 @@ describe('user', function() {
 	describe('ip', function() {
 
 		it('should accept a valid ipv4 address', function(done) {
-			var user = new User();
-			user.ip = '66.249.64.0';
-			user.validate(function(err) {
+			User.vValidate({ip: '66.249.64.0'}, function(err) {
 				expect(err).toBeFalsy();
 				done();
 			});
 		});
 
-		it('should accept a valid ipv6 address', function(done) {
-			var user = new User();
-			user.ip = '2001:db8:85a3::8a2e:370:7334';
-			user.validate(function(err) {
+		it('should accept a valid value', function(done) {
+			User.vValidate({ip: '2001:db8:85a3::8a2e:370:7334'}, function(err) {
 				expect(err).toBeFalsy();
 				done();
 			});
 		});
 
 		it('should not accept an invalid value', function(done) {
-			var user = new User();
-			user.ip = 'not an ip address';
-			user.validate(function(err) {
+			User.vValidate({ip: 'not an ip address'}, function(err) {
 				expect(err).toBeTruthy();
 				done();
 			});
@@ -175,21 +149,15 @@ describe('user', function() {
 	describe('registerDate', function() {
 
 		it('should accept a valid value', function(done) {
-			var user = new User();
-			user.registerDate = new Date();
-			user.validate(function(err) {
-				expect(user.registerDate).toBeTruthy();
+			User.vValidate({registerDate: new Date()}, function(err, doc) {
 				expect(err).toBeFalsy();
 				done();
 			});
 		});
 
-		it('should erase an invalid value', function(done) {
-			var user = new User();
-			user.registerDate = 'way not a date';
-			user.validate(function() {
-				expect(user.registerDate).toBeFalsy();
-				//expect(err).toBeTruthy();
+		it('should not accept an invalid value', function(done) {
+			User.vValidate({registerDate: 'not a date'}, function(err) {
+				expect(err).toBeTruthy();
 				done();
 			});
 		});
@@ -202,21 +170,15 @@ describe('user', function() {
 	describe('loginDate', function() {
 
 		it('should accept a valid value', function(done) {
-			var user = new User();
-			user.loginDate = new Date();
-			user.validate(function(err) {
-				expect(user.loginDate).toBeTruthy();
+			User.vValidate({loginDate: new Date()}, function(err) {
 				expect(err).toBeFalsy();
 				done();
 			});
 		});
 
-		it('should erase an invalid value', function(done) {
-			var user = new User();
-			user.loginDate = [1,2,3,4,5,6];
-			user.validate(function() {
-				expect(user.loginDate).toBeFalsy();
-				//expect(err).toBeTruthy();
+		it('should not accept an invalid value', function(done) {
+			User.vValidate({loginDate: {}}, function(err) {
+				expect(err).toBeTruthy();
 				done();
 			});
 		});
@@ -229,21 +191,15 @@ describe('user', function() {
 	describe('guildId', function() {
 
 		it('should accept a valid value', function(done) {
-			var user = new User();
-			user.guildId = mongoose.Types.ObjectId();
-			user.validate(function(err) {
-				expect(user.guildId).toBeTruthy();
+			User.vValidate({guildId: mongoose.Types.ObjectId()}, function(err) {
 				expect(err).toBeFalsy();
 				done();
 			});
 		});
 
-		it('should erase an invalid value', function(done) {
-			var user = new User();
-			user.guildId = 'hie guis';
-			user.validate(function() {
-				expect(user.guildId).toBeFalsy();
-				//expect(err).toBeTruthy();
+		it('should not accept an invalid value', function(done) {
+			User.vValidate({guildId: false}, function(err) {
+				expect(err).toBeTruthy();
 				done();
 			});
 		});
@@ -256,39 +212,22 @@ describe('user', function() {
 	describe('messages', function() {
 
 		it('should accept a valid value', function(done) {
-			var _id = mongoose.Types.ObjectId();
-			var fromUserId = mongoose.Types.ObjectId();
-			var date = new Date();
 
-			var user = new User();
-			user.messages = [{
-				_id: _id,
-				fromUserId: fromUserId,
+			User.vValidate({messages: [{
+				_id: mongoose.Types.ObjectId(),
+				fromUserId: mongoose.Types.ObjectId(),
 				fromIp: '66.102.15.255',
 				body: 'right back at ya',
-				lastBody: 'hey there',
-				date: date
-			}];
-			user.validate(function(err) {
-				expect(user.messages.toObject()).toEqual([{
-					_id: _id,
-					fromUserId: fromUserId,
-					fromIp: '66.102.15.255',
-					body: 'right back at ya',
-					lastBody: 'hey there',
-					date: date
-				}]);
+				date: new Date()
+			}]}, function(err) {
 				expect(err).toBeFalsy();
 				done();
 			});
 		});
 
-		it('should set an invalid value to an empty array', function(done) {
-			var user = new User();
-			user.messages = 1509;
-			user.validate(function() {
-				expect(user.messages.toObject()).toEqual([]);
-				//expect(err).toBeTruthy();
+		it('should not accept an invalid value', function(done) {
+			User.vValidate({messages: 1509}, function(err, doc) {
+				expect(err).toBeTruthy();
 				done();
 			});
 		});
@@ -299,22 +238,16 @@ describe('user', function() {
 		 */
 		describe('_id', function() {
 
-			it('should accept an objectId', function(done) {
-				var user = new User();
-				user.messages = [{_id: mongoose.Types.ObjectId()}];
-				user.validate(function(err) {
-					expect(user.messages[0]._id).toBeTruthy();
+			it('should accept a valid value', function(done) {
+				User.vValidate({messages: [{_id: mongoose.Types.ObjectId()}]}, function(err) {
 					expect(err).toBeFalsy();
 					done();
 				});
 			});
 
-			it('should erase an invalid value', function(done) {
-				var user = new User();
-				user._id = 123;
-				user.validate(function() {
-					expect(user.messages.toObject()).toEqual([]);
-					//expect(err).toBeTruthy();
+			it('should not accept an invalid value', function(done) {
+				User.vValidate({messages: [{_id: 123}]}, function(err) {
+					expect(err).toBeTruthy();
 					done();
 				});
 			});
@@ -326,22 +259,16 @@ describe('user', function() {
 		 */
 		describe('fromUserId', function() {
 
-			it('should accept an objectId', function(done) {
-				var user = new User();
-				user.messages = [{fromUserId: mongoose.Types.ObjectId()}];
-				user.validate(function(err) {
-					expect(user.messages[0].fromUserId).toBeTruthy();
+			it('should accept a valid value', function(done) {
+				User.vValidate({messages: [{fromUserId: mongoose.Types.ObjectId()}]}, function(err) {
 					expect(err).toBeFalsy();
 					done();
 				});
 			});
 
-			it('should erase an invalid value', function(done) {
-				var user = new User();
-				user.messages = [{fromUserId: 'invalid'}];
-				user.validate(function() {
-					expect(user.messages.toObject()).toEqual([null]);
-					//expect(err).toBeTruthy();
+			it('should not accept an invalid value', function(done) {
+				User.vValidate({messages: [{fromUserId: 'happy patty'}]}, function(err) {
+					expect(err).toBeTruthy();
 					done();
 				});
 			});
@@ -353,30 +280,15 @@ describe('user', function() {
 		 */
 		describe('fromIp', function() {
 
-			it('should accept a valid ipv4 address', function(done) {
-				var user = new User();
-				user.messages = [{fromIp: '12.249.64.0'}];
-				user.validate(function(err) {
-					expect(user.messages[0].fromIp).toEqual('12.249.64.0');
-					expect(err).toBeFalsy();
-					done();
-				});
-			});
-
-			it('should accept a valid ipv6 address', function(done) {
-				var user = new User();
-				user.messages = [{fromIp: '2001:0db8:85a3:0000:0000:8a2e:0370:7334'}];
-				user.validate(function(err) {
-					expect(user.messages[0].fromIp).toEqual('2001:0db8:85a3:0000:0000:8a2e:0370:7334');
+			it('should accept a valid value', function(done) {
+				User.vValidate({messages: [{fromIp: '2001:0db8:85a3:0000:0000:8a2e:0370:7334'}]}, function(err) {
 					expect(err).toBeFalsy();
 					done();
 				});
 			});
 
 			it('should not accept an invalid value', function(done) {
-				var user = new User();
-				user.messages = [{fromIp: [1,2,3,'no ip here']}];
-				user.validate(function(err) {
+				User.vValidate({messages: [{fromIp: 'not an ip'}]}, function(err) {
 					expect(err).toBeTruthy();
 					done();
 				});
@@ -389,63 +301,15 @@ describe('user', function() {
 		 */
 		describe('body', function() {
 
-			it('should accept valid value', function(done) {
-				var user = new User();
-				user.messages = [{body: 'hello'}];
-				user.validate(function(err) {
-					expect(user.messages[0].body).toEqual('hello');
+			it('should accept a valid value', function(done) {
+				User.vValidate({messages: [{body: 'hello'}]}, function(err) {
 					expect(err).toBeFalsy();
 					done();
 				});
 			});
 
-			it('should erase an invalid value', function(done) {
-				var user = new User();
-				user.messages = [{body: 'loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-					'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-					'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-					'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-					'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-					'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-					'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-					'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-					'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong'}];
-				user.validate(function(err) {
-					expect(err).toBeTruthy();
-					done();
-				});
-			});
-		});
-
-
-
-		/**
-		 *
-		 */
-		describe('lastBody', function() {
-
-			it('should accept valid value', function(done) {
-				var user = new User();
-				user.messages = [{lastBody: 'hello'}];
-				user.validate(function(err) {
-					expect(user.messages[0].lastBody).toEqual('hello');
-					expect(err).toBeFalsy();
-					done();
-				});
-			});
-
-			it('should erase an invalid value', function(done) {
-				var user = new User();
-				user.messages = [{lastBody: 'loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-					'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-					'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-					'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-					'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-					'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-					'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-					'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo' +
-					'oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong'}];
-				user.validate(function(err) {
+			it('should not accept an invalid value', function(done) {
+				User.vValidate({messages: [{body: [1,2,3]}]}, function(err) {
 					expect(err).toBeTruthy();
 					done();
 				});
@@ -458,23 +322,16 @@ describe('user', function() {
 		 */
 		describe('date', function() {
 
-			it('should accept valid value', function(done) {
-				var user = new User();
-				var date = new Date();
-				user.messages = [{date: date}];
-				user.validate(function(err) {
-					expect(user.messages[0].date).toEqual(date);
+			it('should accept a valid value', function(done) {
+				User.vValidate({messages: [{date: new Date()}]}, function(err) {
 					expect(err).toBeFalsy();
 					done();
 				});
 			});
 
-			it('should erase an invalid value', function(done) {
-				var user = new User();
-				user.messages = [{date: 'this is not a date'}];
-				user.validate(function() {
-					expect(user.messages[0].date).toBeFalsy();
-					//expect(err).toBeTruthy();
+			it('should not accept an invalid value', function(done) {
+				User.vValidate({messages: [{date: ':)'}]}, function(err) {
+					expect(err).toBeTruthy();
 					done();
 				});
 			});
@@ -495,22 +352,16 @@ describe('user', function() {
 		 */
 		describe('_id', function() {
 
-			it('should accept an objectId', function(done) {
-				var user = new User();
-				user.friends = [{_id: mongoose.Types.ObjectId()}];
-				user.validate(function(err) {
-					expect(user.friends[0]._id).toBeTruthy();
+			it('should accept a valid value', function(done) {
+				User.vValidate({friends: [{_id: mongoose.Types.ObjectId()}]}, function(err) {
 					expect(err).toBeFalsy();
 					done();
 				});
 			});
 
-			it('should erase an invalid value', function(done) {
-				var user = new User();
-				user.friends = [{_id: 'yeahok'}];
-				user.validate(function() {
-					expect(user.friends.toObject()).toEqual([null]);
-					//expect(err).toBeTruthy();
+			it('should not accept an invalid value', function(done) {
+				User.vValidate({freinds: [{_id: 123}]}, function(err) {
+					expect(err).toBeTruthy();
 					done();
 				});
 			});
@@ -522,19 +373,15 @@ describe('user', function() {
 		 */
 		describe('site', function() {
 
-			it('should accept a valid site', function(done) {
-				var user = new User();
-				user.friends = [{site: 'g'}];
-				user.validate(function(err) {
+			it('should accept a valid value', function(done) {
+				User.vValidate({friends: [{site: 'g'}]}, function(err) {
 					expect(err).toBeFalsy();
 					done();
 				});
 			});
 
-			it('should not accept an invalid site', function(done) {
-				var user = new User();
-				user.friends = [{site: 7}];
-				user.validate(function(err) {
+			it('should not accept an invalid value', function(done) {
+				User.vValidate({freinds: [{site: 123}]}, function(err) {
 					expect(err).toBeTruthy();
 					done();
 				});
@@ -547,19 +394,15 @@ describe('user', function() {
 		 */
 		describe('name', function() {
 
-			it('should accept a valid name', function(done) {
-				var user = new User();
-				user.friends = [{name: 'badwolf'}];
-				user.validate(function(err) {
+			it('should accept a valid value', function(done) {
+				User.vValidate({friends: [{name: 'badwold'}]}, function(err) {
 					expect(err).toBeFalsy();
 					done();
 				});
 			});
 
-			it('should not accept na invalid name', function(done) {
-				var user = new User();
-				user.friends = [{name: ''}];
-				user.validate(function(err) {
+			it('should not accept an invalid value', function(done) {
+				User.vValidate({freinds: [{name: ''}]}, function(err) {
 					expect(err).toBeTruthy();
 					done();
 				});
