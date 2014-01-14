@@ -1,7 +1,7 @@
 (function() {
 	'use strict';
 
-	var UserGoose = require('../models/user');
+	var UserGoose = require('../../models/user');
 
 
 	/**

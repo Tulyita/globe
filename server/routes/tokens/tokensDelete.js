@@ -1,7 +1,7 @@
 (function() {
 	'use strict';
 
-	var session = require('../fns/mongoSession');
+	var session = require('../../fns/mongoSession');
 
 
 	/**
