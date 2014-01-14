@@ -6,7 +6,7 @@ var mongoose = require('mongoose');
 var mockgoose = require('mockgoose');
 mockgoose(mongoose);
 
-var findByIdAndSave = require('../../server/fns/findByIdAndSave');
+var findByIdAndSave = require('../../../server/fns/mongoose/findByIdAndSave');
 
 
 var TestSchema = new mongoose.Schema({
@@ -29,7 +29,7 @@ afterEach(function() {
 });
 
 
-describe('fndSave', function() {
+describe('findByIdAndSave', function() {
 
 	it('should return the updated/created document on success', function(done) {
 		findByIdAndSave(Test, {_id: 7, value: 99}, function(err, doc) {
@@ -75,6 +75,7 @@ describe('fndSave', function() {
 
 
 	it('should extend mongoose model for easy access', function(done) {
+		findByIdAndSave.attach(mongoose);
 		Test.findByIdAndSave({_id: 7, value: 99}, function(err, doc) {
 			expect(err).toBeFalsy();
 			expect(doc.toObject()).toEqual({__v: 0, _id: 7, value: 99});

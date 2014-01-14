@@ -24,11 +24,12 @@ describe('user', function() {
 			});
 		});
 
-		it('should erase an invalid value', function(done) {
+		it('should not accept an invalid value', function(done) {
 			var user = new User();
 			user._id = 123;
 			user.validate(function() {
 				expect(user._id).toBeFalsy();
+				//expect(err).toBeTruthy();
 				done();
 			});
 		});
@@ -189,6 +190,7 @@ describe('user', function() {
 			user.registerDate = 'way not a date';
 			user.validate(function() {
 				expect(user.registerDate).toBeFalsy();
+				//expect(err).toBeTruthy();
 				done();
 			});
 		});
@@ -215,6 +217,7 @@ describe('user', function() {
 			user.loginDate = [1,2,3,4,5,6];
 			user.validate(function() {
 				expect(user.loginDate).toBeFalsy();
+				//expect(err).toBeTruthy();
 				done();
 			});
 		});
@@ -241,6 +244,7 @@ describe('user', function() {
 			user.guildId = 'hie guis';
 			user.validate(function() {
 				expect(user.guildId).toBeFalsy();
+				//expect(err).toBeTruthy();
 				done();
 			});
 		});
@@ -285,6 +289,7 @@ describe('user', function() {
 			user.messages = 1509;
 			user.validate(function() {
 				expect(user.messages.toObject()).toEqual([]);
+				//expect(err).toBeTruthy();
 				done();
 			});
 		});
@@ -310,6 +315,7 @@ describe('user', function() {
 				user._id = 123;
 				user.validate(function() {
 					expect(user.messages.toObject()).toEqual([]);
+					//expect(err).toBeTruthy();
 					done();
 				});
 			});
@@ -336,6 +342,7 @@ describe('user', function() {
 				user.messages = [{fromUserId: 'invalid'}];
 				user.validate(function() {
 					expect(user.messages.toObject()).toEqual([null]);
+					//expect(err).toBeTruthy();
 					done();
 				});
 			});
@@ -468,6 +475,7 @@ describe('user', function() {
 				user.messages = [{date: 'this is not a date'}];
 				user.validate(function() {
 					expect(user.messages[0].date).toBeFalsy();
+					//expect(err).toBeTruthy();
 					done();
 				});
 			});
@@ -503,6 +511,7 @@ describe('user', function() {
 				user.friends = [{_id: 'yeahok'}];
 				user.validate(function() {
 					expect(user.friends.toObject()).toEqual([null]);
+					//expect(err).toBeTruthy();
 					done();
 				});
 			});
