@@ -91,14 +91,6 @@ describe('validatedUpdate', function() {
 	});
 
 
-	it('should handle mongo specific variables like $push and $inc', function(done) {
-		Test.create({_id: 55, value: 2}, function(err, doc) {
-
-		});
-		done();
-	});
-
-
 	it('should add shortcut method to model', function(done) {
 		validatedUpdate.attach(mongoose);
 		Test.validatedUpdate({_id: 5}, {value: 13}, {}, function(err, num) {
