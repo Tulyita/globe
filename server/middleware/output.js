@@ -6,9 +6,8 @@
 
 		/**
 		 * Standard output function for all api calls
-		 * @param err Error
-		 * @param result Result
-		 * @returns {null}
+		 * @param {*} err
+		 * @param {*} [result]
 		 */
 		res.apiOut = function(err, result) {
 			var code, response;

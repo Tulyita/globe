@@ -43,6 +43,8 @@ var UserSchema = new Schema({
 	ip: {type: String, validate: validateIp},
 	registerDate: Date,
 	loginDate: Date,
+	silencedUntil: Date,
+	bannedUntil: Date,
 	guildId: Schema.Types.ObjectId,
 	messages: [{
 		_id: Schema.Types.ObjectId,
