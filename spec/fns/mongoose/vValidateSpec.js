@@ -108,7 +108,7 @@ describe('vValidate', function() {
 
 
 
-	describe('arrayOfObjects', function(done) {
+	describe('arrayOfObjects', function() {
 
 		it('should accept a valid ObjectId', function(done) {
 			Test.vValidate({arrayOfObjects: [{objectId: new mongoose.Types.ObjectId()}]}, function(err) {
@@ -160,7 +160,7 @@ describe('vValidate', function() {
 		});
 
 		it('should reject an invalid array', function(done) {
-			Test.vValidate({arrayOfObjects: [{array: ['not','numbers']}]}, function(err, doc) {
+			Test.vValidate({arrayOfObjects: [{array: ['not','numbers']}]}, function(err) {
 				expect(err).toBeTruthy();
 				done();
 			});

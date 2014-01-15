@@ -69,7 +69,7 @@ function() {
 				User.findByIdAndSave({
 					_id: v.user_id,
 					name: v.user_name,
-					group: powerToGroup(v.power),
+					group: v.group,
 					site: v.site
 				}, callback);
 			},

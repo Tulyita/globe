@@ -149,7 +149,7 @@ describe('user', function() {
 	describe('registerDate', function() {
 
 		it('should accept a valid value', function(done) {
-			User.vValidate({registerDate: new Date()}, function(err, doc) {
+			User.vValidate({registerDate: new Date()}, function(err) {
 				expect(err).toBeFalsy();
 				done();
 			});
@@ -226,7 +226,7 @@ describe('user', function() {
 		});
 
 		it('should not accept an invalid value', function(done) {
-			User.vValidate({messages: 1509}, function(err, doc) {
+			User.vValidate({messages: 1509}, function(err) {
 				expect(err).toBeTruthy();
 				done();
 			});
