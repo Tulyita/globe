@@ -6,14 +6,15 @@
 (function() {
 	'use strict';
 
+	var _ = require('lodash');
 	var session = require('../../fns/redisSession');
 	var sites = require('../../fns/sites');
 	var User = require('../../models/user');
 
-	var facebook = require('auth/facebook');
-	var guest = require('auth/guest');
-	var jigg = require('auth/jigg');
-	var kong = require('auth/kong');
+	var facebook = require('../../fns/auth/facebook');
+	var guest = require('../../fns/auth/guest');
+	var jigg = require('../../fns/auth/jigg');
+	var kong = require('../../fns/auth/kong');
 
 
 	/**
@@ -60,9 +61,12 @@
 			if(err) {
 				return res.apiOut(err);
 			}
+			if(!verified.name || !verified.site || !verified.siteUserId || !verified.group) {
+				return res.apiOut('Name, site, siteUserId, and group are required from auth.');
+			}
 
 			// save verified data to the database
-			User.findByIdAndSave(verified, function(err, user) {
+			User.findOneAndSave({site: verified.site, siteUserId: verified.siteUserId}, verified, function(err, user) {
 				if(err) {
 					return res.apiOut(err);
 				}

@@ -1,7 +1,7 @@
 'use strict';
 
 var request = require('request');
-var groups = require('../../../fns/groups');
+var groups = require('../groups');
 
 
 /**
