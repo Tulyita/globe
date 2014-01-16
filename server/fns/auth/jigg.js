@@ -31,10 +31,16 @@ var jigg = {
 
 	authenticate: function(data, callback) {
 
-		request.post('https://jiggmin.com/-use-login-token.php', {token: data.token}, function(err, response, body) {
+		request.post('https://jiggmin.com/-use-login-token.php', {form: {token: data.jiggToken}}, function(err, response, body) {
 			if(err) {
 				return callback(err);
 			}
+			if(!body) {
+				return('no reply from Jiggmin.com');
+			}
+
+			body = JSON.parse(body);
+
 			if(body.error) {
 				return callback('Jiggmin login token was not accepted: ' + body.error);
 			}

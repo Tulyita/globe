@@ -14,8 +14,8 @@ var validateName = [function(val) {
 }, 'Name must be between 3 and 40 characters.'];
 
 var validateSiteUserId = [function(val) {
-	return (val.length >= 3 && val.length <= 40);
-}, 'SiteUserId must be between 3 and 40 characters.'];
+	return (val.length >= 1 && val.length <= 40);
+}, 'SiteUserId must be between 1 and 40 characters.'];
 
 var validateGroup = [function(val) {
 	return ['g', 'u', 'm', 'a'].indexOf(val) !== -1;
