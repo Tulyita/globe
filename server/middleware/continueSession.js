@@ -7,12 +7,11 @@
 	module.exports = function(req, res, next) {
 
 		req.session = req.session || {};
+		var token = req.headers['session-token'] || req.body.token;
 
-		if(!req.headers || !req.headers['session-token']) {
+		if(!token) {
 			return next();
 		}
-
-		var token = req.headers['session-token'];
 
 		session.get(token, function(err, result) {
 			if(err) {

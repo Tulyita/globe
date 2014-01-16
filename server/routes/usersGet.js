@@ -10,12 +10,12 @@
 	module.exports = function(req, res) {
 		UserGoose.findById(req.session._id, function(err, user) {
 			if(err) {
-				res.apiOut(err);
+				return res.apiOut(err);
 			}
 			if(!user) {
-				res.apiOut({code: 200, message: 'no user found with that token'});
+				return res.apiOut({code: 200, message: 'no user found with that token'});
 			}
-			res.apiOut(null, user);
+			return res.apiOut(null, user);
 		});
 	};
 

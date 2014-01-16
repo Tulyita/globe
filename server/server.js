@@ -32,12 +32,9 @@
 
 
 	//--- load routes
-	/*globe.post('/api/canonCards', checkMod, require('./routes/canonCardsPost'));
-	globe.post('/mod/canonCards', checkMod, require('./routes/canonCardsPost'));
-	globe.post('/admin/canonCards', checkMod, require('./routes/canonCardsPost'));
-	globe.post('/server/canonCards', checkMod, require('./routes/canonCardsPost'));*/
 	globe.get('/tests', require('./routes/testsGet'));
 	globe.get('/tokens', require('./routes/tokens/tokensGet'));
+	globe.get('/users', require('./routes/usersGet'));
 	globe.delete('/tokens', require('./routes/tokens/tokensDelete'));
 
 

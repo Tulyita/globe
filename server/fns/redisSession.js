@@ -79,6 +79,9 @@
 			if(err) {
 				return callback(err);
 			}
+			if(!result) {
+				return callback('no session found with this token');
+			}
 
 			var obj = JSON.parse(result);
 			if(obj.token !== token) {

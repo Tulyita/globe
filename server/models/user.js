@@ -13,6 +13,10 @@ var validateName = [function(val) {
 	return (val.length >= 3 && val.length <= 40);
 }, 'Name must be between 3 and 40 characters.'];
 
+var validateSiteUserId = [function(val) {
+	return (val.length >= 3 && val.length <= 40);
+}, 'SiteUserId must be between 3 and 40 characters.'];
+
 var validateGroup = [function(val) {
 	return ['g', 'u', 'm', 'a'].indexOf(val) !== -1;
 }, 'Group must be g, u, m, or a.'];
@@ -39,6 +43,7 @@ var UserSchema = new Schema({
 	name: {type: String, validate: validateName},
 	group: {type: String, validate: validateGroup},
 	avatar: {type: String, validate: validateAvatar},
+	siteUserId: {type: String, validate: validateSiteUserId},
 	ip: {type: String, validate: validateIp},
 	registerDate: Date,
 	loginDate: Date,
