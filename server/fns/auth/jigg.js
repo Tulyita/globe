@@ -27,10 +27,9 @@ var powerToGroup = function(power) {
 
 
 
-var jigg = function() {
-	var self = this;
+var jigg = {
 
-	self.authenticate = function(data, callback) {
+	authenticate: function(data, callback) {
 
 		request.post('https://jiggmin.com/-use-login-token.php', {token: data.token}, function(err, response, body) {
 			if(err) {
@@ -54,7 +53,7 @@ var jigg = function() {
 
 			return callback(err, verified);
 		});
-	};
+	}
 };
 
 module.exports = jigg;

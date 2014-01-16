@@ -2,22 +2,33 @@
 	'use strict';
 
 	//--- initialize
+	/*var checkAuth = require('./middleware/checkAuth');
+	var checkMod = require('./middleware/checkMod');*/
 	var express = require('express');
 	var globe = express();
 
 
 	//--- mongoose connect
 	var mongoose = require('mongoose');
+	require('./fns/mongoose/findByIdAndSave').attach(mongoose);
+	require('./fns/mongoose/findOneAndSave').attach(mongoose);
+	require('./fns/mongoose/validatedUpdate').attach(mongoose);
+	require('./fns/mongoose/vValidate').attach(mongoose);
 	mongoose.connect(process.env.MONGO_URI);
+
+
+	//--- redis connect
+	var redis = require('./fns/redisSession');
+	redis.connect(process.env.REDIS_URI);
 
 
 	//--- middleware
 	globe.use(express.urlencoded());
 	globe.use(express.json());
-	//globe.use('/', handleErrors);
+	globe.use(require('./middleware/handleErrors'));
 	globe.use(require('./middleware/output'));
-	//globe.use('/', consolidateParams);
-	//globe.use('/', continueSession);
+	globe.use(require('./middleware/consolidateParams'));
+	globe.use(require('./middleware/continueSession'));
 
 
 	//--- load routes
@@ -26,6 +37,8 @@
 	globe.post('/admin/canonCards', checkMod, require('./routes/canonCardsPost'));
 	globe.post('/server/canonCards', checkMod, require('./routes/canonCardsPost'));*/
 	globe.get('/tests', require('./routes/testsGet'));
+	globe.get('/tokens', require('./routes/tokens/tokensGet'));
+	globe.delete('/tokens', require('./routes/tokens/tokensDelete'));
 
 
 	//--- last ditch error handler

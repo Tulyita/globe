@@ -35,7 +35,6 @@ var validateIp = [function(val) {
 
 
 var UserSchema = new Schema({
-	_id: Schema.Types.ObjectId,
 	site: {type: String, validate: validateSite},
 	name: {type: String, validate: validateName},
 	group: {type: String, validate: validateGroup},
@@ -47,14 +46,12 @@ var UserSchema = new Schema({
 	bannedUntil: Date,
 	guildId: Schema.Types.ObjectId,
 	messages: [{
-		_id: Schema.Types.ObjectId,
 		fromUserId: Schema.Types.ObjectId,
 		fromIp: {type: String, validate: validateIp},
 		body: {type: String, validate: validateMessageBody},
 		date: Date
 	}],
 	friends: [{
-		_id: Schema.Types.ObjectId,
 		site: {type: String, validate: validateSite},
 		name: {type: String, validate: validateName}
 	}]

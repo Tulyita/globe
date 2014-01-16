@@ -17,6 +17,6 @@
 			_.extend(req.body, req.query);
 		}
 		return next();
-	}
+	};
 
 }());
