@@ -1,7 +1,7 @@
 (function() {
 	'use strict';
 
-	var session = require('../../fns/mongoSession');
+	var session = require('../../fns/redisSession');
 
 
 	/**
@@ -9,14 +9,12 @@
 	 */
 	module.exports = function(req, res) {
 
-		if(!req.session.userId || !req.body.token) {
+		if(!req.session._id || !req.body.token) {
 			return res.apiOut('No token to delete', null);
 		}
 
 		var token = req.body.token;
-		session.destroy(token, function(err, result) {
-			return res.apiOut(err, result);
-		});
+		session.destroy(token, res.apiOut);
 	};
 
 }());

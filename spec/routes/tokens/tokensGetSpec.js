@@ -56,14 +56,6 @@ mockery.deregisterAll();
 /////////////////////////////////////////////////////////////////////////
 describe('tokensGet', function() {
 
-	beforeEach(function() {
-
-	});
-
-	afterEach(function() {
-
-	});
-
 	it('should pass a request on to an auth service', function() {
 		var req = {
 			body: {

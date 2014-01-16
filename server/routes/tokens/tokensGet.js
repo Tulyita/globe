@@ -72,7 +72,7 @@
 				}
 
 				// create a session for this user
-				session.make(user._id, _.pick(user, 'name', 'site', 'group', 'bannedUntil', 'silencedUntil', 'guildId'), function(err, response, token) {
+				session.make(user._id, _.pick(user, '_id', 'name', 'site', 'group', 'bannedUntil', 'silencedUntil', 'guildId'), function(err, response, token) {
 					if(err) {
 						return res.apiOut(err);
 					}

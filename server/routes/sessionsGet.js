@@ -1,19 +1,19 @@
 (function() {
 	'use strict';
 
-	var UserGoose = require('../../models/user');
+	var UserGoose = require('../models/user');
 
 
 	/**
 	 * Return the user associated with an existing session
 	 */
 	module.exports = function(req, res) {
-		UserGoose.findById(req.session.userId, function(err, user) {
+		UserGoose.findById(req.session._id, function(err, user) {
 			if(err) {
 				res.apiOut(err);
 			}
 			if(!user) {
-				res.apiOut({code:200, message:'no user found with that token'});
+				res.apiOut({code: 200, message: 'no user found with that token'});
 			}
 			res.apiOut(null, user);
 		});
