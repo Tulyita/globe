@@ -7,14 +7,14 @@
 	'use strict';
 
 	var _ = require('lodash');
-	var session = require('../../fns/redisSession');
-	var sites = require('../../fns/sites');
-	var User = require('../../models/user');
+	var session = require('../fns/redisSession');
+	var sites = require('../fns/sites');
+	var User = require('../models/user');
 
-	var facebook = require('../../fns/auth/facebook');
-	var guest = require('../../fns/auth/guest');
-	var jigg = require('../../fns/auth/jigg');
-	var kong = require('../../fns/auth/kong');
+	var facebook = require('../fns/auth/facebook');
+	var guest = require('../fns/auth/guest');
+	var jigg = require('../fns/auth/jigg');
+	var kong = require('../fns/auth/kong');
 
 
 	/**

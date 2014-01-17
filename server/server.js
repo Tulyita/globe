@@ -33,8 +33,8 @@
 
 	//--- load routes
 	globe.get('/tests', require('./routes/testsGet'));
-	globe.get('/tokens', require('./routes/tokens/tokensGet'));
-	globe.delete('/tokens', require('./routes/tokens/tokensDelete'));
+	globe.get('/tokens', require('./routes/tokensGet'));
+	globe.delete('/tokens', require('./routes/tokensDelete'));
 	globe.get('/users', require('./routes/usersGet'));
 	globe.get('/avatars/:filename', require('./routes/avatarsGet'));
 

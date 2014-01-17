@@ -38,15 +38,15 @@ var mockRedisSession = {
 ////////////////////////////////////////////////////////////////////
 var mockery = require('mockery');
 mockery.enable();
-mockery.registerAllowables(['lodash', '../../fns/sites', '../../../server/routes/tokens/tokensGet']);
-mockery.registerMock('../../fns/redisSession', mockRedisSession);
-mockery.registerMock('../../models/user', mockUser);
-mockery.registerMock('../../fns/auth/guest', mockAuth);
-mockery.registerMock('../../fns/auth/facebook', mockAuth);
-mockery.registerMock('../../fns/auth/jigg', mockAuth);
-mockery.registerMock('../../fns/auth/kong', mockAuth);
+mockery.registerAllowables(['lodash', '../fns/sites', '../../server/routes/tokens/tokensGet']);
+mockery.registerMock('../fns/redisSession', mockRedisSession);
+mockery.registerMock('../models/user', mockUser);
+mockery.registerMock('../fns/auth/guest', mockAuth);
+mockery.registerMock('../fns/auth/facebook', mockAuth);
+mockery.registerMock('../fns/auth/jigg', mockAuth);
+mockery.registerMock('../fns/auth/kong', mockAuth);
 
-var tokensGet = require('../../../server/routes/tokens/tokensGet');
+var tokensGet = require('../../server/routes/tokensGet');
 
 mockery.disable();
 mockery.deregisterAll();
