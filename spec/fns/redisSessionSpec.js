@@ -38,12 +38,13 @@ describe('redisSession', function() {
 	});
 
 
-	it('should return an error if it can not connect', function(done) {
-		redisSession.connect('redis://user:pass@blah.rediszz.com:9678/', function(err) {
+	// this does work, but causes annoying address not found errors
+	/*it('should return an error if it can not connect', function(done) {
+		redisSession.connect('redis://user:pass@noredis.jiggmin.com:9678/', function(err) {
 			expect(err).toBeTruthy();
 			done();
 		});
-	});
+	});*/
 
 
 	it('should create a new session', function(done) {

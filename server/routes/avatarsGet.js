@@ -1,0 +1,96 @@
+'use strict';
+
+var gm = require('gm').subClass({ imageMagick: true });
+var User = require('../models/user');
+
+
+/**
+ * Load a user's avatar url from mongo, retrieve the image, resize it, and return it
+ * @param req
+ * @param res
+ */
+var avatarsGet = function(req, res) {
+
+	var vals = avatarsGet.parseValues(req.params.filename);
+
+	User.findById(vals.userId, {avatar: true}, function(err, user) {
+		if(err) {
+			return res.apiOut(err);
+		}
+		if(!user) {
+			return res.apiOut('user not found.');
+		}
+
+		return gm(user.avatar).toBuffer(function(err, buffer) {
+			if(err) {
+				return res.apiOut(err);
+			}
+
+			return avatarsGet.resizeImage(buffer, vals.width, vals.height, function(err, buffer) {
+				res.writeHead(200, {'Content-Type': 'image/gif' });
+				return res.end(buffer, 'binary');
+			});
+		});
+	});
+};
+
+
+/**
+ * Convert userId-50x60.gif to {userId: userId, width:50, height: 60}
+ * @param {string} filename
+ */
+avatarsGet.parseValues = function(filename) {
+	var dash = filename.indexOf('-');
+	var x = filename.indexOf('x');
+	var dot = filename.indexOf('.');
+
+	if(dash === -1 || x === -1 || dot === -1) {
+		return {
+			userId: filename,
+			width: 12,
+			height: 12
+		};
+	}
+
+	return {
+		userId: filename.substring(0, dash),
+		width: Number(filename.substring(dash+1, x)),
+		height: Number(filename.substring(x+1, dot))
+	};
+};
+
+
+/**
+ * Crop and resize an image to try to get it to a particular size
+ * Will not scale an image up
+ * @param buffer
+ * @param targetWidth
+ * @param targetHeight
+ * @param callback
+ */
+avatarsGet.resizeImage = function(buffer, targetWidth, targetHeight, callback) {
+	gm(buffer).size(function(err, size) {
+		if(err) {
+			return callback(err);
+		}
+
+		var xRatio = targetWidth / size.width;
+		var yRatio = targetHeight / size.height;
+		var ratio = Math.min(1, Math.max(xRatio, yRatio));
+		var resizeWidth = Math.ceil(size.width * ratio);
+		var resizeHeight = Math.ceil(size.height * ratio);
+		var cropX = Math.max(0, Math.round((resizeWidth-targetWidth)/2));
+		var cropY = Math.max(0, Math.round((resizeHeight-targetHeight)/2));
+		var finalWidth = Math.min(size.width, targetWidth);
+		var finalHeight = Math.min(size.height, targetHeight);
+
+		return gm(buffer)
+			.resize(resizeWidth, resizeHeight)
+			.crop(finalWidth, finalHeight, cropX, cropY)
+			.repage(finalWidth, finalHeight, 0, 0)
+			.toBuffer(callback);
+	});
+};
+
+
+module.exports = avatarsGet;

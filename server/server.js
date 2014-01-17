@@ -34,8 +34,9 @@
 	//--- load routes
 	globe.get('/tests', require('./routes/testsGet'));
 	globe.get('/tokens', require('./routes/tokens/tokensGet'));
-	globe.get('/users', require('./routes/usersGet'));
 	globe.delete('/tokens', require('./routes/tokens/tokensDelete'));
+	globe.get('/users', require('./routes/usersGet'));
+	globe.get('/avatars/:filename', require('./routes/avatarsGet'));
 
 
 	//--- last ditch error handler
