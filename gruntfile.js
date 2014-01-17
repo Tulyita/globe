@@ -66,6 +66,12 @@ module.exports = function (grunt) {
 				}
 			},
 			deploy: {
+				command: 'modulus deploy --project-name globe-staging',
+				options: {
+					stdout: true
+				}
+			},
+			deployProduction: {
 				command: 'modulus deploy --project-name globe',
 				options: {
 					stdout: true
@@ -90,5 +96,9 @@ module.exports = function (grunt) {
 
 	grunt.registerTask('deploy', [
 		'shell:deploy'
+	]);
+
+	grunt.registerTask('deployProduction', [
+		'shell:deployProduction'
 	]);
 };

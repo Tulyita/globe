@@ -15,7 +15,15 @@
 	 */
 	redisSession.connect = function(uri, callback) {
 		redisSession.end();
-		client = redis.createClient(uri);
+
+		if(uri) {
+			var rtg = require('url').parse(uri);
+			client = redis.createClient(rtg.port, rtg.hostname);
+			client.auth(rtg.auth.split(':')[1]);
+		}
+		else {
+			client = redis.createClient();
+		}
 
 		if(callback) {
 			client.on('ready', function() {

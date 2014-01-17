@@ -39,7 +39,7 @@ describe('redisSession', function() {
 
 
 	it('should return an error if it can not connect', function(done) {
-		redisSession.connect('redis://bad.com', function(err) {
+		redisSession.connect('redis://user:pass@blah.rediszz.com:9678/', function(err) {
 			expect(err).toBeTruthy();
 			done();
 		});
