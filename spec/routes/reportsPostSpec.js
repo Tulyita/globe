@@ -5,7 +5,6 @@ var mongoose = require('mongoose');
 var mockgoose = require('mockgoose');
 mockgoose(mongoose);
 
-var Report = require('../../server/models/report');
 var reportsPost = require('../../server/routes/reportsPost');
 
 describe('reportsPost', function() {

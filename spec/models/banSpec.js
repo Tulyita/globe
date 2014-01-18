@@ -29,7 +29,7 @@ describe('ban', function() {
 				expect(err).toBeFalsy();
 				expect(doc.expireDate).toEqual(new Date(0));
 				done();
-			})
+			});
 		});
 	});
 
