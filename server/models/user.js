@@ -1,6 +1,7 @@
 'use strict';
 
 
+var isIp = require('../fns/isIp');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
@@ -30,11 +31,7 @@ var validateMessageBody = [function(val) {
 	return (val.length > 0 && val.length <= 300);
 }, 'Message body must be between 0 and 300 characters'];
 
-var validateIp = [function(val) {
-	var isIpv6 = /^((?=.*::)(?!.*::.+::)(::)?([\dA-F]{1,4}:(:|\b)|){5}|([\dA-F]{1,4}:){6})((([\dA-F]{1,4}((?!\3)::|:\b|$))|(?!\2\3)){2}|(((2[0-4]|1\d|[1-9])?\d|25[0-5])\.?\b){4})$/i.test(val);
-	var isIpv4 = /\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$){4}\b/.test(val);
-	return isIpv6 || isIpv4;
-}, 'Ip must be a valid ipv4 or ipv6 address.'];
+var validateIp = [isIp, 'Ip must be a valid ipv4 or ipv6 address.'];
 
 
 
