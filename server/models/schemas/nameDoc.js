@@ -1,12 +1,10 @@
 'use strict';
 
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
 var isName = require('../../validators/isName');
 var isSite = require('../../validators/isSite');
 var isGroup = require('../../validators/isGroup');
 
-var NameSchema = new Schema({
+var NameDoc = {
 	name: {
 		type: String,
 		validate: isName,
@@ -22,6 +20,6 @@ var NameSchema = new Schema({
 		enum: isGroup,
 		required: true
 	}
-});
+};
 
-module.exports = NameSchema;
+module.exports = NameDoc;

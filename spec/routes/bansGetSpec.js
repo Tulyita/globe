@@ -1,92 +1,76 @@
 /* global describe, expect, it, beforeEach, afterEach */
 'use strict';
-/*
-var mongoose = require('mongoose');
-var mockgoose = require('mockgoose');
-mockgoose(mongoose);
 
-var Ban = require('../../server/models/ban');
+///////////////////////////////////////////////////////////////
+// mocks
+///////////////////////////////////////////////////////////////
+var db = {
+	abc: {
+		_id: 'abc',
+		bans: [
+			{name: 'ban1'},
+			{name: 'ban2'}
+		]
+	}
+};
+
+var MockUser = {
+	findById: function(_id, fields, callback) {
+		if(_id === 'errorTime') {
+			return callback('There was a horrible error');
+		}
+		return callback(null, db[_id]);
+	}
+};
+
+
+
+////////////////////////////////////////////////////////////////
+// dependencies
+////////////////////////////////////////////////////////////////
+var mockery = require('mockery');
+mockery.registerAllowables(['../../server/routes/bansGet']);
+mockery.registerMock('../models/user', MockUser);
+
 var bansGet = require('../../server/routes/bansGet');
 
+mockery.disable();
+mockery.deregisterAll();
+
+
+////////////////////////////////////////////////////////////////
+// tests
+////////////////////////////////////////////////////////////////
 describe('bansGet', function() {
 
-	var ban1, ban2;
-
-
-	beforeEach(function(done) {
-
-		ban1 = {
-			_id: mongoose.Types.ObjectId(),
-			type: 'ban',
-			user: {
-				_id: mongoose.Types.ObjectId(),
-				name: 'aaaa',
-				site: 'j',
-				group: 'u'
-			},
-			mod: {
-				_id: mongoose.Types.ObjectId(),
-				name: 'aaaa',
-				site: 'j',
-				group: 'm'
-			},
-			date: new Date(1000)
-		};
-
-		ban2 = {
-			_id: mongoose.Types.ObjectId(),
-			type: 'ban',
-			user: {
-				_id: mongoose.Types.ObjectId(),
-				name: 'aaaa',
-				site: 'j',
-				group: 'u'
-			},
-			mod: {
-				_id: mongoose.Types.ObjectId(),
-				name: 'aaaa',
-				site: 'j',
-				group: 'm'
-			},
-			date: new Date(2000)
-		};
-
-		Ban.create(ban1, function() {
-			Ban.create(ban2, function() {
-				done();
-			});
-		});
-	});
-
-
-	afterEach(function() {
-		mockgoose.reset();
-	});
-
-
-	it('should reply with a list bans if no banId is present', function(done) {
+	it('should return what mongoose finds', function(done) {
 		var req = {
-			body: {}
+			body: {userId: 'abc'}
 		};
-		bansGet(req, {apiOut: function(err, response) {
+		bansGet(req, {apiOut: function(err, resp) {
 			expect(err).toBeFalsy();
-			expect(response[0]._id).toEqual(ban2._id);
-			expect(response[1]._id).toEqual(ban1._id);
+			expect(resp.bans).toEqual([{name: 'ban1'}, {name: 'ban2'}]);
 			done();
 		}});
 	});
 
-
-	it('should reply with a ban if its banId is present', function(done) {
+	it('should return an error if nothing is found', function(done) {
 		var req = {
-			body: {
-				banId: ban2._id
-			}
+			body: {userId: 'zzz'}
 		};
-		bansGet(req, {apiOut: function(err, response) {
-			expect(err).toBeFalsy();
-			expect(response._id).toEqual(ban2._id);
+		bansGet(req, {apiOut: function(err) {
+			expect(err).toBeTruthy();
 			done();
 		}});
 	});
-});*/
+
+	it('should return an error if mongoose returns an error', function(done) {
+		var req = {
+			body: {userId: 'errorTime'}
+		};
+		bansGet(req, {apiOut: function(err) {
+			expect(err).toBeTruthy();
+			done();
+		}});
+	});
+});

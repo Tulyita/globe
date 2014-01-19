@@ -1,6 +1,6 @@
+var NameDoc = require('./nameDoc');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var NameSchema = require('./nameSchema');
 
 var ReportSchema = new Schema({
 	type: {
@@ -13,7 +13,7 @@ var ReportSchema = new Schema({
 		required: true
 	},
 	fromUser: {
-		type: NameSchema,
+		type: NameDoc,
 		required: true
 	},
 	created: {

@@ -5,7 +5,7 @@ var isIp = require('../../validators/isIp');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var MessageSchema = new Schema({
+var MessageDoc = {
 	fromUserId: {
 		type: Schema.Types.ObjectId,
 		required: true
@@ -24,6 +24,6 @@ var MessageSchema = new Schema({
 		type: Date,
 		default: Date
 	}
-});
+};
 
-module.exports = MessageSchema;
+module.exports = MessageDoc;

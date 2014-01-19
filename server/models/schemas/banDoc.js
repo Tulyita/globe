@@ -1,11 +1,11 @@
 'use strict';
 
 var isIp = require('../../validators/isIp');
-var NameSchema = require('./nameSchema');
+var NameSchema = require('./nameDoc');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var BanSchema = new Schema({
+var BanDoc = {
 	type: {
 		type: String,
 		enum: ['ban', 'silence'],
@@ -37,6 +37,6 @@ var BanSchema = new Schema({
 	publicInfo: {
 		type: Schema.Types.Mixed
 	}
-});
+};
 
-module.exports = BanSchema;
+module.exports = BanDoc;
