@@ -38,7 +38,7 @@ var mockRedisSession = {
 ////////////////////////////////////////////////////////////////////
 var mockery = require('mockery');
 mockery.enable();
-mockery.registerAllowables(['lodash', '../fns/sites', '../../server/routes/tokens/tokensGet']);
+mockery.registerAllowables(['lodash', '../fns/sites', '../../server/routes/tokensGet']);
 mockery.registerMock('../fns/redisSession', mockRedisSession);
 mockery.registerMock('../models/user', mockUser);
 mockery.registerMock('../fns/auth/guest', mockAuth);

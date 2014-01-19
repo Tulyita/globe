@@ -1,6 +1,6 @@
 /*global beforeEach, afterEach, expect, it, describe */
 'use strict';
-
+/*
 var mongoose = require('mongoose');
 var mockgoose = require('mockgoose');
 mockgoose(mongoose);
@@ -77,4 +77,4 @@ describe('bansPost', function() {
 			done();
 		}});
 	});
-});
+});*/

@@ -1,21 +1,12 @@
 'use strict';
 
-var Ban = require('../models/ban');
+var User = require('../models/user');
 
 module.exports = function(req, res) {
 
-	///////////////////////////////////////////
-	// return a single ban
-	///////////////////////////////////////////
-	if(req.body.banId) {
-		Ban.findById(req.body.banId, res.apiOut);
+	if(!req.body.userId) {
+		return res.apiOut('userId required');
 	}
 
-
-	//////////////////////////////////////////
-	// return a list of bans
-	//////////////////////////////////////////
-	else {
-		Ban.find({}, {}, {sort: {date: -1}}, res.apiOut);
-	}
+	User.findById(req.body.userId, {bans:true}, res.apiOut);
 };

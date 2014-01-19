@@ -1,6 +1,6 @@
 /* global describe, expect, it, beforeEach, afterEach */
 'use strict';
-
+/*
 var mongoose = require('mongoose');
 var mockgoose = require('mockgoose');
 mockgoose(mongoose);
@@ -64,4 +64,4 @@ describe('reportsGet', function() {
 			done();
 		}});
 	});
-});
+});*/
