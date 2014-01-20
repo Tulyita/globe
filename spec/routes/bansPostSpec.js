@@ -45,11 +45,13 @@ describe('bansPost', function() {
 						_id: modId,
 						name: 'mod',
 						site: 'j',
-						group: 'm'
+						group: 'z',
+						unrelated: 'boop'
 					},
 					date: new Date(0),
 					expireDate: new Date(1),
-					reason: 'spam'
+					reason: 'spam',
+					unrelated: 'yada'
 				}
 			];
 			bansPost.saveBans(userId, bans, function(err) {

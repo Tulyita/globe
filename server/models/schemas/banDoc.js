@@ -19,13 +19,13 @@ var BanDoc = {
 		type: Date,
 		required: true
 	},
-	date: {
-		type: Date,
-		default: Date
-	},
 	reason: {
 		type: String,
 		required: true
+	},
+	date: {
+		type: Date,
+		default: Date
 	},
 	ip: {
 		type: String,
