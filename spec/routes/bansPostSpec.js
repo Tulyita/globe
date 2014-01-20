@@ -45,7 +45,7 @@ describe('bansPost', function() {
 						_id: modId,
 						name: 'mod',
 						site: 'j',
-						group: 'z'
+						group: 'm'
 					},
 					date: new Date(0),
 					expireDate: new Date(1),
@@ -80,14 +80,15 @@ describe('bansPost', function() {
 	describe('pruneOldBans', function() {
 
 		it('should remove long expired bans from an array', function() {
+			var now = new Date();
 			var bans = [
 				{name: 'ban1', expireDate: new Date(0)},
-				{name: 'ban2', expireDate: new Date()},
-				{name: 'ban3', expireDate: new Date()},
+				{name: 'ban2', expireDate: now},
+				{name: 'ban3', expireDate: now},
 				{name: 'ban4', expireDate: new Date(1)}
 			];
 			var prunedBans = bansPost.pruneOldBans(bans);
-			expect(prunedBans).toEqual([{name: 'ban1', expireDate: new Date(0)}, {name: 'ban4', expireDate: new Date(1)}]);
+			expect(prunedBans).toEqual([{name: 'ban2', expireDate: now}, {name: 'ban3', expireDate: now}]);
 		});
 	});
 
@@ -111,7 +112,7 @@ describe('bansPost', function() {
 		var req = {
 			body: {
 				type: 'silence',
-				ip: '67.195.160.76',
+				reason: 'spam',
 				privateInfo: {message: 'bla'},
 				userId: userId
 			},
@@ -119,18 +120,24 @@ describe('bansPost', function() {
 				_id: modId,
 				name: 'Villa',
 				site: 'j',
-				group: 'm',
-				extra: 'unrelated'
+				group: 'm'
 			}
 		};
-		bansPost(req, {apiOut: function(err, resp) {
+
+		bansPost.post(req, {apiOut: function(err, resp) {
 			expect(err).toBeFalsy();
 			expect(resp).toBeTruthy();
 			if(resp) {
 				expect(resp.type).toEqual('silence');
 				expect(resp.mod).toEqual({_id: modId, name: 'Villa', site: 'j', group: 'm'});
 			}
-			done();
+
+			User.findById(userId, function(err, user) {
+				expect(err).toBeFalsy();
+				expect(user).toBeTruthy();
+				expect(user.bans.toObject()[0].reason).toEqual('spam');
+				done();
+			});
 		}});
 	});
 
@@ -142,7 +149,7 @@ describe('bansPost', function() {
 				type: 'wewewe'
 			}
 		};
-		bansPost(req, {apiOut: function(err) {
+		bansPost.post(req, {apiOut: function(err) {
 			expect(err).toBeTruthy();
 			done();
 		}});
