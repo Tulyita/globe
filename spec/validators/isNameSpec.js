@@ -2,7 +2,7 @@
 
 var isName = require('../../server/validators/isName');
 
-describe('isName', function() {
+describe('isNameDisplay', function() {
 
 	it('should accept a string of one character', function() {
 		expect(isName('a')).toBe(true);

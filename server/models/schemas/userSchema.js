@@ -9,7 +9,7 @@ var isSite = require('../../validators/isSite');
 var isName = require('../../validators/isName');
 var isUrl = require('../../validators/isUrl');
 var messageDoc = require('./messageDoc');
-var nameDoc = require('./nameDoc');
+var nameDisplayDoc = require('./nameDisplayDoc');
 var banDoc = require('./banDoc');
 
 var UserSchema = new Schema({
@@ -52,13 +52,13 @@ var UserSchema = new Schema({
 		type: Schema.Types.ObjectId
 	},
 	messages: {
-		type: [messageDoc]
+		type: [new Schema(messageDoc)]
 	},
 	friends: {
-		type: [nameDoc]
+		type: [new Schema(nameDisplayDoc)]
 	},
 	bans: {
-		type: [banDoc]
+		type: [new Schema(banDoc)]
 	}
 });
 

@@ -1,6 +1,7 @@
-var NameDoc = require('./nameDoc');
+var nameDisplayDoc = require('./nameDisplayDoc');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var isNameDisplay = require('../../validators/isNameDisplay');
 
 var ReportSchema = new Schema({
 	type: {
@@ -13,7 +14,8 @@ var ReportSchema = new Schema({
 		required: true
 	},
 	fromUser: {
-		type: NameDoc,
+		type: nameDisplayDoc,
+		validate: isNameDisplay,
 		required: true
 	},
 	created: {

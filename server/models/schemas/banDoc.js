@@ -1,7 +1,7 @@
 'use strict';
 
 var isIp = require('../../validators/isIp');
-var NameDoc = require('./nameDoc');
+var NameDoc = require('./nameDisplayDoc');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 

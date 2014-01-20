@@ -14,6 +14,7 @@ describe('report', function() {
 			type: 'message',
 			data: {},
 			fromUser: {
+				_id: mongoose.Types.ObjectId(),
 				name: 'Buffy',
 				group: 'u',
 				site: 'j'
@@ -76,7 +77,7 @@ describe('report', function() {
 			});
 		});
 
-		it('should not accapt null', function(done) {
+		it('should not accept null', function(done) {
 			obj.data = null;
 			Report.create(obj, function(err) {
 				expect(err).toBeTruthy();

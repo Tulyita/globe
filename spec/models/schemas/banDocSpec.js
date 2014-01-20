@@ -24,7 +24,7 @@ describe('ban', function() {
 				site: 'j',
 				group: 'm'
 			}
-		}
+		};
 	});
 
 
