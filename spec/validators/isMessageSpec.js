@@ -8,7 +8,12 @@ describe('isMessage', function() {
 	it('should accept a valid message', function() {
 		var message = {
 			_id: mongoose.Types.ObjectId(),
-			fromUserId: mongoose.Types.ObjectId(),
+			fromUser: {
+				_id: mongoose.Types.ObjectId(),
+				name: 'Karen',
+				site: 'j',
+				group: 'g'
+			},
 			ip: '66.7.217.155',
 			body: 'hi',
 			date: new Date()

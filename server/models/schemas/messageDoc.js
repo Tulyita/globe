@@ -1,13 +1,14 @@
 'use strict';
 
-var validate = require('mongoose-validator').validate;
+var nameDisplayDoc = require('./nameDisplayDoc');
 var isIp = require('../../validators/isIp');
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+var isNameDisplay = require('../../validators/isNameDisplay');
+var isMessageBody = require('../../validators/isMessageBody');
 
 var MessageDoc = {
-	fromUserId: {
-		type: Schema.Types.ObjectId,
+	fromUser: {
+		type: nameDisplayDoc,
+		validate: isNameDisplay,
 		required: true
 	},
 	ip: {
@@ -17,7 +18,7 @@ var MessageDoc = {
 	},
 	body: {
 		type: String,
-		validate: validate('len', 1, 300),
+		validate: isMessageBody,
 		required: true
 	},
 	date: {
