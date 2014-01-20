@@ -17,7 +17,7 @@ var NameDoc = {
 	},
 	group: {
 		type: String,
-		enum: isGroup,
+		validate: isGroup,
 		required: true
 	}
 };

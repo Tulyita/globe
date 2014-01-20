@@ -2,10 +2,10 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var validate = require('mongoose-validator').validate;
 var isGroup = require('../../validators/isGroup');
 var isIp = require('../../validators/isIp');
 var isSite = require('../../validators/isSite');
+var isSiteUserId = require('../../validators/isSiteUserId');
 var isName = require('../../validators/isName');
 var isUrl = require('../../validators/isUrl');
 var messageDoc = require('./messageDoc');
@@ -30,14 +30,18 @@ var UserSchema = new Schema({
 	},
 	siteUserId: {
 		type: String,
-		validate: [validate('len', 1, 40), validate('isAlphanumeric')],
+		validate: isSiteUserId,
 		required: true
 	},
 	avatar: {
 		type: String,
 		validate: isUrl
 	},
-	ip: {
+	registerIp: {
+		type: String,
+		validate: isIp
+	},
+	loginIp: {
 		type: String,
 		validate: isIp
 	},
@@ -46,7 +50,8 @@ var UserSchema = new Schema({
 		default: Date
 	},
 	loginDate: {
-		type: Date
+		type: Date,
+		default: Date
 	},
 	guildId: {
 		type: Schema.Types.ObjectId
