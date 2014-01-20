@@ -1,4 +1,3 @@
-/* global describe, expect, it, beforeEach, afterEach */
 'use strict';
 
 ///////////////////////////////////////////////////////////////
@@ -31,6 +30,7 @@ var MockUser = {
 var mockery = require('mockery');
 mockery.registerAllowables(['../../server/routes/bansGet']);
 mockery.registerMock('../models/user', MockUser);
+mockery.enable();
 
 var bansGet = require('../../server/routes/bansGet');
 
@@ -50,16 +50,6 @@ describe('bansGet', function() {
 		bansGet(req, {apiOut: function(err, resp) {
 			expect(err).toBeFalsy();
 			expect(resp.bans).toEqual([{name: 'ban1'}, {name: 'ban2'}]);
-			done();
-		}});
-	});
-
-	it('should return an error if nothing is found', function(done) {
-		var req = {
-			body: {userId: 'zzz'}
-		};
-		bansGet(req, {apiOut: function(err) {
-			expect(err).toBeTruthy();
 			done();
 		}});
 	});

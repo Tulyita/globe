@@ -28,14 +28,14 @@ var UserSchema = new Schema({
 		validate: isGroup,
 		required: true
 	},
-	avatar: {
-		type: String,
-		validate: isUrl
-	},
 	siteUserId: {
 		type: String,
 		validate: [validate('len', 1, 40), validate('isAlphanumeric')],
 		required: true
+	},
+	avatar: {
+		type: String,
+		validate: isUrl
 	},
 	ip: {
 		type: String,

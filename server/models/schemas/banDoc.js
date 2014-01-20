@@ -1,7 +1,7 @@
 'use strict';
 
 var isIp = require('../../validators/isIp');
-var NameSchema = require('./nameDoc');
+var NameDoc = require('./nameDoc');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
@@ -12,7 +12,7 @@ var BanDoc = {
 		required: true
 	},
 	mod: {
-		type: NameSchema,
+		type: NameDoc,
 		required: true
 	},
 	expireDate: {

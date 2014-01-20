@@ -1,52 +1,122 @@
 /*global beforeEach, afterEach, expect, it, describe */
 'use strict';
-/*
+
+var _ = require('lodash');
 var mongoose = require('mongoose');
 var mockgoose = require('mockgoose');
 mockgoose(mongoose);
 
+var User = require('../../server/models/user');
 var bansPost = require('../../server/routes/bansPost');
 
 describe('bansPost', function() {
 
+	var userId;
+	var modId;
+
 	beforeEach(function(done) {
-		done();
+		userId = mongoose.Types.ObjectId();
+		modId = mongoose.Types.ObjectId();
+
+		User.create({
+			_id: userId,
+			name: 'bob',
+			site: 'j',
+			group: 'u',
+			siteUserId: '123'
+		}, function() {
+			done();
+		});
 	});
 
 	afterEach(function() {
 		mockgoose.reset();
 	});
 
-	it('should add mod field to the body', function() {
-		var _id = mongoose.Types.ObjectId();
-		var ban = {};
-		var session = {
-			_id: _id,
-			name: 'Villa',
-			site: 'j',
-			group: 'm',
-			extra: 'unrelated'
-		};
-		bansPost.populateMod(ban, session);
-		expect(ban.mod).toEqual({_id: _id, name: 'Villa', site: 'j', group: 'm'});
+
+	describe('saveBans', function() {
+
+		it('should save a list of bans to a user account', function(done) {
+			var bans = [
+				{
+					_id: mongoose.Types.ObjectId(),
+					type: 'ban',
+					mod: {
+						_id: modId,
+						name: 'mod',
+						site: 'j',
+						group: 'm'
+					},
+					date: new Date(0),
+					expireDate: new Date(1),
+					reason: 'spam'
+				}
+			];
+			bansPost.saveBans(userId, bans, function(err) {
+				expect(err).toBeFalsy();
+
+				User.findById(userId, function(err, user) {
+					expect(err).toBeFalsy();
+					expect(user.bans.toObject()).toEqual(bans);
+					done();
+				});
+			});
+		});
 	});
+
+
+	describe('getBanHistory', function() {
+
+		it('should return an array of bans for a user', function(done) {
+			bansPost.getBanHistory(userId, function(err, bans) {
+				expect(err).toBeFalsy();
+				expect(_.isArray(bans)).toBe(true);
+				done();
+			});
+		});
+	});
+
+
+	describe('pruneOldBans', function() {
+
+		it('should remove long expired bans from an array', function() {
+			var bans = [
+				{name: 'ban1', expireDate: new Date(0)},
+				{name: 'ban2', expireDate: new Date()},
+				{name: 'ban3', expireDate: new Date()},
+				{name: 'ban4', expireDate: new Date(1)}
+			];
+			var prunedBans = bansPost.pruneOldBans(bans);
+			expect(prunedBans).toEqual([{name: 'ban1', expireDate: new Date(0)}, {name: 'ban4', expireDate: new Date(1)}]);
+		});
+	});
+
+
+	describe('determineDuration', function() {
+
+		it('should assign longer bans if there are more prior bans', function() {
+			var dur1 = bansPost.determineDuration([]);
+			var dur2 = bansPost.determineDuration(['banOne']);
+			var dur3 = bansPost.determineDuration(['banOne', 'banTwo']);
+			var dur4 = bansPost.determineDuration(['banOne', 'banTwo', 'banThree']);
+
+			expect(dur1).toBeLessThan(dur2);
+			expect(dur2).toBeLessThan(dur3);
+			expect(dur3).toBeLessThan(dur4);
+		});
+	});
+
 
 	it('should save a ban to mongo', function(done) {
 		var req = {
 			body: {
 				type: 'silence',
-				banAccount: true,
-				banIp: true,
 				ip: '67.195.160.76',
 				privateInfo: {message: 'bla'},
-				user: {
-					name: 'el',
-					site: 'j',
-					group: 'u'
-				}
+				userId: userId
 			},
 			session: {
-				_id: mongoose.Types.ObjectId(),
+				_id: modId,
 				name: 'Villa',
 				site: 'j',
 				group: 'm',
@@ -58,12 +128,12 @@ describe('bansPost', function() {
 			expect(resp).toBeTruthy();
 			if(resp) {
 				expect(resp.type).toEqual('silence');
-				expect(resp.mod.name).toEqual('Villa');
-				expect(resp.user.name).toEqual('el');
+				expect(resp.mod).toEqual({_id: modId, name: 'Villa', site: 'j', group: 'm'});
 			}
 			done();
 		}});
 	});
+
 
 	it('should return an error if something goes wrong', function(done) {
 		var req = {
@@ -77,4 +147,4 @@ describe('bansPost', function() {
 			done();
 		}});
 	});
-});*/
+});

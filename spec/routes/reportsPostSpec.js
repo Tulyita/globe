@@ -1,4 +1,3 @@
-/*global beforeEach, afterEach, expect, it, describe */
 'use strict';
 /*
 var mongoose = require('mongoose');

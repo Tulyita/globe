@@ -8,44 +8,62 @@ var bansPost  = function(req, res) {
 	var ban = req.body;
 
 
-	User.findById(ban.userId, {bans: 1}, function(err, user) {
+	bansPost.getBanHistory(ban.userId, function(err, bans) {
 		if(err) {
 			return res.apiOut(err);
 		}
-		if(!user) {
-			return res.apiOut('User not found.');
-		}
 
-		var bans = pruneOldBans(user.bans);
-		var duration = determineDuration(bans);
+		bans = bansPost.pruneOldBans(bans);
+		var duration = bansPost.determineDuration(bans);
 
 		ban.expireDate = new Date() + duration;
 		ban.mod = _.pick(req.session, '_id', 'name', 'site', 'group');
+		bans.push(ban);
 
-		return User.findByIdAndUpdate(ban.userId, {bans: bans}, function(err) {
+		bansPost.saveBans(ban.userId, bans, function(err) {
 			if(err) {
 				return res.apiOut(err);
 			}
 
-			return res.apiOut(null, bans);
+			return res.apiOut(null, ban);
 		});
 	});
 };
 
 
-var pruneOldBans = function(bans) {
-	var oneYearAgo = new Date();
-	oneYearAgo.setYear(oneYearAgo.getYear()-1);
+bansPost.saveBans = function(userId, bans, callback) {
+	User.findByIdAndUpdate(userId, {bans: bans}, callback);
+};
+
+
+bansPost.getBanHistory = function(userId, callback) {
+	User.findById(userId, {bans: 1}, function(err, user) {
+		if(err) {
+			return callback(err);
+		}
+		if(!user) {
+			return callback('User not found.');
+		}
+
+		var bans = user.bans || [];
+		return callback(null, bans);
+	});
+};
+
+
+bansPost.pruneOldBans = function(bans) {
+	var thisYear = new Date().getFullYear();
+	var oneYearAgo = new Date().setYear(thisYear-1);
 
 	bans = _.filter(bans, function(ban) {
-		return ban.expireDate > oneYearAgo;
+		return ban.expireDate < oneYearAgo;
 	});
 
 	return bans;
 };
 
 
-var determineDuration = function(bans) {
+bansPost.determineDuration = function(bans) {
 	var len = bans.length;
 	var dur;
 	if(len === 0) {
