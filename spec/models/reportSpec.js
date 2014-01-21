@@ -22,6 +22,10 @@ describe('report', function() {
 		};
 	});
 
+	afterEach(function() {
+		mockgoose.reset();
+	});
+
 
 	describe('type', function() {
 
