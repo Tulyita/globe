@@ -11,15 +11,14 @@ var MessageDoc = {
 		validate: isNameDisplay,
 		required: true
 	},
-	ip: {
-		type: String,
-		validate: isIp,
-		required: true
-	},
 	body: {
 		type: String,
 		validate: isMessageBody,
 		required: true
+	},
+	ip: {
+		type: String,
+		validate: isIp
 	},
 	date: {
 		type: Date,
