@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+var _ = require('lodash');
 var nameDisplayDoc = require('./nameDisplayDoc');
 var memberDoc = require('./memberDoc');
 var isName = require('../../validators/isName');
@@ -56,5 +57,17 @@ var GuildSchema = new Schema({
 	joinRequests: [nameSchema],
 	invitations: [nameSchema]
 });
+
+
+GuildSchema.methods.isOwner = function (userId) {
+	var isOwner = false;
+	_.each(this.owners, function(owner) {
+		if(String(owner._id) === String(userId)) {
+			isOwner = true;
+		}
+	});
+	return isOwner;
+};
+
 
 module.exports = GuildSchema;

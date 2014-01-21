@@ -9,6 +9,7 @@ var guildFns = {
 		guildFns.createGuild(req.body, req.session, res.apiOut);
 	},
 
+
 	createGuild: function(data, session, callback) {
 		var guild = {_id: data.guildId};
 		guild.owners = [_.pick(session, '_id', 'name', 'site', 'group')];
@@ -36,16 +37,7 @@ var guildFns = {
 	leaveGuild: function(guildId, userId) {
 
 	},
-
-	isOwner: function(guild, session) {
-		var owner = false;
-		_.each(guild.owners, function(owner) {
-			if(owner._id === session._id) {
-				owner = true;
-			}
-		});
-		return owner;
-	}*/
+*/
 };
 
 module.exports = guildFns;
