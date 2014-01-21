@@ -4,13 +4,12 @@ var Schema = mongoose.Schema;
 var nameDisplayDoc = require('./nameDisplayDoc');
 var memberDoc = require('./memberDoc');
 var isName = require('../../validators/isName');
-var isUrl = require('../../validators/isUrl');
 
 var nameSchema = new Schema(nameDisplayDoc);
 var memberSchema = new Schema(memberDoc);
 
 var GuildSchema = new Schema({
-	name: {
+	_id: {
 		type: String,
 		validate: isName,
 		required: true
@@ -18,7 +17,7 @@ var GuildSchema = new Schema({
 	join: {
 		type: String,
 		enum: ['inviteOnly', 'requestToJoin', 'allWelcome'],
-		required: true
+		default: 'inviteOnly'
 	},
 	createdDate: {
 		type: Date,

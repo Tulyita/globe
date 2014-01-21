@@ -12,7 +12,7 @@ describe('guild', function() {
 
 	beforeEach(function() {
 		obj = {
-			name: 'best guild!',
+			_id: 'best guild!',
 			join: 'inviteOnly'
 		};
 	});
@@ -22,19 +22,19 @@ describe('guild', function() {
 	});
 
 
-	describe('name', function() {
+	describe('_id', function() {
 
 		it('should accept a valid name', function(done) {
-			obj.name = 'birds';
+			obj._id = 'birds';
 			Guild.create(obj, function(err, doc) {
 				expect(err).toBeFalsy();
-				expect(doc.name).toBe('birds');
+				expect(doc._id).toBe('birds');
 				done();
 			});
 		});
 
 		it('should not accept an invalid name', function(done) {
-			obj.name = '';
+			obj._id = '';
 			Guild.create(obj, function(err) {
 				expect(err).toBeTruthy();
 				done();
