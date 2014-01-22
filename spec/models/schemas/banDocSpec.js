@@ -9,11 +9,8 @@ var BanDoc = require('../../../server/models/schemas/banDoc');
 var BanSchema = new mongoose.Schema(BanDoc);
 var Ban = mongoose.model('BanTest', BanSchema);
 
-var data;
-
 
 describe('ban', function() {
-
 
 	beforeEach(function() {
 	});

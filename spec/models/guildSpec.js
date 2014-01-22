@@ -309,14 +309,11 @@ describe('guild', function() {
 
 	describe('addToJoinRequests', function() {
 
-
 		it('should add a user', function(done) {
-
 			var guildObj = {
 				_id: 'sun',
 				joinRequests: []
 			};
-
 			var user = {
 				_id: mongoose.Types.ObjectId(),
 				name: 'bob',
@@ -333,16 +330,13 @@ describe('guild', function() {
 			});
 		});
 
-
 		it('should return an error if the user is already in joinRequests', function(done) {
-
 			var user = {
 				_id: mongoose.Types.ObjectId(),
 				name: 'bob',
 				site: 'j',
 				group: 'u'
 			};
-
 			var guildObj = {
 				_id: 'sun',
 				joinRequests: [user]
@@ -361,16 +355,13 @@ describe('guild', function() {
 
 	describe('removeFromJoinRequests', function() {
 
-
 		it('should remove a user', function(done) {
-
 			var user = {
 				_id: mongoose.Types.ObjectId(),
 				name: 'bob',
 				site: 'j',
 				group: 'u'
 			};
-
 			var guildObj = {
 				_id: 'sun',
 				joinRequests: [user]
@@ -385,16 +376,13 @@ describe('guild', function() {
 			});
 		});
 
-
 		it('should return an error if the user is not in joinRequests', function(done) {
-
 			var user = {
 				_id: mongoose.Types.ObjectId(),
 				name: 'bob',
 				site: 'j',
 				group: 'u'
 			};
-
 			var guildObj = {
 				_id: 'sun',
 				joinRequests: []
@@ -402,6 +390,97 @@ describe('guild', function() {
 
 			Guild.create(guildObj, function(err, guild) {
 				guild.removeFromJoinRequests(user, function(err) {
+					expect(err).toBeTruthy();
+					done();
+				});
+			});
+		});
+	});
+
+
+
+	describe('addToInvitations', function() {
+
+		it('should add a user', function(done) {
+			var user = {
+				_id: mongoose.Types.ObjectId(),
+				name: 'bob',
+				site: 'j',
+				group: 'u'
+			};
+			var guildObj = {
+				_id: 'sun',
+				invitations: []
+			};
+
+			Guild.create(guildObj, function(err, guild) {
+				guild.addToInvitations(user, function(err) {
+					expect(err).toBeFalsy();
+					expect(guild.invitations.length).toBe(1);
+					done();
+				});
+			});
+		});
+
+		it('should return an error if the user is already in joinRequests', function(done) {
+			var user = {
+				_id: mongoose.Types.ObjectId(),
+				name: 'bob',
+				site: 'j',
+				group: 'u'
+			};
+			var guildObj = {
+				_id: 'sun',
+				invitations: [user]
+			};
+
+			Guild.create(guildObj, function(err, guild) {
+				guild.addToInvitations(user, function(err) {
+					expect(err).toBeTruthy();
+					done();
+				});
+			});
+		});
+	});
+
+
+	describe('removeFromInvitations', function() {
+
+		it('should remove a user', function(done) {
+			var user = {
+				_id: mongoose.Types.ObjectId(),
+				name: 'bob',
+				site: 'j',
+				group: 'u'
+			};
+			var guildObj = {
+				_id: 'sun',
+				invitations: [user]
+			};
+
+			Guild.create(guildObj, function(err, guild) {
+				guild.removeFromInvitations(user, function(err) {
+					expect(err).toBeFalsy();
+					expect(guild.invitations.length).toBe(0);
+					done();
+				});
+			});
+		});
+
+		it('should return an error if the user is not in joinRequests', function(done) {
+			var user = {
+				_id: mongoose.Types.ObjectId(),
+				name: 'bob',
+				site: 'j',
+				group: 'u'
+			};
+			var guildObj = {
+				_id: 'sun',
+				invitations: []
+			};
+
+			Guild.create(guildObj, function(err, guild) {
+				guild.removeFromInvitations(user, function(err) {
 					expect(err).toBeTruthy();
 					done();
 				});

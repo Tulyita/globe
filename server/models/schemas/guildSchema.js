@@ -9,7 +9,6 @@ var async = require('async');
 var nameDisplayDoc = require('./nameDisplayDoc');
 var memberDoc = require('./memberDoc');
 var isName = require('../../validators/isName');
-var isNameDisplay = require('../../validators/isNameDisplay');
 
 var nameSchema = new Schema(nameDisplayDoc);
 var memberSchema = new Schema(memberDoc);
@@ -177,7 +176,7 @@ GuildSchema.methods.addToJoinRequests = function(user, callback) {
 	}
 	var nameDisplay = _.pick(user, '_id', 'name', 'site', 'group');
 	this.joinRequests.push(nameDisplay);
-	this.save(callback);
+	return this.save(callback);
 };
 
 
@@ -189,6 +188,31 @@ GuildSchema.methods.removeFromJoinRequests = function(user, callback) {
 		return callback('User is not in joinRequests');
 	}
 	this.joinRequests = remaining;
+	return this.save(callback);
+};
+
+
+GuildSchema.methods.addToInvitations = function(user, callback) {
+	var matches = _.filter(this.invitations, function(jr) {
+		return jr._id === user._id;
+	});
+	if(matches.length > 0) {
+		return callback('User is already in invitations');
+	}
+	var nameDisplay = _.pick(user, '_id', 'name', 'site', 'group');
+	this.invitations.push(nameDisplay);
+	return this.save(callback);
+};
+
+
+GuildSchema.methods.removeFromInvitations = function(user, callback) {
+	var remaining = _.filter(this.invitations, function(jr) {
+		return jr._id !== user._id;
+	});
+	if(remaining.length === this.invitations.length) {
+		return callback('User is not in invitations');
+	}
+	this.invitations = remaining;
 	return this.save(callback);
 };
 
