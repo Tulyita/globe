@@ -7,14 +7,10 @@ mockgoose(mongoose);
 var _ = require('lodash');
 var Guild = require('../../server/models/guild');
 var User = require('../../server/models/user');
-var obj;
 
 describe('guild', function() {
 
 	beforeEach(function() {
-		obj = {
-			_id: 'best guild!'
-		};
 	});
 
 	afterEach(function() {
@@ -22,281 +18,88 @@ describe('guild', function() {
 	});
 
 
-	describe('_id', function() {
+	describe('schema', function() {
 
-		it('should accept a valid name', function(done) {
+		it('should accept valid values', function(done) {
+
+			var obj = {};
 			obj._id = 'birds';
-			Guild.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc._id).toBe('birds');
-				done();
-			});
-		});
-
-		it('should not accept an invalid name', function(done) {
-			obj._id = '';
-			Guild.create(obj, function(err) {
-				expect(err).toBeTruthy();
-				done();
-			});
-		});
-	});
-
-
-	describe('join', function() {
-
-		it('should accept inviteOnly', function(done) {
 			obj.join = Guild.INVITE;
-			Guild.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.join).toBe(Guild.INVITE);
-				done();
-			});
-		});
-
-		it('should accept requestToJoin', function(done) {
-			obj.join = Guild.ASK;
-			Guild.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.join).toBe(Guild.ASK);
-				done();
-			});
-		});
-
-		it('should accept allWelcome', function(done) {
-			obj.join = Guild.OPEN;
-			Guild.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.join).toBe(Guild.OPEN);
-				done();
-			});
-		});
-
-		it('should use default if given an invalid value', function(done) {
-			obj.join = {haxxor: true};
-			Guild.create(obj, function(err, doc) {
-				expect(doc.join).toBe(Guild.INVITE);
-				done();
-			});
-		});
-	});
-
-
-	describe('createdDate', function() {
-		it('should accept a valid date', function(done) {
 			obj.createdDate = new Date(1);
-			Guild.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.createdDate).toEqual(new Date(1));
-				done();
-			});
-		});
-
-		it('should replace invalid date with default', function(done) {
-			obj.createdDate = {haxxor: true};
-			Guild.create(obj, function(err, doc) {
-				expect(_.isDate(doc.createdDate)).toBeTruthy();
-				done();
-			});
-		});
-	});
-
-
-	describe('activeDate', function() {
-		it('should accept a valid date', function(done) {
 			obj.activeDate = new Date(1);
-			Guild.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.activeDate).toEqual(new Date(1));
-				done();
-			});
-		});
-
-		it('should replace invalid date with default', function(done) {
-			obj.activeDate = {haxxor: true};
-			Guild.create(obj, function(err, doc) {
-				expect(_.isDate(doc.activeDate)).toBeTruthy();
-				done();
-			});
-		});
-	});
-
-
-	describe('hasBanner', function() {
-		it('should accept a valid boolean', function(done) {
 			obj.hasBanner = true;
-			Guild.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.hasBanner).toEqual(true);
-				done();
-			});
-		});
-
-		it('should replace invalid value with default', function(done) {
-			obj.hasBanner = {haxxor: true};
-			Guild.create(obj, function(err, doc) {
-				expect(doc.hasBanner).toBe(false);
-				done();
-			});
-		});
-	});
-
-
-	describe('gp', function() {
-		it('should accept a valid value', function(done) {
 			obj.gp = 3;
-			Guild.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.gp).toBe(3);
-				done();
-			});
-		});
-
-		it('should replace invalid value with default', function(done) {
-			obj.gp = {haxxor: true};
-			Guild.create(obj, function(err, doc) {
-				expect(doc.gp).toBe(0);
-				done();
-			});
-		});
-	});
-
-
-	describe('gpDay', function() {
-		it('should accept a valid value', function(done) {
 			obj.gpDay = 3;
-			Guild.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.gpDay).toBe(3);
-				done();
-			});
-		});
-
-		it('should replace invalid value with default', function(done) {
-			obj.gpDay = {haxxor: true};
-			Guild.create(obj, function(err, doc) {
-				expect(doc.gpDay).toBe(0);
-				done();
-			});
-		});
-	});
-
-
-	describe('gpWeek', function() {
-		it('should accept a valid value', function(done) {
 			obj.gpWeek = 3;
-			Guild.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.gpWeek).toBe(3);
-				done();
-			});
-		});
-
-		it('should replace invalid value with default', function(done) {
-			obj.gpWeek = {haxxor: true};
-			Guild.create(obj, function(err, doc) {
-				expect(doc.gpWeek).toBe(0);
-				done();
-			});
-		});
-	});
-
-
-	describe('gpLifetime', function() {
-		it('should accept a valid value', function(done) {
 			obj.gpLifetime = 3;
-			Guild.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.gpLifetime).toBe(3);
-				done();
-			});
-		});
-
-		it('should replace invalid value with default', function(done) {
-			obj.gpLifetime = {haxxor: true};
-			Guild.create(obj, function(err, doc) {
-				expect(doc.gpLifetime).toBe(0);
-				done();
-			});
-		});
-	});
-
-
-	describe('invitations', function() {
-		it('should accept an empty array', function(done) {
 			obj.owners = [];
-			Guild.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.owners.toObject()).toEqual([]);
-				done();
-			});
-		});
-
-		it('should replace invalid value with default', function(done) {
-			obj.owners = {haxxor: true};
-			Guild.create(obj, function(err, doc) {
-				expect(doc.owners.toObject()).toEqual([]);
-				done();
-			});
-		});
-	});
-
-
-	describe('members', function() {
-		it('should accept an empty array', function(done) {
 			obj.members = [];
-			Guild.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.members.toObject()).toEqual([]);
-				done();
-			});
-		});
-
-		it('should replace invalid value with default', function(done) {
-			obj.members = {haxxor: true};
-			Guild.create(obj, function(err, doc) {
-				expect(doc.members.toObject()).toEqual([]);
-				done();
-			});
-		});
-	});
-
-
-	describe('joinRequests', function() {
-		it('should accept an empty array', function(done) {
 			obj.joinRequests = [];
-			Guild.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.joinRequests.toObject()).toEqual([]);
-				done();
-			});
-		});
-
-		it('should replace invalid value with default', function(done) {
-			obj.joinRequests = {haxxor: true};
-			Guild.create(obj, function(err, doc) {
-				expect(doc.joinRequests.toObject()).toEqual([]);
-				done();
-			});
-		});
-	});
-
-
-	describe('invitations', function() {
-		it('should accept an empty array', function(done) {
 			obj.invitations = [];
-			Guild.create(obj, function(err, doc) {
+
+			Guild.create(obj, function(err, guild) {
 				expect(err).toBeFalsy();
-				expect(doc.invitations.toObject()).toEqual([]);
+
+				expect(guild._id).toBe('birds');
+				expect(guild.join).toBe(Guild.INVITE);
+				expect(guild.createdDate).toEqual(new Date(1));
+				expect(guild.activeDate).toEqual(new Date(1));
+				expect(guild.hasBanner).toEqual(true);
+				expect(guild.gp).toBe(3);
+				expect(guild.gpDay).toBe(3);
+				expect(guild.gpWeek).toBe(3);
+				expect(guild.gpLifetime).toBe(3);
+				expect(guild.owners.toObject()).toEqual([]);
+				expect(guild.members.toObject()).toEqual([]);
+				expect(guild.joinRequests.toObject()).toEqual([]);
+				expect(guild.invitations.toObject()).toEqual([]);
+
 				done();
 			});
 		});
 
-		it('should replace invalid value with default', function(done) {
+		it('should return an error if a required field is invalid', function() {
+			var obj = {
+				_id: ''
+			};
+			Guild.create(obj, function(err) {
+				expect(err).toMatch('Validator failed');
+				expect(err).toMatch('_id');
+			});
+		});
+
+		it('should replace non-required but invalid fields with a default', function(done) {
+			var obj = {};
+			obj._id = 'turtles';
+			obj.join = {haxxor: true};
+			obj.createdDate = {haxxor: true};
+			obj.activeDate = {haxxor: true};
+			obj.hasBanner = {haxxor: true};
+			obj.gp = {haxxor: true};
+			obj.gpDay = {haxxor: true};
+			obj.gpWeek = {haxxor: true};
+			obj.gpLifetime = {haxxor: true};
+			obj.owners = {haxxor: true};
+			obj.members = {haxxor: true};
+			obj.joinRequests = {haxxor: true};
 			obj.invitations = {haxxor: true};
-			Guild.create(obj, function(err, doc) {
-				expect(doc.invitations.toObject()).toEqual([]);
-				done();
+
+			Guild.create(obj, function(err, guild) {
+
+				expect(guild.join).toBe(Guild.INVITE);
+				expect(_.isDate(guild.createdDate)).toBe(true);
+				expect(_.isDate(guild.activeDate)).toBe(true);
+				expect(guild.hasBanner).toBe(false);
+				expect(guild.gp).toBe(0);
+				expect(guild.gpDay).toBe(0);
+				expect(guild.gpWeek).toBe(0);
+				expect(guild.gpLifetime).toBe(0);
+				expect(guild.owners.toObject()).toEqual([]);
+				expect(guild.members.toObject()).toEqual([]);
+				expect(guild.joinRequests.toObject()).toEqual([]);
+				expect(guild.invitations.toObject()).toEqual([]);
+
+				done(err);
 			});
 		});
 	});
@@ -491,7 +294,7 @@ describe('guild', function() {
 
 		it('should set the users guild to this guilds id', function(done) {
 			Guild.findById('geff', function(err, guild) {
-				guild.addMember(userId, function(err) {
+				guild.addMember(userId, function() {
 					User.findById(userId, function(err, user){
 						expect(user.guild).toBe('geff');
 						done(err);
