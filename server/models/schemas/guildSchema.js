@@ -166,10 +166,18 @@ GuildSchema.methods.addMember = function(userId, callback) {
 };
 
 
-
-GuildSchema.methods.addToJoinRequests = function(user, callback) {
+/**
+ *
+ * @param user
+ * @param callback
+ * @returns {*}
+ */
+GuildSchema.methods.addJoinRequest = function(user, callback) {
+	if(this.join === GuildSchema.statics.INVITE) {
+		return callback('This guild is invite only');
+	}
 	var matches = _.filter(this.joinRequests, function(jr) {
-		return jr._id === user._id;
+		return String(jr._id) === String(user._id);
 	});
 	if(matches.length > 0) {
 		return callback('User is already in joinRequests');
@@ -180,9 +188,15 @@ GuildSchema.methods.addToJoinRequests = function(user, callback) {
 };
 
 
-GuildSchema.methods.removeFromJoinRequests = function(user, callback) {
+/**
+ *
+ * @param user
+ * @param callback
+ * @returns {*}
+ */
+GuildSchema.methods.removeJoinRequest = function(user, callback) {
 	var remaining = _.filter(this.joinRequests, function(jr) {
-		return jr._id !== user._id;
+		return String(jr._id) !== String(user._id);
 	});
 	if(remaining.length === this.joinRequests.length) {
 		return callback('User is not in joinRequests');
@@ -192,9 +206,15 @@ GuildSchema.methods.removeFromJoinRequests = function(user, callback) {
 };
 
 
-GuildSchema.methods.addToInvitations = function(user, callback) {
+/**
+ *
+ * @param user
+ * @param callback
+ * @returns {*}
+ */
+GuildSchema.methods.addInvitation = function(user, callback) {
 	var matches = _.filter(this.invitations, function(jr) {
-		return jr._id === user._id;
+		return String(jr._id) === String(user._id);
 	});
 	if(matches.length > 0) {
 		return callback('User is already in invitations');
@@ -205,9 +225,15 @@ GuildSchema.methods.addToInvitations = function(user, callback) {
 };
 
 
-GuildSchema.methods.removeFromInvitations = function(user, callback) {
+/**
+ *
+ * @param user
+ * @param callback
+ * @returns {*}
+ */
+GuildSchema.methods.removeInvitation = function(user, callback) {
 	var remaining = _.filter(this.invitations, function(jr) {
-		return jr._id !== user._id;
+		return String(jr._id) !== String(user._id);
 	});
 	if(remaining.length === this.invitations.length) {
 		return callback('User is not in invitations');

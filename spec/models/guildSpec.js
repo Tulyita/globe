@@ -312,7 +312,8 @@ describe('guild', function() {
 		it('should add a user', function(done) {
 			var guildObj = {
 				_id: 'sun',
-				joinRequests: []
+				joinRequests: [],
+				join: Guild.ASK
 			};
 			var user = {
 				_id: mongoose.Types.ObjectId(),
@@ -322,7 +323,7 @@ describe('guild', function() {
 			};
 
 			Guild.create(guildObj, function(err, guild) {
-				guild.addToJoinRequests(user, function(err) {
+				guild.addJoinRequest(user, function(err) {
 					expect(err).toBeFalsy();
 					expect(guild.joinRequests.length).toBe(1);
 					done();
@@ -343,7 +344,7 @@ describe('guild', function() {
 			};
 
 			Guild.create(guildObj, function(err, guild) {
-				guild.addToJoinRequests(user, function(err) {
+				guild.addJoinRequest(user, function(err) {
 					expect(err).toBeTruthy();
 					done();
 				});
@@ -368,7 +369,7 @@ describe('guild', function() {
 			};
 
 			Guild.create(guildObj, function(err, guild) {
-				guild.removeFromJoinRequests(user, function(err) {
+				guild.removeJoinRequest(user, function(err) {
 					expect(err).toBeFalsy();
 					expect(guild.joinRequests.length).toBe(0);
 					done();
@@ -389,7 +390,7 @@ describe('guild', function() {
 			};
 
 			Guild.create(guildObj, function(err, guild) {
-				guild.removeFromJoinRequests(user, function(err) {
+				guild.removeJoinRequest(user, function(err) {
 					expect(err).toBeTruthy();
 					done();
 				});
@@ -414,7 +415,7 @@ describe('guild', function() {
 			};
 
 			Guild.create(guildObj, function(err, guild) {
-				guild.addToInvitations(user, function(err) {
+				guild.addInvitation(user, function(err) {
 					expect(err).toBeFalsy();
 					expect(guild.invitations.length).toBe(1);
 					done();
@@ -435,7 +436,7 @@ describe('guild', function() {
 			};
 
 			Guild.create(guildObj, function(err, guild) {
-				guild.addToInvitations(user, function(err) {
+				guild.addInvitation(user, function(err) {
 					expect(err).toBeTruthy();
 					done();
 				});
@@ -459,7 +460,7 @@ describe('guild', function() {
 			};
 
 			Guild.create(guildObj, function(err, guild) {
-				guild.removeFromInvitations(user, function(err) {
+				guild.removeInvitation(user, function(err) {
 					expect(err).toBeFalsy();
 					expect(guild.invitations.length).toBe(0);
 					done();
@@ -480,7 +481,7 @@ describe('guild', function() {
 			};
 
 			Guild.create(guildObj, function(err, guild) {
-				guild.removeFromInvitations(user, function(err) {
+				guild.removeInvitation(user, function(err) {
 					expect(err).toBeTruthy();
 					done();
 				});
