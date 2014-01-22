@@ -67,6 +67,11 @@ GuildSchema.statics.ASK = 'ask';
 GuildSchema.statics.OPEN = 'open';
 
 
+/**
+ * Returns true if userId is in owners array
+ * @param userId
+ * @returns {boolean}
+ */
 GuildSchema.methods.isOwner = function (userId) {
 	var isOwner = false;
 	_.each(this.owners, function(owner) {
