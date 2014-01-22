@@ -6,14 +6,14 @@ mockgoose(mongoose);
 
 var _ = require('lodash');
 var Guild = require('../../server/models/guild');
+var User = require('../../server/models/user');
 var obj;
 
 describe('guild', function() {
 
 	beforeEach(function() {
 		obj = {
-			_id: 'best guild!',
-			join: 'inviteOnly'
+			_id: 'best guild!'
 		};
 	});
 
@@ -46,36 +46,36 @@ describe('guild', function() {
 	describe('join', function() {
 
 		it('should accept inviteOnly', function(done) {
-			obj.join = 'inviteOnly';
+			obj.join = Guild.INVITE;
 			Guild.create(obj, function(err, doc) {
 				expect(err).toBeFalsy();
-				expect(doc.join).toBe('inviteOnly');
+				expect(doc.join).toBe(Guild.INVITE);
 				done();
 			});
 		});
 
 		it('should accept requestToJoin', function(done) {
-			obj.join = 'requestToJoin';
+			obj.join = Guild.ASK;
 			Guild.create(obj, function(err, doc) {
 				expect(err).toBeFalsy();
-				expect(doc.join).toBe('requestToJoin');
+				expect(doc.join).toBe(Guild.ASK);
 				done();
 			});
 		});
 
 		it('should accept allWelcome', function(done) {
-			obj.join = 'allWelcome';
+			obj.join = Guild.OPEN;
 			Guild.create(obj, function(err, doc) {
 				expect(err).toBeFalsy();
-				expect(doc.join).toBe('allWelcome');
+				expect(doc.join).toBe(Guild.OPEN);
 				done();
 			});
 		});
 
-		it('should not accept an invalid value', function(done) {
+		it('should use default if given an invalid value', function(done) {
 			obj.join = {haxxor: true};
-			Guild.create(obj, function(err) {
-				expect(err).toBeTruthy();
+			Guild.create(obj, function(err, doc) {
+				expect(doc.join).toBe(Guild.INVITE);
 				done();
 			});
 		});
@@ -297,6 +297,206 @@ describe('guild', function() {
 			Guild.create(obj, function(err, doc) {
 				expect(doc.invitations.toObject()).toEqual([]);
 				done();
+			});
+		});
+	});
+
+
+
+	describe('isOwner', function() {
+
+		it('should return true if userId is in the list of owners', function() {
+			var userId = mongoose.Types.ObjectId();
+			var guild = new Guild();
+			guild.owners = [{_id: userId, name: 'aaaa', site: 'j', group: 'u'}];
+			expect(guild.isOwner(userId)).toBe(true);
+		});
+
+		it('should return false if userId is not in the list of owners', function() {
+			var userId = mongoose.Types.ObjectId();
+			var guild = new Guild();
+			guild.owners = [];
+			expect(guild.isOwner(userId)).toBe(false);
+		});
+	});
+
+
+	describe('removeMember', function() {
+
+		var userId, userId2;
+
+		beforeEach(function(done) {
+			userId = mongoose.Types.ObjectId();
+			userId2 = mongoose.Types.ObjectId();
+
+			User.create({
+				_id: userId,
+				name: 'aaaa',
+				site: 'j',
+				group: 'u',
+				siteUserId: 'abc',
+				guild: 'Happy Guild'
+			}, function(err) {
+				if(err) {
+					return done(err);
+				}
+
+				return Guild.create({
+					_id: 'Happy Guild',
+					members: [
+						{_id: userId, name: 'aaaa', site: 'j', group: 'u'},
+						{_id: userId2, name: 'bbbb', site: 'j', group: 'u'}
+					]
+				}, function(err) {
+					if(err) {
+						return done(err);
+					}
+					return done();
+				});
+			});
+		});
+
+		afterEach(function() {
+			mockgoose.reset();
+		});
+
+
+		it('should remove a member from the members array', function(done) {
+			Guild.findById('Happy Guild', function(err, guild) {
+				if(err) {
+					return done(err);
+				}
+				if(!guild) {
+					return done('guild not found');
+				}
+
+				return guild.removeMember(userId, function(err) {
+					if(err) {
+						return done(err);
+					}
+
+					return Guild.findById('Happy Guild', function(err, guild) {
+						if(err) {
+							return done(err);
+						}
+
+						expect(guild.members.length).toBe(1);
+						expect(guild.members[0].name).toBe('bbbb');
+
+						return User.findById(userId, function(err, user) {
+							if(err) {
+								return done(err);
+							}
+
+							expect(user.guild).toBeFalsy();
+							return done();
+						});
+					});
+				});
+			});
+		});
+
+
+		it('should return an error if the user is not in the member array', function(done) {
+			Guild.findById('Happy Guild', function(err, guild) {
+				if(err) {
+					return done(err);
+				}
+
+				return guild.removeMember(mongoose.Types.ObjectId(), function(err) {
+					expect(err).toBeTruthy();
+					done();
+				});
+			});
+		});
+
+
+		it('should remove a member from the array even if the user does not exist in the users collection', function(done) {
+			Guild.findById('Happy Guild', function(err, guild) {
+				if(err) {
+					return done(err);
+				}
+
+				return guild.removeMember(userId2, function(err) {
+					expect(err).toBeFalsy();
+					expect(guild.members.length).toBe(1);
+					expect(guild.members[0].name).toBe('aaaa');
+					done();
+				});
+			});
+		});
+
+
+		describe('removeAllMembers', function() {
+
+			it('should remove all members from a guild', function(done) {
+				Guild.findById('Happy Guild', function(err, guild) {
+					if(err) {
+						return done(err);
+					}
+
+					return guild.removeAllMembers(function(err) {
+						expect(guild.members.length).toBe(0);
+						done(err);
+					});
+				});
+			});
+		});
+	});
+
+
+
+
+	describe('removeMember', function() {
+
+		var userId;
+
+		beforeEach(function(done) {
+			userId = mongoose.Types.ObjectId();
+
+			var guild = {
+				_id: 'geff',
+				members: []
+			};
+
+			var user = {
+				_id: userId,
+				name: 'aaaa',
+				site: 'j',
+				group: 'u',
+				siteUserId: 'abc'
+			};
+
+			User.create(user, function() {
+				Guild.create(guild, function() {
+					done();
+				});
+			});
+		});
+
+		afterEach(function() {
+			mockgoose.reset();
+		});
+
+
+		it('should add a user to the guild', function(done) {
+			Guild.findById('geff', function(err, guild) {
+				guild.addMember(userId, function(err) {
+					expect(guild.members[0].name).toBe('aaaa');
+					done(err);
+				});
+			});
+		});
+
+
+		it('should set the users guild to this guilds id', function(done) {
+			Guild.findById('geff', function(err, guild) {
+				guild.addMember(userId, function(err) {
+					User.findById(userId, function(err, user){
+						expect(user.guild).toBe('geff');
+						done(err);
+					});
+				});
 			});
 		});
 	});

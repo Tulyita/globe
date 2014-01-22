@@ -53,8 +53,9 @@ var UserSchema = new Schema({
 		type: Date,
 		default: Date
 	},
-	guildId: {
-		type: Schema.Types.ObjectId
+	guild: {
+		type: String,
+		validate: isName
 	},
 	messages: {
 		type: [new Schema(messageDoc)]

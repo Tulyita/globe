@@ -217,19 +217,18 @@ describe('user', function() {
 	describe('guildId', function() {
 
 		it('should accept a valid value', function(done) {
-			var id = mongoose.Types.ObjectId();
-			obj.guildId = id;
+			obj.guild = 'hi';
 			User.create(obj, function(err, doc) {
 				expect(err).toBeFalsy();
-				expect(doc.guildId).toEqual(id);
+				expect(doc.guild).toEqual('hi');
 				done();
 			});
 		});
 
 		it('should reject an invalid value', function(done) {
-			obj.guildId = {haxor: true};
+			obj.guild = {haxor: true};
 			User.create(obj, function(err, doc) {
-				expect(doc.guildId).toBe(undefined);
+				expect(doc.guild).toBe(undefined);
 				done();
 			});
 		});

@@ -14,7 +14,7 @@ describe('guildsPatch', function() {
 		ownerId = mongoose.Types.ObjectId();
 		Guild.create({
 			_id: 'abc',
-			join: 'inviteOnly',
+			join: Guild.INVITE,
 			owners: [{
 				_id: ownerId,
 				name: 'bob',
@@ -22,7 +22,7 @@ describe('guildsPatch', function() {
 				group: 'u'
 			}]
 		}, function(err) {
-			done(err)
+			done(err);
 		});
 	});
 
@@ -35,7 +35,7 @@ describe('guildsPatch', function() {
 		var req = {
 			body: {
 				guildId: 'abc',
-				join: 'requestToJoin'
+				join: Guild.ASK
 			},
 			session: {
 				_id: ownerId
@@ -45,7 +45,7 @@ describe('guildsPatch', function() {
 			expect(err).toBeFalsy();
 
 			Guild.findById('abc', function(err, doc) {
-				expect(doc.join).toBe('requestToJoin');
+				expect(doc.join).toBe(Guild.ASK);
 			});
 
 			done();

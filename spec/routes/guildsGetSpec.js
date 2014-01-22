@@ -13,7 +13,7 @@ describe('guildsGet', function() {
 		Guild.create({
 			_id: 'abc'
 		}, function(err) {
-			done(err)
+			done(err);
 		});
 	});
 
@@ -42,7 +42,7 @@ describe('guildsGet', function() {
 				bla: 'bla bla'
 			}
 		};
-		guildsGet(req, {apiOut: function(err, doc) {
+		guildsGet(req, {apiOut: function(err) {
 			expect(err).toBeTruthy();
 			done();
 		}});

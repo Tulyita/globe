@@ -1,6 +1,5 @@
 'use strict';
 
-var _ = require('lodash');
 var mongoose = require('mongoose');
 var mockgoose = require('mockgoose');
 mockgoose(mongoose);
@@ -16,7 +15,7 @@ describe('guildsPost', function() {
 			name: 'Sue',
 			site: 'j',
 			group: 'u'
-		}
+		};
 	});
 
 	afterEach(function() {
