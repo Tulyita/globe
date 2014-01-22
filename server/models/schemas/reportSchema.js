@@ -20,8 +20,8 @@ var ReportSchema = new Schema({
 	},
 	created: {
 		type: Date,
-		default: Date.now,
-		expires: 60*60*7
+		expires: 60*60*7,
+		default: Date
 	},
 	seen: {
 		type: Boolean,

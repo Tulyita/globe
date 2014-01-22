@@ -6,18 +6,10 @@ mockgoose(mongoose);
 
 var _ = require('lodash');
 var User = require('../../server/models/user');
-var obj;
 
 describe('user', function() {
 
 	beforeEach(function() {
-		obj = {
-			_id: mongoose.Types.ObjectId(),
-			name: 'aaaa',
-			site: 'j',
-			group: 'u',
-			siteUserId: '123'
-		};
 	});
 
 	afterEach(function() {
@@ -25,346 +17,201 @@ describe('user', function() {
 	});
 
 
-	describe('site', function() {
-
-		it('should accept a valid value', function(done) {
-			obj.site = 'g';
-			User.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.site).toBe('g');
-				done();
-			});
-		});
-
-		it('should reject an invalid value', function(done) {
-			obj.site = ['wat'];
-			User.create(obj, function(err) {
-				expect(err).toBeTruthy();
-				done();
-			});
-		});
-	});
+	describe('validation', function() {
 
 
-	describe('name', function() {
-
-		it('should accept a valid value', function(done) {
-			obj.name = 'alfie';
-			User.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.name).toBe('alfie');
-				done();
-			});
-		});
-
-		it('should reject an invalid value', function(done) {
-			obj.name = '';
-			User.create(obj, function(err) {
-				expect(err).toBeTruthy();
-				done();
-			});
-		});
-	});
-
-
-	describe('group', function() {
-
-		it('should accept a valid value', function(done) {
-			obj.group = 'a';
-			User.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.group).toBe('a');
-				done();
-			});
-		});
-
-		it('should reject an invalid value', function(done) {
-			obj.group = true;
-			User.create(obj, function(err) {
-				expect(err).toBeTruthy();
-				done();
-			});
-		});
-	});
-
-
-	describe('siteUserId', function() {
-
-		it('should accept a valid value', function(done) {
-			obj.siteUserId = 'ppddss';
-			User.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.siteUserId).toBe('ppddss');
-				done();
-			});
-		});
-
-		it('should reject an invalid value', function(done) {
-			obj.siteUserId = '';
-			User.create(obj, function(err) {
-				expect(err).toBeTruthy();
-				done();
-			});
-		});
-	});
-
-
-	describe('avatar', function() {
-
-		it('should accept a valid value', function(done) {
-			obj.avatar = 'https://site.com/img.png';
-			User.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.avatar).toBe('https://site.com/img.png');
-				done();
-			});
-		});
-
-		it('should reject an invalid value', function(done) {
-			obj.avatar = true;
-			User.create(obj, function(err) {
-				expect(err).toBeTruthy();
-				done();
-			});
-		});
-	});
-
-
-	describe('registerIp', function() {
-
-		it('should accept a valid value', function(done) {
-			obj.registerIp = '2607:f0d0:1002:51::4';
-			User.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.registerIp).toBe('2607:f0d0:1002:51::4');
-				done();
-			});
-		});
-
-		it('should reject an invalid value', function(done) {
-			obj.registerIp = true;
-			User.create(obj, function(err) {
-				expect(err).toBeTruthy();
-				done();
-			});
-		});
-	});
-
-
-	describe('loginIp', function() {
-
-		it('should accept a valid value', function(done) {
-			obj.loginIp = '69.147.76.15';
-			User.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.loginIp).toBe('69.147.76.15');
-				done();
-			});
-		});
-
-		it('should reject an invalid value', function(done) {
-			obj.loginIp = {haxor: true};
-			User.create(obj, function(err, doc) {
-				expect(doc.loginIp).toBe(undefined);
-				done();
-			});
-		});
-	});
-
-
-	describe('registerDate', function() {
-
-		it('should accept a valid value', function(done) {
-			obj.registerDate = new Date(1);
-			User.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.registerDate).toEqual(new Date(1));
-				done();
-			});
-		});
-
-		it('should use a default date if value is invalid', function(done) {
-			obj.registerDate = {haxor: true};
-			User.create(obj, function(err, doc) {
-				expect(_.isDate(doc.registerDate)).toBe(true);
-				done();
-			});
-		});
-	});
-
-
-	describe('loginDate', function() {
-
-		it('should accept a valid value', function(done) {
-			obj.loginDate = new Date(2);
-			User.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.loginDate).toEqual(new Date(2));
-				done();
-			});
-		});
-
-		it('should use a default date if value is invalid', function(done) {
-			obj.loginDate = {haxor: true};
-			User.create(obj, function(err, doc) {
-				expect(_.isDate(doc.loginDate)).toBe(true);
-				done();
-			});
-		});
-	});
-
-
-	describe('guildId', function() {
-
-		it('should accept a valid value', function(done) {
-			obj.guild = 'hi';
-			User.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.guild).toEqual('hi');
-				done();
-			});
-		});
-
-		it('should reject an invalid value', function(done) {
-			obj.guild = {haxor: true};
-			User.create(obj, function(err, doc) {
-				expect(doc.guild).toBe(undefined);
-				done();
-			});
-		});
-	});
-
-
-	describe('message', function() {
-
-		it('should accept a valid value', function(done) {
-			var messages = [{
+		it('should accept valid values', function(done) {
+			var obj = {
 				_id: mongoose.Types.ObjectId(),
-				ip: '139.130.4.5',
-				fromUser: {
-					_id: mongoose.Types.ObjectId(),
-					name: 'bob',
-					site: 'j',
-					group: 'u'
-				},
-				date: new Date(),
-				body: 'hi'
-			}];
-			obj.messages = messages;
-			User.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.messages.toObject()).toEqual(messages);
-				done();
-			});
-		});
-
-		it('should remove an invalid value', function(done) {
-			obj.messages = {haxor: true};
-			User.create(obj, function(err, doc) {
-				expect(doc.messages.toObject()).toEqual([]);
-				done();
-			});
-		});
-
-		it('should reject an invalid sub-value', function(done) {
-			obj.messages = [{
-				_id: mongoose.Types.ObjectId(),
-				ip: '139.130.4.5',
-				fromUser: {
-					_id: mongoose.Types.ObjectId(),
-					name: 'bob',
-					site: 'super invalid site',
-					group: 'u'
-				},
-				date: new Date(),
-				body: 'hi'
-			}];
-			User.create(obj, function(err) {
-				expect(err).toBeTruthy();
-				done();
-			});
-		});
-
-		it('should not insert extra fields', function(done) {
-			var messages = [{
-				_id: mongoose.Types.ObjectId(),
-				ip: '139.130.4.5',
-				fromUser: {
-					_id: mongoose.Types.ObjectId(),
-					name: 'bob',
-					site: 'j',
-					group: 'u'
-				},
-				date: new Date(),
-				body: 'hi',
-				extra: 'yup'
-			}];
-			obj.messages = messages;
-			User.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.messages.toObject()[0].body).toBe('hi');
-				expect(doc.messages.toObject()[0].extra).toBe(undefined);
-				done();
-			});
-		});
-	});
-
-
-	describe('friends', function() {
-		it('should accept a valid value', function(done) {
-			var friends = [{
-				_id: mongoose.Types.ObjectId(),
-				name: 'bob',
+				name: 'aaaa',
 				site: 'j',
-				group: 'u'
-			}];
-			obj.friends = friends;
-			User.create(obj, function(err, doc) {
-				expect(err).toBeFalsy();
-				expect(doc.friends.toObject()).toEqual(friends);
-				done();
-			});
-		});
-
-		it('should remove an invalid value', function(done) {
-			obj.friends = {haxor: true};
-			User.create(obj, function(err, doc) {
-				expect(doc.friends.toObject()).toEqual([]);
-				done();
-			});
-		});
-	});
-
-
-	describe('bans', function() {
-
-		it('should accept a valid value', function(done) {
-			var bans = [{
-				_id: mongoose.Types.ObjectId(),
-				ip: '139.130.4.5',
-				mod: {
+				group: 'u',
+				siteUserId: '123',
+				avatar: 'https://site.com/img.png',
+				registerIp: '2607:f0d0:1002:51::4',
+				loginIp: '69.147.76.15',
+				registerDate: new Date(1),
+				loginDate: new Date(2),
+				guild: 'hi',
+				messages: [{
+					_id: mongoose.Types.ObjectId(),
+					ip: '139.130.4.5',
+					fromUser: {
+						_id: mongoose.Types.ObjectId(),
+						name: 'bob',
+						site: 'j',
+						group: 'u'
+					},
+					date: new Date(3),
+					body: 'hi'
+				}],
+				friends: [{
 					_id: mongoose.Types.ObjectId(),
 					name: 'bob',
 					site: 'j',
-					group: 'm'
-				},
-				date: new Date(),
-				expireDate: new Date(),
-				reason: 'boobs',
-				type: 'silence'
-			}];
-			obj.bans = bans;
-			User.create(obj, function(err, doc) {
+					group: 'u'
+				}],
+				bans: [{
+					_id: mongoose.Types.ObjectId(),
+					ip: '139.130.4.5',
+					mod: {
+						_id: mongoose.Types.ObjectId(),
+						name: 'bob',
+						site: 'j',
+						group: 'm'
+					},
+					date: new Date(40),
+					expireDate: new Date(50),
+					reason: 'boobs',
+					type: 'silence'
+				}]
+			};
+
+			User.create(obj, function(err, user) {
 				expect(err).toBeFalsy();
-				expect(doc.bans.toObject()).toEqual(bans);
+				expect(user._id).toEqual(obj._id);
+				expect(user.name).toBe(obj.name);
+				expect(user.site).toBe(obj.site);
+				expect(user.group).toBe(obj.group);
+				expect(user.siteUserId).toBe(obj.siteUserId);
+				expect(user.avatar).toBe(obj.avatar);
+				expect(user.registerIp).toBe(obj.registerIp);
+				expect(user.loginIp).toBe(obj.loginIp);
+				expect(user.registerDate).toBe(obj.registerDate);
+				expect(user.loginDate).toBe(obj.loginDate);
+				expect(user.guild).toBe(obj.guild);
+				expect(user.messages.toObject()).toEqual(obj.messages);
+				expect(user.friends.toObject()).toEqual(obj.friends);
+				expect(user.bans.toObject()).toEqual(obj.bans);
+				done(err);
+			});
+		});
+
+
+		it('should return an error for invalid values', function(done) {
+			var obj = {
+				site: 'wat',
+				name: '',
+				group: true,
+				siteUserId: '',
+				avatar: true,
+				registerIp: true
+			};
+
+			User.create(obj, function(err) {
+				expect(err).toMatch('Validator failed');
+				expect(err).toMatch('site');
+				expect(err).toMatch('name');
+				expect(err).toMatch('group');
+				expect(err).toMatch('siteUserId');
+				expect(err).toMatch('avatar');
+				expect(err).toMatch('registerIp');
 				done();
 			});
 		});
 
-		it('should remove an invalid value', function(done) {
-			obj.bans = {haxor: true};
-			User.create(obj, function(err, doc) {
-				expect(doc.bans.toObject()).toEqual([]);
+
+		it('should fix what it can using typecasting and defaults', function(done) {
+			var obj = {
+
+				// required valid values
+				_id: mongoose.Types.ObjectId(),
+				name: 'aaaa',
+				site: 'j',
+				group: 'u',
+				siteUserId: '123',
+
+				// invalid values
+				loginIp: {haxxor: true},
+				registerDate: {haxor: true},
+				loginDate: {haxor: true},
+				guild: {haxor: true},
+				messages: {haxxor: true},
+				friends: {haxor: true},
+				bans: {haxor: true}
+			};
+
+			User.create(obj, function(err, user) {
+				expect(err).toBeFalsy();
+				expect(user.loginIp).toBe(undefined);
+				expect(_.isDate(user.registerDate)).toBe(true);
+				expect(_.isDate(user.loginDate)).toBe(true);
+				expect(user.guild).toBe(undefined);
+				expect(user.messages.toObject()).toEqual([]);
+				expect(user.friends.toObject()).toEqual([]);
+				expect(user.bans.toObject()).toEqual([]);
+				done(err);
+			});
+		});
+
+
+		it('should bubble up errors from messages', function(done) {
+			var obj = {
+
+				// required valid values
+				_id: mongoose.Types.ObjectId(),
+				name: 'aaaa',
+				site: 'j',
+				group: 'u',
+				siteUserId: '123',
+
+				// invalid values
+				messages: [{
+					soWrong: true
+				}]
+			};
+
+			User.create(obj, function(err) {
+				err = JSON.stringify(err);
+				expect(err).toMatch('ValidationError');
+				expect(err).toMatch('messages.0.*');
+				done();
+			});
+		});
+
+
+		it('should bubble up errors from bans', function(done) {
+			var obj = {
+
+				// required valid values
+				_id: mongoose.Types.ObjectId(),
+				name: 'aaaa',
+				site: 'j',
+				group: 'u',
+				siteUserId: '123',
+
+				// invalid values
+				bans: [1, 2, 3]
+			};
+
+			User.create(obj, function(err) {
+				// mongoose seems to return an empty object as an error here...
+				expect(err).toBeTruthy();
+				done();
+			});
+		});
+
+
+		it('should bubble up errors from friends', function(done) {
+			var obj = {
+
+				// required valid values
+				_id: mongoose.Types.ObjectId(),
+				name: 'aaaa',
+				site: 'j',
+				group: 'u',
+				siteUserId: '123',
+
+				// invalid values
+				friends: [{
+					soWrong: true
+				}]
+			};
+
+			User.create(obj, function(err) {
+				err = JSON.stringify(err);
+				expect(err).toMatch('ValidationError');
+				expect(err).toMatch('friends.0.*');
 				done();
 			});
 		});
