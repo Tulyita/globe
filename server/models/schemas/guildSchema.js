@@ -9,6 +9,7 @@ var async = require('async');
 var nameDisplayDoc = require('./nameDisplayDoc');
 var memberDoc = require('./memberDoc');
 var isName = require('../../validators/isName');
+var isNameDisplay = require('../../validators/isNameDisplay');
 
 var nameSchema = new Schema(nameDisplayDoc);
 var memberSchema = new Schema(memberDoc);
@@ -163,6 +164,32 @@ GuildSchema.methods.addMember = function(userId, callback) {
 			});
 		});
 	});
+};
+
+
+
+GuildSchema.methods.addToJoinRequests = function(user, callback) {
+	var matches = _.filter(this.joinRequests, function(jr) {
+		return jr._id === user._id;
+	});
+	if(matches.length > 0) {
+		return callback('User is already in joinRequests');
+	}
+	var nameDisplay = _.pick(user, '_id', 'name', 'site', 'group');
+	this.joinRequests.push(nameDisplay);
+	this.save(callback);
+};
+
+
+GuildSchema.methods.removeFromJoinRequests = function(user, callback) {
+	var remaining = _.filter(this.joinRequests, function(jr) {
+		return jr._id !== user._id;
+	});
+	if(remaining.length === this.joinRequests.length) {
+		return callback('User is not in joinRequests');
+	}
+	this.joinRequests = remaining;
+	return this.save(callback);
 };
 
 

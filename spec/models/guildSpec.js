@@ -303,4 +303,109 @@ describe('guild', function() {
 			});
 		});
 	});
+
+
+
+
+	describe('addToJoinRequests', function() {
+
+
+		it('should add a user', function(done) {
+
+			var guildObj = {
+				_id: 'sun',
+				joinRequests: []
+			};
+
+			var user = {
+				_id: mongoose.Types.ObjectId(),
+				name: 'bob',
+				site: 'j',
+				group: 'u'
+			};
+
+			Guild.create(guildObj, function(err, guild) {
+				guild.addToJoinRequests(user, function(err) {
+					expect(err).toBeFalsy();
+					expect(guild.joinRequests.length).toBe(1);
+					done();
+				});
+			});
+		});
+
+
+		it('should return an error if the user is already in joinRequests', function(done) {
+
+			var user = {
+				_id: mongoose.Types.ObjectId(),
+				name: 'bob',
+				site: 'j',
+				group: 'u'
+			};
+
+			var guildObj = {
+				_id: 'sun',
+				joinRequests: [user]
+			};
+
+			Guild.create(guildObj, function(err, guild) {
+				guild.addToJoinRequests(user, function(err) {
+					expect(err).toBeTruthy();
+					done();
+				});
+			});
+		});
+	});
+
+
+
+	describe('removeFromJoinRequests', function() {
+
+
+		it('should remove a user', function(done) {
+
+			var user = {
+				_id: mongoose.Types.ObjectId(),
+				name: 'bob',
+				site: 'j',
+				group: 'u'
+			};
+
+			var guildObj = {
+				_id: 'sun',
+				joinRequests: [user]
+			};
+
+			Guild.create(guildObj, function(err, guild) {
+				guild.removeFromJoinRequests(user, function(err) {
+					expect(err).toBeFalsy();
+					expect(guild.joinRequests.length).toBe(0);
+					done();
+				});
+			});
+		});
+
+
+		it('should return an error if the user is not in joinRequests', function(done) {
+
+			var user = {
+				_id: mongoose.Types.ObjectId(),
+				name: 'bob',
+				site: 'j',
+				group: 'u'
+			};
+
+			var guildObj = {
+				_id: 'sun',
+				joinRequests: []
+			};
+
+			Guild.create(guildObj, function(err, guild) {
+				guild.removeFromJoinRequests(user, function(err) {
+					expect(err).toBeTruthy();
+					done();
+				});
+			});
+		});
+	});
 });
