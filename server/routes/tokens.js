@@ -64,9 +64,23 @@
 
 
 	/**
+	 * Delete a token
+	 * @param req
+	 * @param res
+	 */
+	tokens.del = function(req, res) {
+		if(!req.session._id || !req.body.token) {
+			return res.apiOut('No token to delete', null);
+		}
+		var token = req.body.token;
+		return session.destroy(token, res.apiOut);
+	};
+
+
+	/**
 	 * Prevent frequent offenders from logging in
-	 * @param ip
-	 * @param callback
+	 * @param {string} ip
+	 * @param {Function} callback
 	 */
 	tokens.checkIpBan = function(ip, callback) {
 		IpBan.find({ip: ip}, function(err, ipBans) {
@@ -217,11 +231,6 @@
 
 		return auth;
 	};
-
-
-	/*tokens.delete = function(req, res) {
-
-	};*/
 
 
 	module.exports = tokens;

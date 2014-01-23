@@ -279,8 +279,8 @@ describe('tokensGet', function() {
 		it('should call session.make and yield the token', function() {
 			var token = '123abc';
 			var userId = mongoose.Types.ObjectId();
-			var user = {_id: userId, name: 'bob', site: 'j', group: 'u', silencedUntil: new Date(), guild: 'best guild', extra: 'should not be included'};
-			var expectedSessionData = {_id: userId, name: 'bob', site: 'j', group: 'u', silencedUntil: new Date(), guild: 'best guild'};
+			var user = {_id: userId, name: 'bob', site: 'j', group: 'u', silencedUntil: new Date(1), guild: 'best guild', extra: 'should not be included'};
+			var expectedSessionData = {_id: userId, name: 'bob', site: 'j', group: 'u', silencedUntil: new Date(1), guild: 'best guild'};
 			var callback = sinon.stub();
 			session.make.withArgs(userId, expectedSessionData).yields(null, 'OK', token);
 			tokens.startSession(user, callback);
@@ -289,8 +289,8 @@ describe('tokensGet', function() {
 
 		it('should yield an error if session.make yields an error', function() {
 			var userId = mongoose.Types.ObjectId();
-			var user = {_id: userId, name: 'bob', site: 'j', group: 'u', silencedUntil: new Date(), guild: 'best guild', extra: 'should not be included'};
-			var expectedSessionData = {_id: userId, name: 'bob', site: 'j', group: 'u', silencedUntil: new Date(), guild: 'best guild'};
+			var user = {_id: userId, name: 'bob', site: 'j', group: 'u', silencedUntil: new Date(1), guild: 'best guild', extra: 'should not be included'};
+			var expectedSessionData = {_id: userId, name: 'bob', site: 'j', group: 'u', silencedUntil: new Date(1), guild: 'best guild'};
 			var callback = sinon.stub();
 			session.make.withArgs(userId, expectedSessionData).yields('redis error');
 			tokens.startSession(user, callback);
@@ -336,6 +336,42 @@ describe('tokensGet', function() {
 			];
 			var ban = tokens.findActiveBan(bans);
 			expect(ban.type).toBe('silence');
+		});
+	});
+
+
+	////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+
+	describe('del', function() {
+
+		beforeEach(function() {
+			sinon.stub(session, 'destroy');
+		});
+
+		afterEach(function() {
+			session.destroy.restore();
+		});
+
+		it('should call session.destroy with the token', function() {
+			session.destroy
+				.withArgs('123-abc')
+				.yields(null);
+
+			var req = {
+				body: {
+					token: '123-abc'
+				},
+				session: {
+					_id: '123'
+				}
+			};
+			var res = {
+				apiOut: sinon.stub()
+			};
+			tokens.del(req, res);
+			expect(res.apiOut.args[0]).toEqual([null]);
 		});
 	});
 });

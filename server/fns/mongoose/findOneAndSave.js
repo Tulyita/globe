@@ -17,21 +17,25 @@ var findOneAndSave = function(Model, conditions, data, callback) {
 	data = data || {};
 	callback = callback || function(){};
 
-	//--- make sure _id is not accidentally changed
-	delete data.id;
-	delete data._id;
 
 	//--- load the document
 	Model.findOne(conditions, function(err, document) {
 		if(err) {
 			return callback(err);
 		}
+
 		document = document || new Model();
+
+		//--- make sure _id is not accidentally changed
+		if(document._id) {
+			delete data.id;
+			delete data._id;
+		}
 		document = _.extend(document, data);
 		document.updated = Date.now();
 
 		//--- save the document
-		document.save(function(err, document) {
+		return document.save(function(err, document) {
 			if(err) {
 				return callback(err);
 			}
