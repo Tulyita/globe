@@ -7,7 +7,6 @@
 	'use strict';
 
 	var _ = require('lodash');
-	var async = require('async');
 	var session = require('../fns/redisSession');
 	var sites = require('../fns/sites');
 	var User = require('../models/user');
@@ -20,30 +19,6 @@
 
 	var tokens = {};
 
-
-	/**
-	 * Find the auth service for a particular site
-	 * @param {string} site
-	 * @returns {*}
-	 */
-	tokens.siteToAuth = function(site) {
-		var auth;
-
-		if(site === sites.GUEST) {
-			auth = guest;
-		}
-		if(site === sites.JIGGMIN) {
-			auth = jigg;
-		}
-		if(site === sites.FACEBOOK) {
-			auth = facebook;
-		}
-		if(site === sites.KONGREGATE) {
-			auth = kong;
-		}
-
-		return auth;
-	};
 
 
 	/**
@@ -88,6 +63,11 @@
 	};
 
 
+	/**
+	 * Prevent frequent offenders from logging in
+	 * @param ip
+	 * @param callback
+	 */
 	tokens.checkIpBan = function(ip, callback) {
 		IpBan.find({ip: ip}, function(err, ipBans) {
 			if(err) {
@@ -101,6 +81,11 @@
 	};
 
 
+	/**
+	 * Validate a login from a remote site
+	 * @param {Object} data
+	 * @param {Function} callback
+	 */
 	tokens.authenticate = function(data, callback) {
 
 		// find the right authenticator
@@ -123,7 +108,11 @@
 	};
 
 
-	// save verified data to the database
+	/**
+	 * Save new user to mongo, or update an existing one
+	 * @param verified
+	 * @param callback
+	 */
 	tokens.saveUser = function(verified, callback) {
 		User.findOneAndSave({site: verified.site, siteUserId: verified.siteUserId}, verified, function(err, user) {
 			if(err) {
@@ -136,7 +125,7 @@
 
 
 	/**
-	 * Make changes to user before starting the session
+	 * Make changes to a user
 	 * @param user
 	 * @param callback
 	 * @returns {*}
@@ -152,6 +141,21 @@
 			}
 		}
 		return callback(null);
+	};
+
+
+	/**
+	 * Create a session for a user
+	 * @param user
+	 * @param callback
+	 */
+	tokens.startSession = function(user, callback) {
+		session.make(user._id, _.pick(user, '_id', 'name', 'site', 'group', 'silencedUntil', 'guild'), function(err, response, token) {
+			if(err) {
+				return callback(err);
+			}
+			return callback(null, token);
+		});
 	};
 
 
@@ -182,7 +186,7 @@
 	tokens.findNewestBan = function(bans, type) {
 		var newestBan = null;
 		_.each(bans, function(ban) {
-			if(ban.type === type && !newestBan || newestBan.expireDate < ban.date) {
+			if(ban.type === type && (!newestBan || newestBan.expireDate < ban.date)) {
 				newestBan = ban;
 			}
 		});
@@ -190,23 +194,34 @@
 	};
 
 
-	// create a session for this user
-	tokens.startSession = function(req, callback) {
-		session.make(user._id, _.pick(user, '_id', 'name', 'site', 'group', 'silencedUntil', 'guildId'), function(err, response, token) {
-			if(err) {
-				return res.apiOut(err);
-			}
-		});
+	/**
+	 * Find the auth service for a particular site
+	 * @param {string} site
+	 * @returns {*}
+	 */
+	tokens.siteToAuth = function(site) {
+		var auth;
+
+		if(site === sites.GUEST) {
+			auth = guest;
+		}
+		if(site === sites.JIGGMIN) {
+			auth = jigg;
+		}
+		if(site === sites.FACEBOOK) {
+			auth = facebook;
+		}
+		if(site === sites.KONGREGATE) {
+			auth = kong;
+		}
+
+		return auth;
 	};
 
 
+	/*tokens.delete = function(req, res) {
 
-
-
-
-	tokens.delete = function(req, res) {
-
-	};
+	};*/
 
 
 	module.exports = tokens;

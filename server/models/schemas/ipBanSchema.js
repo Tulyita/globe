@@ -12,7 +12,7 @@ var ipBanSchema = new mongoose.Schema({
 	date: {
 		type: Date,
 		default: Date,
-		expires: '7d'
+		expires: '14d'
 	}
 });
 

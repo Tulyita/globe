@@ -2,7 +2,6 @@
 
 var mongoose = require('mongoose');
 var sinon = require('sinon');
-var User = require('../../server/models/user');
 var Guild = require('../../server/models/guild');
 var guildsPost = require('../../server/routes/guildsPost');
 
@@ -131,7 +130,7 @@ describe('guildsPost', function() {
 			guild.isOwner = sinon.stub();
 			guild.isOwner.withArgs('aaa').returns(true);
 			guild.isOwner.withArgs('bbb').returns(false);
-			guild.save = sinon.stub()
+			guild.save = sinon.stub();
 		});
 
 		it('should update guild', function() {

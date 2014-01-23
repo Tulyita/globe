@@ -1,5 +1,6 @@
+'use strict';
+
 var sinon = require('sinon');
-var mongoose = require('mongoose');
 var User = require('../../server/models/user');
 var friends = require('../../server/routes/friends');
 

@@ -5,6 +5,7 @@ var sinon = require('sinon');
 var tokens = require('../../server/routes/tokens');
 var User = require('../../server/models/user');
 var IpBan = require('../../server/models/ipBan');
+var session = require('../../server/fns/redisSession');
 var findOneAndSave = require('../../server/fns/mongoose/findOneAndSave');
 findOneAndSave.attach(mongoose);
 
@@ -125,7 +126,7 @@ describe('tokensGet', function() {
 
 			sinon.stub(tokens, 'siteToAuth')
 				.withArgs('j')
-				.returns(jiggAuth)
+				.returns(jiggAuth);
 		});
 
 		afterEach(function() {
@@ -257,6 +258,84 @@ describe('tokensGet', function() {
 			var callback = sinon.stub();
 			tokens.processUser(user, callback);
 			expect(callback.args[0]).toEqual(['This account has been banned until Wed Dec 31 1969 19:00:00 GMT-0500 (EST). Reason: spam']);
+		});
+	});
+
+
+	///////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////
+
+	describe('startSession', function() {
+
+		beforeEach(function() {
+			sinon.stub(session, 'make');
+		});
+
+		afterEach(function() {
+			session.make.restore();
+		});
+
+		it('should call session.make and yield the token', function() {
+			var token = '123abc';
+			var userId = mongoose.Types.ObjectId();
+			var user = {_id: userId, name: 'bob', site: 'j', group: 'u', silencedUntil: new Date(), guild: 'best guild', extra: 'should not be included'};
+			var expectedSessionData = {_id: userId, name: 'bob', site: 'j', group: 'u', silencedUntil: new Date(), guild: 'best guild'};
+			var callback = sinon.stub();
+			session.make.withArgs(userId, expectedSessionData).yields(null, 'OK', token);
+			tokens.startSession(user, callback);
+			expect(callback.args[0]).toEqual([null, token]);
+		});
+
+		it('should yield an error if session.make yields an error', function() {
+			var userId = mongoose.Types.ObjectId();
+			var user = {_id: userId, name: 'bob', site: 'j', group: 'u', silencedUntil: new Date(), guild: 'best guild', extra: 'should not be included'};
+			var expectedSessionData = {_id: userId, name: 'bob', site: 'j', group: 'u', silencedUntil: new Date(), guild: 'best guild'};
+			var callback = sinon.stub();
+			session.make.withArgs(userId, expectedSessionData).yields('redis error');
+			tokens.startSession(user, callback);
+			expect(callback.args[0]).toEqual(['redis error']);
+		});
+	});
+
+
+	/////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////
+
+	describe('findActiveBan', function() {
+
+		it('should return null if given an empty array', function() {
+			var ban = tokens.findActiveBan([]);
+			expect(ban).toBe(null);
+		});
+
+		it('should return a ban over a silence even if the silence lasts longer', function() {
+			var bans = [
+				{type: 'ban', expireDate: new Date( new Date().getTime()+10000 )},
+				{type: 'silence', expireDate: new Date( new Date().getTime()+20000 )}
+			];
+			var ban = tokens.findActiveBan(bans);
+			expect(ban.type).toBe('ban');
+		});
+
+		it('should return null if all bans are expired', function() {
+			var bans = [
+				{type: 'ban', expireDate: new Date( new Date().getTime()-10000 )},
+				{type: 'silence', expireDate: new Date( new Date().getTime()-20000 )}
+			];
+			var ban = tokens.findActiveBan(bans);
+			expect(ban).toBe(null);
+		});
+
+		it('should return a silence if there are no active bans', function() {
+			var bans = [
+				{type: 'ban', expireDate: new Date( new Date().getTime()-10000 )},
+				{type: 'silence', expireDate: new Date( new Date().getTime()+20000 )},
+				{type: 'ban', expireDate: new Date( new Date().getTime()-20000 )}
+			];
+			var ban = tokens.findActiveBan(bans);
+			expect(ban.type).toBe('silence');
 		});
 	});
 });

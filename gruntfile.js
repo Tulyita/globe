@@ -11,6 +11,7 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-develop');
+	grunt.loadNpmTasks('grunt-jasmine-node-coverage');
 
 
 	// Define the configuration for all the tasks
@@ -19,9 +20,14 @@ module.exports = function (grunt) {
 
 		// Watches files for changes and runs tasks based on the changed files
 		watch: {
-			js: {
+			allJs: {
 				files: ['server/**/*.js', 'spec/**/*.js'],
-				tasks: ['shell:jasmineOnce', 'jshint', 'develop'],
+				tasks: ['jasmine_node', 'jshint'],
+				options: {nospawn: false}
+			},
+			serverJs: {
+				files: ['server/**/*.js'],
+				tasks: ['develop'],
 				options: {nospawn: true}
 			}
 		},
@@ -47,6 +53,21 @@ module.exports = function (grunt) {
 			server: {
 				file: 'server/testServer.js',
 				nodeArgs: ['--debug']
+			}
+		},
+
+
+		//
+		jasmine_node: {
+			coverage: {
+
+			},
+			options: {
+				forceExit: false,
+				match: '.',
+				matchall: false,
+				extensions: 'js',
+				specNameMatcher: 'Spec'
 			}
 		},
 
@@ -78,13 +99,17 @@ module.exports = function (grunt) {
 				}
 			}
 		}
-
 	});
+
+
+	grunt.registerTask('jasmine', [
+		'jasmine_node'
+	]);
 
 
 
 	grunt.registerTask('serve', [
-		'shell:jasmineOnce',
+		'jasmine_node',
 		'jshint',
 		'develop',
 		'watch'
