@@ -21,6 +21,7 @@ describe('tokensGet', function() {
 			sinon.stub(tokens, 'checkIpBan');
 			sinon.stub(tokens, 'authenticate');
 			sinon.stub(tokens, 'saveUser');
+			sinon.stub(tokens, 'processUser');
 			sinon.stub(tokens, 'startSession');
 		});
 
@@ -28,19 +29,27 @@ describe('tokensGet', function() {
 			tokens.checkIpBan.restore();
 			tokens.authenticate.restore();
 			tokens.saveUser.restore();
+			tokens.processUser.restore();
 			tokens.startSession.restore();
 		});
 
 		it('should run through a bunch of functions', function() {
+			var authInfo = {site: 'j', jiggToken: 'hippo'};
+			var authReply = {name: 'bob', site: 'j', siteUserId: '123', group: 'u'};
+			var user = {_id: mongoose.Types.ObjectId(), name: 'bob', site: 'j', siteUserId: '123', group: 'u', bans: []};
+
 			tokens.checkIpBan
 				.withArgs('184.106.201.44')
 				.yields(null, 0);
 			tokens.authenticate
-				.withArgs({site: 'j', jiggToken: 'hippo'})
-				.yields(null, {name: 'bob', site: 'j', siteUserId: '123', group: 'u'});
+				.withArgs(authInfo)
+				.yields(null, authReply);
 			tokens.saveUser
-				.withArgs({name: 'bob', site: 'j', siteUserId: '123', group: 'u'})
-				.yields(null, {_id: mongoose.Types.ObjectId(), name: 'bob', site: 'j', siteUserId: '123', group: 'u'});
+				.withArgs(authReply)
+				.yields(null, user);
+			tokens.processUser
+				.withArgs(user)
+				.yields(null);
 			tokens.startSession
 				.yields(null, 'bestSessionEver49');
 
@@ -196,6 +205,58 @@ describe('tokensGet', function() {
 			var callback = sinon.stub();
 			tokens.saveUser(verified, callback);
 			expect(callback.args[0]).toEqual(['mongo error']);
+		});
+	});
+
+
+	/////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////
+
+	describe('processUser', function() {
+
+		beforeEach(function() {
+			sinon.stub(tokens, 'findActiveBan');
+		});
+
+		afterEach(function() {
+			tokens.findActiveBan.restore();
+		});
+
+		it('should not alter user if there are no active bans', function() {
+			tokens.findActiveBan.withArgs([]).returns(null);
+			var user = {
+				bans: []
+			};
+			var callback = sinon.stub();
+			tokens.processUser(user, callback);
+			expect(callback.args[0]).toEqual([null]);
+			expect(user.silencedUntil).toBe(undefined);
+		});
+
+		it('should set silencedUntil on user if there is an active silence', function() {
+			var expireDate = new Date(1);
+			var ban = {type: 'silence', expireDate: expireDate, reason: 'spam'};
+			tokens.findActiveBan.withArgs([ban]).returns(ban);
+			var user = {
+				bans: [ban]
+			};
+			var callback = sinon.stub();
+			tokens.processUser(user, callback);
+			expect(callback.args[0]).toEqual([null]);
+			expect(user.silencedUntil).toEqual(new Date(1));
+		});
+
+		it('should yield an error if the user is banned', function() {
+			var expireDate = new Date(1);
+			var ban = {type: 'ban', expireDate: expireDate, reason: 'spam'};
+			tokens.findActiveBan.withArgs([ban]).returns(ban);
+			var user = {
+				bans: [ban]
+			};
+			var callback = sinon.stub();
+			tokens.processUser(user, callback);
+			expect(callback.args[0]).toEqual(['This account has been banned until Wed Dec 31 1969 19:00:00 GMT-0500 (EST). Reason: spam']);
 		});
 	});
 });

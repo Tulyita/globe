@@ -69,7 +69,7 @@
 						res.apiOut(err);
 					}
 
-					tokens.applyAccountBans(user, function(err) {
+					tokens.processUser(user, function(err) {
 						if(err) {
 							res.apiOut(err);
 						}
@@ -135,20 +135,64 @@
 	};
 
 
-	tokens.applyAccountBans = function(user, callback) {
-		user.silencedUntil = tokens.bannedUntil(user.bans, 'silence');
-		user.bannedUntil = tokens.bannedUntil(user.bans, 'ban');
-		if(user.bannedUntil > new Date()) {
-			return callback('This account has been banned until ' + user.bannedUntil);
+	/**
+	 * Make changes to user before starting the session
+	 * @param user
+	 * @param callback
+	 * @returns {*}
+	 */
+	tokens.processUser = function(user, callback) {
+		var ban = tokens.findActiveBan(user.bans);
+		if(ban) {
+			if(ban.type === 'ban') {
+				return callback('This account has been banned until ' + ban.expireDate + '. Reason: ' + ban.reason);
+			}
+			if(ban.type === 'silence') {
+				user.silencedUntil = ban.expireDate;
+			}
 		}
-		return callback(null, user);
+		return callback(null);
+	};
+
+
+	/**
+	 * Look through all the bans on a user and return the active one if it exists
+	 * @param bans
+	 * @returns {Ban}
+	 */
+	tokens.findActiveBan = function(bans) {
+		var silence = tokens.findNewestBan(bans, 'silence');
+		var ban = tokens.findNewestBan(bans, 'ban');
+		if(ban && ban.expireDate > new Date()) {
+			return ban;
+		}
+		if(silence && silence.expireDate > new Date()) {
+			return silence;
+		}
+		return null;
+	};
+
+
+	/**
+	 * Find the newest ban of a certain type
+	 * @param bans
+	 * @param type
+	 * @returns {Ban}
+	 */
+	tokens.findNewestBan = function(bans, type) {
+		var newestBan = null;
+		_.each(bans, function(ban) {
+			if(ban.type === type && !newestBan || newestBan.expireDate < ban.date) {
+				newestBan = ban;
+			}
+		});
+		return newestBan;
 	};
 
 
 	// create a session for this user
 	tokens.startSession = function(req, callback) {
-
-		session.make(user._id, _.pick(user, '_id', 'name', 'site', 'group', 'bannedUntil', 'silencedUntil', 'guildId'), function(err, response, token) {
+		session.make(user._id, _.pick(user, '_id', 'name', 'site', 'group', 'silencedUntil', 'guildId'), function(err, response, token) {
 			if(err) {
 				return res.apiOut(err);
 			}
@@ -156,15 +200,7 @@
 	};
 
 
-	tokens.bannedUntil = function(bans, type) {
-		var date = new Date(1);
-		_.each(bans, function(ban) {
-			if(ban.type === type && ban.expireDate > date) {
-				date = ban.expireDate;
-			}
-		});
-		return date;
-	};
+
 
 
 
