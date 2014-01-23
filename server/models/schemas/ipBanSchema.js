@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var isIp = require('../../validators/isIp');
 
 var ipBanSchema = new mongoose.Schema({
-	_id: {
+	ip: {
 		type: String,
 		validate: isIp,
 		required: true

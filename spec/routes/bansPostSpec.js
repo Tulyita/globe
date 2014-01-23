@@ -68,9 +68,9 @@ describe('bansPost', function() {
 	describe('getBanHistory', function() {
 
 		it('should return an array of bans for a user', function(done) {
-			bansPost.getBanHistory(userId, function(err, bans) {
+			bansPost.getBanHistory(userId, function(err, user) {
 				expect(err).toBeFalsy();
-				expect(_.isArray(bans)).toBe(true);
+				expect(_.isArray(user.bans)).toBe(true);
 				done();
 			});
 		});

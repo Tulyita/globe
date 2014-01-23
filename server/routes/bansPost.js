@@ -2,7 +2,9 @@
 
 var _ = require('lodash');
 var User = require('../models/user');
+var IpBan = require('../models/ipBan');
 var isBans = require('../validators/isBans');
+var isIp = require('../validators/isIp');
 
 
 var banFns = {
@@ -16,10 +18,13 @@ var banFns = {
 
 		var userId = req.body.userId;
 
-		banFns.getBanHistory(userId, function(err, bans) {
+		banFns.getBanHistory(userId, function(err, user) {
 			if(err) {
 				return res.apiOut(err);
 			}
+
+			var bans = user.bans;
+			var ip = user.ip;
 
 			var ban = _.pick(req.body, 'type', 'privateInfo', 'publicInfo', 'reason');
 			ban.expireDate = new Date() + banFns.determineDuration(bans);
@@ -27,15 +32,22 @@ var banFns = {
 
 			bans.push(ban);
 			bans = banFns.pruneOldBans(bans);
-			banFns.saveBans(userId, bans, function(err) {
+			return banFns.saveBans(userId, bans, function(err) {
 				if(err) {
 					return res.apiOut(err);
 				}
 
-				return res.apiOut(null, ban);
+				banFns.saveIpBan(ip, function(err) {
+					if(err) {
+						return res.apiOut(err);
+					}
+
+					return res.apiOut(null, ban);
+				});
 			});
 		});
 	},
+
 
 
 	/**
@@ -53,12 +65,30 @@ var banFns = {
 
 
 	/**
+	 *
+	 * @param ip
+	 * @param callback
+	 */
+	saveIpBan: function(ip, callback) {
+		if(!isIp(ip)) {
+			return callback(null);
+		}
+		return IpBan.create({ip: ip, date: new Date()}, function(err) {
+			if(err) {
+				return callback(err);
+			}
+			return callback(null);
+		});
+	},
+
+
+	/**
 	 * Fetch a list of previous bans this user has
 	 * @param {ObjectId} userId
 	 * @param {Function} callback
 	 */
 	getBanHistory: function(userId, callback) {
-		User.findById(userId, {bans: 1}, function(err, user) {
+		User.findById(userId, {bans: 1, ip: 1}, function(err, user) {
 			if(err) {
 				return callback(err);
 			}
@@ -66,8 +96,8 @@ var banFns = {
 				return callback('User not found.');
 			}
 
-			var bans = user.bans || [];
-			return callback(null, bans);
+			user.bans = user.bans || [];
+			return callback(null, user);
 		});
 	},
 

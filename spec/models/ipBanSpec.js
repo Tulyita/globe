@@ -17,12 +17,14 @@ describe('IpBan', function() {
 
 	it('should accept valid values', function() {
 		var data = {
-			_id: '75.98.92.205',
+			_id: mongoose.Types.ObjectId(),
+			ip: '75.98.92.205',
 			date: new Date()
 		};
 		IpBan.create(data, function(err, ban) {
 			expect(err).toBeFalsy();
 			expect(ban._id).toBe(data._id);
+			expect(ban.ip).toBe(data.ip);
 			expect(ban.date).toEqual(data.date);
 		});
 	});
