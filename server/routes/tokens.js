@@ -124,7 +124,7 @@
 
 
 	// save verified data to the database
-	tokens.saveUser = function(req, callback) {
+	tokens.saveUser = function(verified, callback) {
 		User.findOneAndSave({site: verified.site, siteUserId: verified.siteUserId}, verified, function(err, user) {
 			if(err) {
 				return callback(err);

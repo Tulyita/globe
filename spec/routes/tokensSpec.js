@@ -3,8 +3,10 @@
 var mongoose = require('mongoose');
 var sinon = require('sinon');
 var tokens = require('../../server/routes/tokens');
+var User = require('../../server/models/user');
 var IpBan = require('../../server/models/ipBan');
-
+var findOneAndSave = require('../../server/fns/mongoose/findOneAndSave');
+findOneAndSave.attach(mongoose);
 
 describe('tokensGet', function() {
 
@@ -149,6 +151,51 @@ describe('tokensGet', function() {
 			var callback = sinon.stub();
 			tokens.authenticate(data, callback);
 			expect(callback.args[0]).toEqual(['Name, site, siteUserId, and group are required from auth.']);
+		});
+	});
+
+
+	//////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////
+
+	describe('saveUser', function() {
+
+		beforeEach(function() {
+			sinon.stub(User, 'findOneAndSave')
+				.withArgs({site: 'j', siteUserId: '123'})
+				.yields(null, {_id: 'asd', name: 'Bill', site: 'j', group: 'u'});
+		});
+
+		afterEach(function() {
+			User.findOneAndSave.restore();
+		});
+
+		it('should should call User.findOneAndSave', function() {
+			var verified = {
+				site: 'j',
+				siteUserId: '123',
+				name: 'Bill',
+				group: 'u'
+			};
+			var callback = sinon.stub();
+			tokens.saveUser(verified, callback);
+			expect(callback.args[0]).toEqual([null, {_id: 'asd', name: 'Bill', site: 'j', group: 'u'}]);
+		});
+
+		it('should yield an error if User.findOneAndSave yields and error', function() {
+			User.findOneAndSave
+				.withArgs({site: 'j', siteUserId: '999'})
+				.yields('mongo error');
+			var verified = {
+				site: 'j',
+				siteUserId: '999',
+				name: 'Bill',
+				group: 'u'
+			};
+			var callback = sinon.stub();
+			tokens.saveUser(verified, callback);
+			expect(callback.args[0]).toEqual(['mongo error']);
 		});
 	});
 });
