@@ -1,3 +1,5 @@
+/* jshint maxparams: false */
+
 'use strict';
 
 

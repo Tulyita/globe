@@ -23,7 +23,8 @@ describe('bansPost', function() {
 			name: 'bob',
 			site: 'j',
 			group: 'u',
-			siteUserId: '123'
+			siteUserId: '123',
+			ip: '64.233.160.0'
 		}, function() {
 			done();
 		});
@@ -49,7 +50,8 @@ describe('bansPost', function() {
 					},
 					date: new Date(0),
 					expireDate: new Date(1),
-					reason: 'spam'
+					reason: 'spam',
+					ip: '64.233.160.0'
 				}
 			];
 			bansPost.saveBans(userId, bans, function(err) {

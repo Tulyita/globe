@@ -1,3 +1,5 @@
+/* jshint camelcase: false */
+
 'use strict';
 
 
@@ -5,8 +7,6 @@ module.exports = function (grunt) {
 
 
 	// Load grunt tasks automatically
-	//require('load-grunt-tasks')(grunt);
-
 	grunt.loadNpmTasks('grunt-shell');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-watch');
@@ -105,8 +105,6 @@ module.exports = function (grunt) {
 	grunt.registerTask('jasmine', [
 		'jasmine_node'
 	]);
-
-
 
 	grunt.registerTask('serve', [
 		'jasmine_node',

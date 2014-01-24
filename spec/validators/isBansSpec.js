@@ -18,6 +18,8 @@ describe('isBans', function() {
 				type: 'ban',
 				reason: 'rude',
 				expireDate: new Date(),
+				date: new Date(),
+				ip: '74.125.224.72',
 				mod: {
 					_id: mongoose.Types.ObjectId(),
 					name: 'Bob',
@@ -30,6 +32,8 @@ describe('isBans', function() {
 				type: 'silence',
 				reason: 'hair',
 				expireDate: new Date(),
+				date: new Date(),
+				ip: '74.125.224.72',
 				mod: {
 					_id: mongoose.Types.ObjectId(),
 					name: 'Bob',

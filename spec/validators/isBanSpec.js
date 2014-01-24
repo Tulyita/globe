@@ -11,7 +11,9 @@ describe('isBan', function() {
 			_id: mongoose.Types.ObjectId(),
 			type: 'ban',
 			expireDate: new Date(),
+			date: new Date(),
 			reason: 'pidgin',
+			ip: '74.125.224.72',
 			mod: {
 				_id: mongoose.Types.ObjectId(),
 				name: 'felix',
@@ -29,6 +31,7 @@ describe('isBan', function() {
 			_id: mongoose.Types.ObjectId(),
 			type: 'ban',
 			expireDate: new Date(),
+			date: new Date(),
 			reason: 'pidgin',
 			ip: '74.125.224.72',
 			privateInfo: 'hello',
@@ -52,6 +55,7 @@ describe('isBan', function() {
 			expireDate: new Date(),
 			date: new Date(),
 			extra: 'lsdfjle',
+			ip: '74.125.224.72',
 			mod: {
 				_id: mongoose.Types.ObjectId(),
 				name: 'felix',

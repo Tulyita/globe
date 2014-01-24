@@ -37,11 +37,7 @@ var UserSchema = new Schema({
 		type: String,
 		validate: isUrl
 	},
-	registerIp: {
-		type: String,
-		validate: isIp
-	},
-	loginIp: {
+	ip: {
 		type: String,
 		validate: isIp
 	},

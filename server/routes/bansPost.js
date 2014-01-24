@@ -29,6 +29,7 @@ var banFns = {
 			var ban = _.pick(req.body, 'type', 'privateInfo', 'publicInfo', 'reason');
 			ban.expireDate = new Date() + banFns.determineDuration(bans);
 			ban.mod = _.pick(req.session, '_id', 'name', 'site', 'group');
+			ban.ip = ip;
 
 			bans.push(ban);
 			bans = banFns.pruneOldBans(bans);
@@ -37,7 +38,7 @@ var banFns = {
 					return res.apiOut(err);
 				}
 
-				banFns.saveIpBan(ip, function(err) {
+				return banFns.saveIpBan(ip, function(err) {
 					if(err) {
 						return res.apiOut(err);
 					}
@@ -60,7 +61,7 @@ var banFns = {
 		if(!isBans(bans)) {
 			return callback('isBans validation failed');
 		}
-		User.update({_id: userId}, {$set: {bans: bans}}, callback);
+		return User.update({_id: userId}, {$set: {bans: bans}}, callback);
 	},
 
 

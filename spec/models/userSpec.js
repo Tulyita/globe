@@ -28,8 +28,7 @@ describe('user', function() {
 				group: 'u',
 				siteUserId: '123',
 				avatar: 'https://site.com/img.png',
-				registerIp: '2607:f0d0:1002:51::4',
-				loginIp: '69.147.76.15',
+				ip: '2607:f0d0:1002:51::4',
 				registerDate: new Date(1),
 				loginDate: new Date(2),
 				guild: 'hi',
@@ -75,8 +74,7 @@ describe('user', function() {
 				expect(user.group).toBe(obj.group);
 				expect(user.siteUserId).toBe(obj.siteUserId);
 				expect(user.avatar).toBe(obj.avatar);
-				expect(user.registerIp).toBe(obj.registerIp);
-				expect(user.loginIp).toBe(obj.loginIp);
+				expect(user.ip).toBe(obj.ip);
 				expect(user.registerDate).toBe(obj.registerDate);
 				expect(user.loginDate).toBe(obj.loginDate);
 				expect(user.guild).toBe(obj.guild);
@@ -95,7 +93,7 @@ describe('user', function() {
 				group: true,
 				siteUserId: '',
 				avatar: true,
-				registerIp: true
+				ip: true
 			};
 
 			User.create(obj, function(err) {
@@ -105,7 +103,7 @@ describe('user', function() {
 				expect(err).toMatch('group');
 				expect(err).toMatch('siteUserId');
 				expect(err).toMatch('avatar');
-				expect(err).toMatch('registerIp');
+				expect(err).toMatch('ip');
 				done();
 			});
 		});

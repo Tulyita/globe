@@ -8,14 +8,9 @@
 
 	var _ = require('lodash');
 	var session = require('../fns/redisSession');
-	var sites = require('../fns/sites');
 	var User = require('../models/user');
 	var IpBan = require('../models/ipBan');
-
-	var facebook = require('../fns/auth/facebook');
-	var guest = require('../fns/auth/guest');
-	var jigg = require('../fns/auth/jigg');
-	var kong = require('../fns/auth/kong');
+	var authServices = require('../fns/auth/authServices');
 
 	var tokens = {};
 
@@ -34,7 +29,7 @@
 				res.apiOut(err);
 			}
 
-			tokens.authenticate(req.body, function(err, verified) {
+			authServices.authenticate(req.body, function(err, verified) {
 				if(err) {
 					res.apiOut(err);
 				}
@@ -91,33 +86,6 @@
 				return callback('This ip address has been temporarily blocked due to frequent abuse.');
 			}
 			return callback(null);
-		});
-	};
-
-
-	/**
-	 * Validate a login from a remote site
-	 * @param {Object} data
-	 * @param {Function} callback
-	 */
-	tokens.authenticate = function(data, callback) {
-
-		// find the right authenticator
-		var auth = tokens.siteToAuth(data.site);
-		if(!auth) {
-			return callback('site not found');
-		}
-
-		// use a remote service to verify user information
-		return auth.authenticate(data, function(err, verified) {
-			if(err) {
-				return callback(err);
-			}
-			if(!verified.name || !verified.site || !verified.siteUserId || !verified.group) {
-				return callback('Name, site, siteUserId, and group are required from auth.');
-			}
-
-			return callback(null, verified);
 		});
 	};
 
@@ -205,31 +173,6 @@
 			}
 		});
 		return newestBan;
-	};
-
-
-	/**
-	 * Find the auth service for a particular site
-	 * @param {string} site
-	 * @returns {*}
-	 */
-	tokens.siteToAuth = function(site) {
-		var auth;
-
-		if(site === sites.GUEST) {
-			auth = guest;
-		}
-		if(site === sites.JIGGMIN) {
-			auth = jigg;
-		}
-		if(site === sites.FACEBOOK) {
-			auth = facebook;
-		}
-		if(site === sites.KONGREGATE) {
-			auth = kong;
-		}
-
-		return auth;
 	};
 
 

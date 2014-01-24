@@ -6,6 +6,7 @@ var tokens = require('../../server/routes/tokens');
 var User = require('../../server/models/user');
 var IpBan = require('../../server/models/ipBan');
 var session = require('../../server/fns/redisSession');
+var authServices = require('../../server/fns/auth/authServices');
 var findOneAndSave = require('../../server/fns/mongoose/findOneAndSave');
 findOneAndSave.attach(mongoose);
 
@@ -20,7 +21,7 @@ describe('tokensGet', function() {
 
 		beforeEach(function() {
 			sinon.stub(tokens, 'checkIpBan');
-			sinon.stub(tokens, 'authenticate');
+			sinon.stub(authServices, 'authenticate');
 			sinon.stub(tokens, 'saveUser');
 			sinon.stub(tokens, 'processUser');
 			sinon.stub(tokens, 'startSession');
@@ -28,7 +29,7 @@ describe('tokensGet', function() {
 
 		afterEach(function() {
 			tokens.checkIpBan.restore();
-			tokens.authenticate.restore();
+			authServices.authenticate.restore();
 			tokens.saveUser.restore();
 			tokens.processUser.restore();
 			tokens.startSession.restore();
@@ -42,7 +43,7 @@ describe('tokensGet', function() {
 			tokens.checkIpBan
 				.withArgs('184.106.201.44')
 				.yields(null, 0);
-			tokens.authenticate
+			authServices.authenticate
 				.withArgs(authInfo)
 				.yields(null, authReply);
 			tokens.saveUser
@@ -68,7 +69,7 @@ describe('tokensGet', function() {
 			tokens.get(req, res);
 
 			expect(tokens.checkIpBan.callCount).toBe(1);
-			expect(tokens.authenticate.callCount).toBe(1);
+			expect(authServices.authenticate.callCount).toBe(1);
 			expect(tokens.saveUser.callCount).toBe(1);
 			expect(tokens.startSession.callCount).toBe(1);
 			expect(res.apiOut.args[0]).toEqual([null, {token: 'bestSessionEver49'}]);
@@ -102,65 +103,6 @@ describe('tokensGet', function() {
 			var callback = sinon.stub();
 			tokens.checkIpBan('badip', callback);
 			expect(callback.args[0]).toEqual(['This ip address has been temporarily blocked due to frequent abuse.']);
-		});
-	});
-
-
-	///////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////
-
-	describe('authenticate', function() {
-
-		beforeEach(function() {
-			var jiggAuth = {
-				authenticate: sinon.stub()
-			};
-
-			jiggAuth.authenticate
-				.withArgs({site: 'j', jiggToken: 'abc'})
-				.yields(null, {siteUserId: '1', name: 'bob', site: 'j', group: 'u'});
-			jiggAuth.authenticate
-				.withArgs({site: 'j', jiggToken: 'zzz'})
-				.yields(null, {notRight: true});
-
-			sinon.stub(tokens, 'siteToAuth')
-				.withArgs('j')
-				.returns(jiggAuth);
-		});
-
-		afterEach(function() {
-			tokens.siteToAuth.restore();
-		});
-
-		it('should yield the result from an authenticator function', function() {
-			var data = {
-				site: 'j',
-				jiggToken: 'abc'
-			};
-			var callback = sinon.stub();
-			tokens.authenticate(data, callback);
-			expect(callback.args[0]).toEqual([null, {siteUserId: '1', name: 'bob', site: 'j', group: 'u'}]);
-		});
-
-		it('should yield an error for an unknown site', function() {
-			var data = {
-				site: 'u',
-				jiggToken: 'abc'
-			};
-			var callback = sinon.stub();
-			tokens.authenticate(data, callback);
-			expect(callback.args[0]).toEqual(['site not found']);
-		});
-
-		it('should yield an error if the validator does not return the correct values', function() {
-			var data = {
-				site: 'j',
-				jiggToken: 'zzz'
-			};
-			var callback = sinon.stub();
-			tokens.authenticate(data, callback);
-			expect(callback.args[0]).toEqual(['Name, site, siteUserId, and group are required from auth.']);
 		});
 	});
 
