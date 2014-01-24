@@ -7,6 +7,5 @@ module.exports = function(globe) {
 	globe.use(express.json());
 	globe.use(require('./middleware/handleErrors'));
 	globe.use(require('./middleware/output'));
-	globe.use(require('./middleware/consolidateParams'));
 	globe.use(require('./middleware/continueSession'));
 };

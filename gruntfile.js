@@ -21,7 +21,7 @@ module.exports = function (grunt) {
 		// Watches files for changes and runs tasks based on the changed files
 		watch: {
 			allJs: {
-				files: ['server/**/*.js', 'spec/**/*.js'],
+				files: ['server/**/*.js', 'tests/**/*.js'],
 				tasks: ['jasmine_node', 'jshint'],
 				options: {nospawn: false}
 			},
@@ -43,7 +43,7 @@ module.exports = function (grunt) {
 			all: [
 				'gruntfile.js',
 				'server/**/*.js',
-				'spec/**/*.js'
+				'tests/**/*.js'
 			]
 		},
 
@@ -75,13 +75,13 @@ module.exports = function (grunt) {
 		// shell commands
 		shell: {
 			jasmineOnce: {
-				command: 'jasmine-node spec --forceexit',
+				command: 'jasmine-node tests/spec --forceexit',
 				options: {
 					stdout: true
 				}
 			},
 			jasmineWatch: {
-				command: 'jasmine-node spec --autotest --watch server',
+				command: 'jasmine-node tests/spec --autotest --watch server',
 				options: {
 					stdout: true
 				}

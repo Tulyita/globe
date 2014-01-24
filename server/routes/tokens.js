@@ -26,30 +26,30 @@
 
 		tokens.checkIpBan(req.ip, function(err) {
 			if(err) {
-				res.apiOut(err);
+				return res.apiOut(err);
 			}
 
-			authServices.authenticate(req.body, function(err, verified) {
+			return authServices.authenticate(req.body, function(err, verified) {
 				if(err) {
-					res.apiOut(err);
+					return res.apiOut(err);
 				}
 
-				tokens.saveUser(verified, function(err, user) {
+				return tokens.saveUser(verified, function(err, user) {
 					if(err) {
-						res.apiOut(err);
+						return res.apiOut(err);
 					}
 
-					tokens.processUser(user, function(err) {
+					return tokens.processUser(user, function(err) {
 						if(err) {
-							res.apiOut(err);
+							return res.apiOut(err);
 						}
 
-						tokens.startSession(user, function(err, token) {
+						return tokens.startSession(user, function(err, token) {
 							if(err) {
-								res.apiOut(err);
+								return res.apiOut(err);
 							}
 
-							res.apiOut(null, {token: token});
+							return res.apiOut(null, {token: token});
 						});
 					});
 				});

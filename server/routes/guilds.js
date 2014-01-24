@@ -13,10 +13,11 @@ var fns = {
 
 
 	get: function(req, res) {
-		if(!isName(req.body.guildId)) {
+		var guildId = req.param('guildId');
+		if(!isName(guildId)) {
 			return res.apiOut('Invalid guildId');
 		}
-		return Guild.findById(req.body.guildId, {}, res.apiOut);
+		return Guild.findById(guildId, {}, res.apiOut);
 	},
 
 
