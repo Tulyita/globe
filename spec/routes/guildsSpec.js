@@ -3,15 +3,62 @@
 var mongoose = require('mongoose');
 var sinon = require('sinon');
 var Guild = require('../../server/models/guild');
-var guildsPost = require('../../server/routes/guildsPost');
+var guilds = require('../../server/routes/guilds');
 
-describe('guildsPost', function() {
+describe('guilds', function() {
+
+
+	describe('get', function() {
+
+		beforeEach(function() {
+			sinon.stub(Guild, 'findById');
+			Guild.findById
+				.withArgs('abc')
+				.yields(null, {_id: 'abc'});
+			Guild.findById
+				.withArgs('bla bla')
+				.yields('oh my an error');
+		});
+
+		afterEach(function() {
+			Guild.findById.restore();
+		});
+
+
+		it('should return a guild by id', function() {
+			var req = {
+				body: {
+					guildId: 'abc'
+				}
+			};
+			var res = {
+				apiOut: sinon.stub()
+			};
+			guilds.get(req, res);
+			expect(res.apiOut.args[0]).toEqual([null, {_id: 'abc'}]);
+		});
+
+
+		it('should return an error for bad data', function() {
+			var req = {
+				body: {
+					bla: 'bla bla'
+				}
+			};
+			var res = {
+				apiOut: sinon.stub()
+			};
+			guilds.get(req, res);
+			expect(res.apiOut.args[0]).toEqual(['Invalid guildId']);
+		});
+	});
+
 
 
 	describe('post', function() {
 
 		beforeEach(function() {
-			sinon.stub(guildsPost, 'performAction');
+			sinon.stub(guilds, 'performAction');
 		});
 
 		it('should pass data on to function performAction', function() {
@@ -27,13 +74,13 @@ describe('guildsPost', function() {
 			var res = {
 				apiOut: sinon.stub()
 			};
-			guildsPost.post(req, res);
+			guilds.post(req, res);
 			expect(res.apiOut.callCount).toBe(0);
-			expect(guildsPost.performAction.args[0]).toEqual(['ha', {action: 'ha', value: true}, {_id: '123'}, res.apiOut]);
+			expect(guilds.performAction.args[0]).toEqual(['ha', {action: 'ha', value: true}, {_id: '123'}, res.apiOut]);
 		});
 
 		afterEach(function() {
-			guildsPost.performAction.restore();
+			guilds.performAction.restore();
 		});
 	});
 
@@ -45,8 +92,8 @@ describe('guildsPost', function() {
 				.withArgs('guildName').yields(null, {_id: 'guildName'})
 				.withArgs('nonExistent').yields(null, null)
 				.withArgs('bomb').yields('terrible error');
-			sinon.stub(guildsPost, 'createGuild');
-			sinon.stub(guildsPost, 'updateGuild');
+			sinon.stub(guilds, 'createGuild');
+			sinon.stub(guilds, 'updateGuild');
 		});
 
 		it('should load a guild and call an action on it', function() {
@@ -54,9 +101,9 @@ describe('guildsPost', function() {
 			var data = {guildId: 'guildName'};
 			var session = {};
 			var callback = sinon.spy();
-			guildsPost.performAction(action, data, session, callback);
+			guilds.performAction(action, data, session, callback);
 			expect(callback.callCount).toBe(0);
-			expect(guildsPost.updateGuild.args[0]).toEqual([{_id: 'guildName'}, data, session, callback]);
+			expect(guilds.updateGuild.args[0]).toEqual([{_id: 'guildName'}, data, session, callback]);
 		});
 
 		it('should yield an error if a guild is not found and the action is not "createGuild"', function() {
@@ -64,7 +111,7 @@ describe('guildsPost', function() {
 			var data = {guildId: 'nonExistent'};
 			var session = {};
 			var callback = sinon.spy();
-			guildsPost.performAction(action, data, session, callback);
+			guilds.performAction(action, data, session, callback);
 			expect(callback.args[0]).toEqual(['Guild not found.']);
 		});
 
@@ -73,14 +120,14 @@ describe('guildsPost', function() {
 			var data = {guildId: 'bomb'};
 			var session = {};
 			var callback = sinon.spy();
-			guildsPost.performAction(action, data, session, callback);
+			guilds.performAction(action, data, session, callback);
 			expect(callback.args[0]).toEqual(['terrible error']);
 		});
 
 		afterEach(function() {
 			Guild.findById.restore();
-			guildsPost.createGuild.restore();
-			guildsPost.updateGuild.restore();
+			guilds.createGuild.restore();
+			guilds.updateGuild.restore();
 		});
 	});
 
@@ -96,7 +143,7 @@ describe('guildsPost', function() {
 			var data = {guildId: 'billies'};
 			var session = {};
 			var callback = sinon.stub();
-			guildsPost.createGuild(guild, data, session, callback);
+			guilds.createGuild(guild, data, session, callback);
 			expect(callback.args[0]).toEqual(['This guild name already exists.']);
 		});
 
@@ -106,7 +153,7 @@ describe('guildsPost', function() {
 			var data = {guildId: 'turtle'};
 			var session = {_id: userId, name: 'paul', site: 'j', group: 'u'};
 			var callback = sinon.stub();
-			guildsPost.createGuild(guild, data, session, callback);
+			guilds.createGuild(guild, data, session, callback);
 			expect(callback.callCount).toBe(0);
 			expect(Guild.create.args[0]).toEqual([{
 				_id: 'turtle',
@@ -137,7 +184,7 @@ describe('guildsPost', function() {
 			var data = {join: Guild.INVITE};
 			var session = {_id: 'aaa'};
 			var callback = sinon.stub();
-			guildsPost.updateGuild(guild, data, session, callback);
+			guilds.updateGuild(guild, data, session, callback);
 			expect(guild.join).toBe(Guild.INVITE);
 			expect(guild.save.args[0]).toEqual([callback]);
 		});
@@ -146,7 +193,7 @@ describe('guildsPost', function() {
 			var data = {join: Guild.INVITE};
 			var session = {_id: 'bbb'};
 			var callback = sinon.stub();
-			guildsPost.updateGuild(guild, data, session, callback);
+			guilds.updateGuild(guild, data, session, callback);
 			expect(callback.args[0]).toEqual(['You are not an owner of this guild.']);
 		});
 
@@ -164,7 +211,7 @@ describe('guildsPost', function() {
 			var data = {};
 			var session = {_id: '1'};
 			var callback = sinon.stub();
-			guildsPost.addJoinRequest(guild, data, session, callback);
+			guilds.addJoinRequest(guild, data, session, callback);
 			expect(guild.addJoinRequest.args[0]).toEqual([{_id: '1'}, callback]);
 		});
 	});
@@ -180,7 +227,7 @@ describe('guildsPost', function() {
 			var data = {userId: '2'};
 			var session = {_id: '1'};
 			var callback = sinon.stub();
-			guildsPost.removeJoinRequest(guild, data, session, callback);
+			guilds.removeJoinRequest(guild, data, session, callback);
 			expect(guild.removeJoinRequest.args[0]).toEqual([{_id: '2'}, callback]);
 		});
 
@@ -192,7 +239,7 @@ describe('guildsPost', function() {
 			var data = {userId: '2'};
 			var session = {_id: '1'};
 			var callback = sinon.stub();
-			guildsPost.removeJoinRequest(guild, data, session, callback);
+			guilds.removeJoinRequest(guild, data, session, callback);
 			expect(callback.args[0]).toEqual(['You are not an owner of this guild.']);
 		});
 	});
@@ -209,7 +256,7 @@ describe('guildsPost', function() {
 			var data = {userId: '2'};
 			var session = {_id: '1'};
 			var callback = sinon.stub();
-			guildsPost.acceptJoinRequest(guild, data, session, callback);
+			guilds.acceptJoinRequest(guild, data, session, callback);
 			expect(guild.removeJoinRequest.args[0][0]).toEqual({_id: '2'});
 			expect(guild.addMember.args[0]).toEqual(['2', callback]);
 		});
@@ -223,7 +270,7 @@ describe('guildsPost', function() {
 			var data = {userId: '2'};
 			var session = {_id: '1'};
 			var callback = sinon.stub();
-			guildsPost.acceptJoinRequest(guild, data, session, callback);
+			guilds.acceptJoinRequest(guild, data, session, callback);
 			expect(callback.args[0]).toEqual(['an error']);
 		});
 
@@ -236,7 +283,7 @@ describe('guildsPost', function() {
 			var data = {userId: '2'};
 			var session = {_id: '1'};
 			var callback = sinon.stub();
-			guildsPost.acceptJoinRequest(guild, data, session, callback);
+			guilds.acceptJoinRequest(guild, data, session, callback);
 			expect(callback.args[0]).toEqual(['You are not an owner of this guild.']);
 		});
 	});
@@ -252,7 +299,7 @@ describe('guildsPost', function() {
 			var data = {userId: '2'};
 			var session = {_id: '1'};
 			var callback = sinon.stub();
-			guildsPost.addInvitation(guild, data, session, callback);
+			guilds.addInvitation(guild, data, session, callback);
 			expect(guild.addInvitation.args[0]).toEqual([{_id: '2'}, callback]);
 		});
 
@@ -264,7 +311,7 @@ describe('guildsPost', function() {
 			var data = {userId: '2'};
 			var session = {_id: '1'};
 			var callback = sinon.stub();
-			guildsPost.addInvitation(guild, data, session, callback);
+			guilds.addInvitation(guild, data, session, callback);
 			expect(callback.args[0]).toEqual(['You are not an owner of this guild.']);
 		});
 	});
@@ -279,7 +326,7 @@ describe('guildsPost', function() {
 			var data = {};
 			var session = {_id: '1'};
 			var callback = sinon.stub();
-			guildsPost.removeInvitation(guild, data, session, callback);
+			guilds.removeInvitation(guild, data, session, callback);
 			expect(guild.removeInvitation.args[0]).toEqual([{_id: '1'}, callback]);
 		});
 	});
@@ -295,7 +342,7 @@ describe('guildsPost', function() {
 			var data = {};
 			var session = {_id: '1'};
 			var callback = sinon.stub();
-			guildsPost.acceptInvitation(guild, data, session, callback);
+			guilds.acceptInvitation(guild, data, session, callback);
 			expect(guild.removeInvitation.args[0][0]).toEqual({_id: '1'});
 			expect(guild.addMember.args[0]).toEqual(['1', callback]);
 		});
@@ -308,7 +355,7 @@ describe('guildsPost', function() {
 			var data = {};
 			var session = {_id: '1'};
 			var callback = sinon.stub();
-			guildsPost.acceptInvitation(guild, data, session, callback);
+			guilds.acceptInvitation(guild, data, session, callback);
 			expect(guild.removeInvitation.args[0][0]).toEqual({_id: '1'});
 			expect(callback.args[0]).toEqual(['some error']);
 		});
@@ -326,7 +373,7 @@ describe('guildsPost', function() {
 			var data = {};
 			var session = {_id: '55'};
 			var callback = sinon.stub();
-			guildsPost.deleteGuild(guild, data, session, callback);
+			guilds.deleteGuild(guild, data, session, callback);
 			expect(guild.removeAllMembers.callCount).toBe(1);
 			expect(guild.remove.callCount).toBe(1);
 		});
@@ -340,7 +387,7 @@ describe('guildsPost', function() {
 			var data = {};
 			var session = {_id: '55'};
 			var callback = sinon.stub();
-			guildsPost.deleteGuild(guild, data, session, callback);
+			guilds.deleteGuild(guild, data, session, callback);
 			expect(callback.args[0]).toEqual(['ouch that hurts']);
 		});
 
@@ -353,7 +400,7 @@ describe('guildsPost', function() {
 			var data = {};
 			var session = {_id: '55'};
 			var callback = sinon.stub();
-			guildsPost.deleteGuild(guild, data, session, callback);
+			guilds.deleteGuild(guild, data, session, callback);
 			expect(callback.args[0]).toEqual(['You are not an owner of this guild.']);
 		});
 	});

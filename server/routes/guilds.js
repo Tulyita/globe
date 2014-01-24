@@ -2,12 +2,21 @@
 
 var _ = require('lodash');
 var Guild = require('../models/guild');
+var isName = require('../validators/isName');
 
 var fns = {
 
 	post: function(req, res) {
 		var action = req.body.action || 'create';
 		return fns.performAction(action, req.body, req.session, res.apiOut);
+	},
+
+
+	get: function(req, res) {
+		if(!isName(req.body.guildId)) {
+			return res.apiOut('Invalid guildId');
+		}
+		return Guild.findById(req.body.guildId, {}, res.apiOut);
 	},
 
 
