@@ -50,6 +50,21 @@ var banFns = {
 	},
 
 
+	/**
+	 * Output a user's bans
+	 * @param req
+	 * @param res
+	 * @returns {*}
+	 */
+	get: function(req, res) {
+		if(!req.body.userId) {
+			return res.apiOut('userId required');
+		}
+
+		return User.findById(req.body.userId, {bans:true}, res.apiOut);
+	},
+
+
 
 	/**
 	 * Save an array of bans into a User model

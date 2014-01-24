@@ -1,4 +1,3 @@
-/*global beforeEach, afterEach, expect, it, describe */
 'use strict';
 
 var _ = require('lodash');
@@ -6,10 +5,12 @@ var mongoose = require('mongoose');
 var mockgoose = require('mockgoose');
 mockgoose(mongoose);
 
+var sinon = require('sinon');
 var User = require('../../server/models/user');
-var bansPost = require('../../server/routes/bansPost');
+var bans = require('../../server/routes/bans');
 
-describe('bansPost', function() {
+
+describe('bans', function() {
 
 	var userId;
 	var modId;
@@ -35,10 +36,57 @@ describe('bansPost', function() {
 	});
 
 
+	//////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////
+
+	describe('get', function() {
+
+		beforeEach(function() {
+			sinon.stub(User, 'findById');
+		});
+
+		afterEach(function() {
+			User.findById.restore();
+		});
+
+		it('should return what mongoose finds', function(done) {
+			User.findById
+				.withArgs('abc')
+				.yields(null, {_id: 'abc',bans: [{name: 'ban1'}, {name: 'ban2'}]});
+			var req = {
+				body: {userId: 'abc'}
+			};
+			bans.get(req, {apiOut: function(err, resp) {
+				expect(err).toBeFalsy();
+				expect(resp.bans).toEqual([{name: 'ban1'}, {name: 'ban2'}]);
+				done();
+			}});
+		});
+
+		it('should return an error if mongoose returns an error', function(done) {
+			User.findById
+				.withArgs('errorTime')
+				.yields('There was a horrible error');
+			var req = {
+				body: {userId: 'errorTime'}
+			};
+			bans.get(req, {apiOut: function(err) {
+				expect(err).toBeTruthy();
+				done();
+			}});
+		});
+	});
+
+
+	/////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+
 	describe('saveBans', function() {
 
 		it('should save a list of bans to a user account', function(done) {
-			var bans = [
+			var banArr = [
 				{
 					_id: mongoose.Types.ObjectId(),
 					type: 'ban',
@@ -54,12 +102,12 @@ describe('bansPost', function() {
 					ip: '64.233.160.0'
 				}
 			];
-			bansPost.saveBans(userId, bans, function(err) {
+			bans.saveBans(userId, banArr, function(err) {
 				expect(err).toBeFalsy();
 
 				User.findById(userId, function(err, user) {
 					expect(err).toBeFalsy();
-					expect(user.bans.toObject()).toEqual(bans);
+					expect(user.bans.toObject()).toEqual(banArr);
 					done();
 				});
 			});
@@ -67,10 +115,14 @@ describe('bansPost', function() {
 	});
 
 
+	////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////
+
 	describe('getBanHistory', function() {
 
 		it('should return an array of bans for a user', function(done) {
-			bansPost.getBanHistory(userId, function(err, user) {
+			bans.getBanHistory(userId, function(err, user) {
 				expect(err).toBeFalsy();
 				expect(_.isArray(user.bans)).toBe(true);
 				done();
@@ -79,29 +131,36 @@ describe('bansPost', function() {
 	});
 
 
+	/////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////
+
 	describe('pruneOldBans', function() {
 
 		it('should remove long expired bans from an array', function() {
 			var now = new Date();
-			var bans = [
+			var banArr = [
 				{name: 'ban1', expireDate: new Date(0)},
 				{name: 'ban2', expireDate: now},
 				{name: 'ban3', expireDate: now},
 				{name: 'ban4', expireDate: new Date(1)}
 			];
-			var prunedBans = bansPost.pruneOldBans(bans);
+			var prunedBans = bans.pruneOldBans(banArr);
 			expect(prunedBans).toEqual([{name: 'ban2', expireDate: now}, {name: 'ban3', expireDate: now}]);
 		});
 	});
 
 
+	///////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////
 	describe('determineDuration', function() {
 
 		it('should assign longer bans if there are more prior bans', function() {
-			var dur1 = bansPost.determineDuration([]);
-			var dur2 = bansPost.determineDuration(['banOne']);
-			var dur3 = bansPost.determineDuration(['banOne', 'banTwo']);
-			var dur4 = bansPost.determineDuration(['banOne', 'banTwo', 'banThree']);
+			var dur1 = bans.determineDuration([]);
+			var dur2 = bans.determineDuration(['banOne']);
+			var dur3 = bans.determineDuration(['banOne', 'banTwo']);
+			var dur4 = bans.determineDuration(['banOne', 'banTwo', 'banThree']);
 
 			expect(dur1).toBeLessThan(dur2);
 			expect(dur2).toBeLessThan(dur3);
@@ -126,7 +185,7 @@ describe('bansPost', function() {
 			}
 		};
 
-		bansPost.post(req, {apiOut: function(err, resp) {
+		bans.post(req, {apiOut: function(err, resp) {
 			expect(err).toBeFalsy();
 			expect(resp).toBeTruthy();
 			if(resp) {
@@ -151,9 +210,10 @@ describe('bansPost', function() {
 				type: 'wewewe'
 			}
 		};
-		bansPost.post(req, {apiOut: function(err) {
+		bans.post(req, {apiOut: function(err) {
 			expect(err).toBeTruthy();
 			done();
 		}});
 	});
+
 });
