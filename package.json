@@ -35,7 +35,6 @@
     "grunt-develop": "~0.3.0",
     "grunt-contrib-watch": "~0.5.3",
     "sinon": "~1.7.3",
-    "mockery": "~1.4.0",
     "grunt-jasmine-node-coverage": "~0.1.7"
   }
 }
