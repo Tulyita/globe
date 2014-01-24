@@ -3,15 +3,17 @@
 var gm = require('gm').subClass({ imageMagick: true });
 var User = require('../models/user');
 
+var avatars = {};
+
 
 /**
  * Load a user's avatar url from mongo, retrieve the image, resize it, and return it
  * @param req
  * @param res
  */
-var avatarsGet = function(req, res) {
+avatars.get = function(req, res) {
 
-	var vals = avatarsGet.parseValues(req.params.filename);
+	var vals = avatars.parseValues(req.params.filename);
 
 	User.findById(vals.userId, {avatar: true}, function(err, user) {
 		if(err) {
@@ -26,7 +28,7 @@ var avatarsGet = function(req, res) {
 				return res.apiOut(err);
 			}
 
-			return avatarsGet.resizeImage(buffer, vals.width, vals.height, function(err, buffer) {
+			return avatars.resizeImage(buffer, vals.width, vals.height, function(err, buffer) {
 				res.writeHead(200, {'Content-Type': 'image/gif' });
 				return res.end(buffer, 'binary');
 			});
@@ -39,7 +41,7 @@ var avatarsGet = function(req, res) {
  * Convert userId-50x60.gif to {userId: userId, width:50, height: 60}
  * @param {string} filename
  */
-avatarsGet.parseValues = function(filename) {
+avatars.parseValues = function(filename) {
 	var dash = filename.indexOf('-');
 	var x = filename.indexOf('x');
 	var dot = filename.indexOf('.');
@@ -68,7 +70,7 @@ avatarsGet.parseValues = function(filename) {
  * @param targetHeight
  * @param callback
  */
-avatarsGet.resizeImage = function(buffer, targetWidth, targetHeight, callback) {
+avatars.resizeImage = function(buffer, targetWidth, targetHeight, callback) {
 	gm(buffer).size(function(err, size) {
 		if(err) {
 			return callback(err);
@@ -93,4 +95,4 @@ avatarsGet.resizeImage = function(buffer, targetWidth, targetHeight, callback) {
 };
 
 
-module.exports = avatarsGet;
+module.exports = avatars;
