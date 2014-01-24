@@ -5,8 +5,63 @@ var mockgoose = require('mockgoose');
 mockgoose(mongoose);
 
 var User = require('../../server/models/user');
-var messagesPost = require('../../server/routes/messagesPost');
+var msgs = require('../../server/routes/messages');
 var me, toUserId;
+
+
+describe('messages', function() {
+
+	describe('get', function() {
+
+		var messages, fromUserId, toUserId;
+
+		beforeEach(function(done) {
+			fromUserId = mongoose.Types.ObjectId();
+			toUserId = mongoose.Types.ObjectId();
+			messages = [{
+				_id: mongoose.Types.ObjectId(),
+				fromUser: {
+					_id: fromUserId,
+					name: 'fred',
+					site: 'j',
+					group: 'u'
+				},
+				body: 'hello',
+				date: new Date()
+			}];
+
+			User.create({
+				_id: toUserId,
+				name: 'aaaa',
+				site: 'j',
+				group: 'u',
+				siteUserId: 'abc',
+				messages: messages
+			}, function(err) {
+				done(err);
+			});
+		});
+
+		afterEach(function() {
+			mockgoose.reset();
+		});
+
+		it('should return a uers messages', function(done) {
+			var req = {
+				session: {
+					_id: toUserId
+				}
+			};
+			msgs.get(req, {apiOut: function(err, res) {
+				if(err) {
+					return done(err);
+				}
+				expect(res.toObject()).toEqual(messages);
+				return done();
+			}});
+		});
+	});
+});
 
 
 describe('messagesPost', function() {
@@ -46,7 +101,7 @@ describe('messagesPost', function() {
 				session: me,
 				connection: {remoteAddress: '12.52.251.0'}
 			};
-			var message = messagesPost.formMessage(req);
+			var message = msgs.formMessage(req);
 			expect(message).toEqual({body: 'hi', fromUser: me, ip: '12.52.251.0', date: message.date, _id: message._id});
 		});
 	});
@@ -63,11 +118,11 @@ describe('messagesPost', function() {
 				date: new Date()
 			};
 
-			messagesPost.saveMessage(toUserId, message, function(err) {
+			msgs.saveMessage(toUserId, message, function(err) {
 				expect(err).toBeFalsy();
 
 				message._id = mongoose.Types.ObjectId();
-				messagesPost.saveMessage(toUserId, message, function(err) {
+				msgs.saveMessage(toUserId, message, function(err) {
 					expect(err).toBeFalsy();
 
 					User.findById(toUserId, function(err, user) {
