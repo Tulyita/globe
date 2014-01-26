@@ -39,7 +39,7 @@ var MemberDoc = {
 		min: 0,
 		default: 0
 	},
-	gpLifetime: {
+	gpLife: {
 		type: Number,
 		min: 0,
 		default: 0
