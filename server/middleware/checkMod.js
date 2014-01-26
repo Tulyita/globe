@@ -1,15 +1,15 @@
 (function() {
 	'use strict';
 
-	var groups = require('../fns/groups');
+	var groups = require('../config/groups');
 
 	module.exports = function(req, res, next) {
-		if (!req.session || !req.session._id || req.session.group !== groups.MOD) {
-			var err = {code: 401, message: 'You are not authorized to view this page'};
-			res.apiOut(err, null);
+		if (req.session && req.session._id && (req.user.group === groups.MOD || req.user.group === groups.ADMIN)) {
+			next();
 		}
 		else {
-			next();
+			var err = {code: 401, message: 'You are not authorized to view this page'};
+			res.apiOut(err, null);
 		}
 	};
 

@@ -63,7 +63,7 @@ module.exports = function (grunt) {
 
 			},
 			options: {
-				forceExit: false,
+				forceExit: true,
 				match: '.',
 				matchall: false,
 				extensions: 'js',
@@ -81,7 +81,7 @@ module.exports = function (grunt) {
 				}
 			},
 			jasmineWatch: {
-				command: 'jasmine-node tests/spec --autotest --watch server',
+				command: 'jasmine-node tests/spec --autotest --watch server --captureExceptions',
 				options: {
 					stdout: true
 				}

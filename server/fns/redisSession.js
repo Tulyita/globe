@@ -2,7 +2,7 @@
 	'use strict';
 
 	var redis = require('redis');
-	var fns = require('../fns/fns');
+	var createRandomString = require('../fns/createRandomString');
 	var sessionLife = 60*60; //one hour
 	var client;
 	var redisSession = {};
@@ -117,7 +117,7 @@
 			if(doc.token !== token) {
 				return callback('not the right token');
 			}
-			client.del(userId, callback);
+			return client.del(userId, callback);
 		});
 	};
 
@@ -128,7 +128,7 @@
 	 * @returns {string} token
 	 */
 	redisSession.createToken = function(userId) {
-		return userId + '-' + fns.createRandomString(32);
+		return userId + '-' + createRandomString(32);
 	};
 
 

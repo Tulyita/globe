@@ -17,7 +17,7 @@ module.exports = function(globe) {
 	globe.post('/bans', bans.post);
 	globe.get('/friends', friends.get);
 	globe.post('/friends', friends.post);
-	globe.get('/guilds/:guildId', guilds.get);
+	globe.get('/guilds', guilds.get);
 	globe.post('/guilds', guilds.post);
 	globe.get('/messages', messages.get);
 	globe.post('/messages', messages.post);
@@ -26,5 +26,5 @@ module.exports = function(globe) {
 	globe.get('/tests', tests.get);
 	globe.get('/tokens', tokens.get);
 	globe.del('/tokens', tokens.del);
-	globe.get('/users/:userId', users.get);
+	globe.get('/users', users.get);
 };

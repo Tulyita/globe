@@ -1,6 +1,6 @@
 'use strict';
 
-var sites = require('../../fns/sites');
+var sites = require('../../config/sites');
 var facebook = require('./facebook');
 var guest = require('./guest');
 var jigg = require('./jigg');

@@ -1,6 +1,6 @@
 'use strict';
 
-var groups = require('../../../server/fns/groups');
+var groups = require('../../../server/config/groups');
 var isGroup = require('../../../server/validators/isGroup');
 
 describe('isGroup', function() {

@@ -1,7 +1,7 @@
 'use strict';
 
 var isSite = require('../../../server/validators/isSite');
-var sites = require('../../../server/fns/sites.js');
+var sites = require('../../../server/config/sites.js');
 
 describe('isSite', function() {
 

@@ -3,7 +3,7 @@
 'use strict';
 
 var request = require('request');
-var groups = require('../groups');
+var groups = require('../../config/groups');
 
 
 var jigg = {

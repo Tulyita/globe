@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
+var mongoose = require('mongoose');
 var Guild = require('../models/guild');
 var isName = require('../validators/isName');
 
@@ -13,7 +14,7 @@ var fns = {
 
 
 	get: function(req, res) {
-		var guildId = req.param('guildId');
+		var guildId = req.body.guildId;
 		if(!isName(guildId)) {
 			return res.apiOut('Invalid guildId');
 		}
@@ -22,7 +23,7 @@ var fns = {
 
 
 	allowedAction: function(action) {
-		return ['createGuild', 'updateGuild', 'addJoinRequest', 'removeJoinRequest', 'acceptJoinRequest', 'addInvitation', 'removeInvitation'].indexOf(action) !== -1;
+		return ['createGuild', 'updateGuild', 'addJoinRequest', 'removeJoinRequest', 'acceptJoinRequest', 'addInvitation', 'removeInvitation', 'setMod'].indexOf(action) !== -1;
 	},
 
 
@@ -41,6 +42,30 @@ var fns = {
 
 			var fn = fns[action];
 			return fn(guild, data, session, callback);
+		});
+	},
+
+
+	setMod: function(guild, data, session, callback) {
+		var userId = data.userId;
+		var mod = data.mod;
+
+		if(!guild.isOwner(session._id)) {
+			return callback('You are not an owner of this guild.');
+		}
+
+		var targetMember = _.find(guild.members, {_id: userId});
+		if(!targetMember) {
+			return callback('Could not find member with userId "'+userId+'".')
+		}
+
+		targetMember.mod = mod;
+
+		return guild.save(function(err) {
+			if(err) {
+				return callback(err);
+			}
+			return callback(null, guild);
 		});
 	},
 

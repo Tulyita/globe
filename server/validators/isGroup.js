@@ -1,6 +1,6 @@
 'use strict';
 
-var groups = require('../fns/groups');
+var groups = require('../config/groups');
 
 var isGroup = function(val) {
 	return [groups.GUEST, groups.USER, groups.APPRENTICE, groups.MOD, groups.ADMIN].indexOf(val) !== -1;
