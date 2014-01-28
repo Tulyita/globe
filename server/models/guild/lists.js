@@ -122,7 +122,7 @@ module.exports = function(schema) {
 
 
 	/**
-	 * Remove user from joinRequests and add them to members
+	 * Remove user from applicants and add them to members
 	 * @param userId
 	 * @param callback
 	 */
@@ -133,7 +133,7 @@ module.exports = function(schema) {
 		 	return callback(err);
 		 }
 
-		 return self.removeUserFromList('joinRequests', userId, callback);
+		 return self.removeUserFromList('applicants', userId, callback);
 	 });
 	};
 
@@ -287,7 +287,7 @@ module.exports = function(schema) {
 
 
 	/**
-	 * Remove user from joinRequests and add them to members
+	 * Remove user from applicants and add them to members
 	 * @param guildId
 	 * @param userId
 	 * @param callback
@@ -299,7 +299,7 @@ module.exports = function(schema) {
 				return callback(err);
 			}
 
-			self.removeUserFromList('joinRequests', data.guildId, data.userId, callback);
+			self.removeUserFromList('applicants', data.guildId, data.userId, callback);
 		});
 	};*/
 };

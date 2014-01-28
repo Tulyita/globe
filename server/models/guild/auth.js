@@ -67,12 +67,12 @@ module.exports = function(schema) {
 
 
 	/**
-	 * Returns true if userId matches a joinRequest
+	 * Returns true if userId matches a applicant
 	 * @param {ObjectId} userId
 	 * @returns {boolean}
 	 */
-	schema.methods.isRequester = function(userId) {
-		return _.where(this.joinRequests, {_id: userId}).length > 0;
+	schema.methods.isApplicant = function(userId) {
+		return _.where(this.applicants, {_id: userId}).length > 0;
 	};
 
 
@@ -112,7 +112,7 @@ module.exports = function(schema) {
 	 };*/
 
 	 /*schema.static.isRequester = function(guildId, userId, callback) {
-	 this.findOne({_id: guildId, 'joinRequests._id': userId}, {_id: 1}, function(err, doc) {
+	 this.findOne({_id: guildId, 'applicants._id': userId}, {_id: 1}, function(err, doc) {
 	 return callback(null, !!doc);
 	 });
 	 };*/

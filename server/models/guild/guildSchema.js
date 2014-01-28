@@ -61,7 +61,7 @@ var GuildSchema = new Schema({
 	owners: [nameSchema],
 	members: [memberSchema],
 	kicks: [nameSchema],
-	joinRequests: [nameSchema],
+	applicants: [nameSchema],
 	invitations: [nameSchema]
 });
 
