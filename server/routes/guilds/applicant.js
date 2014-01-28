@@ -4,7 +4,17 @@ module.exports = {
 
 
 	put: function(req, res) {
-		return req.guild.addUserToList('applicants', req.session._id, res.apiOut);
+		if(String(req.session._id) !== String(req.params.userId)) {
+			return res.apiOut('You can not apply for someone else.');
+		}
+		return req.guild.addUserToList('applicants', req.session._id, function(err) {
+			if(err) {
+				return res.apiOut(err);
+			}
+
+			var user = req.guild.getUserFrom('applicants', req.params.userId);
+			return res.apiOut(null, user);
+		});
 	},
 
 

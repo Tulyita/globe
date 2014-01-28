@@ -9,6 +9,21 @@ module.exports = function(schema) {
 
 
 	/**
+	 *
+	 * @param {string} listName
+	 * @param {ObjectId} userId
+	 * @returns {Object} user
+	 */
+	schema.methods.getUserFrom = function(listName, userId) {
+		var arr = this[listName];
+		var matches = _.where(arr, function(member) {
+			return String(member._id) === String(userId);
+		});
+		return matches[0];
+	};
+
+
+	/**
 	 * Remove all of the members from this guild
 	 * @param {Function} callback
 	 */
@@ -101,7 +116,7 @@ module.exports = function(schema) {
 
 			self[list].push(nameDisplay);
 
-			return this.save(callback);
+			return self.save(callback);
 		});
 	};
 
@@ -116,7 +131,7 @@ module.exports = function(schema) {
 		var self = this;
 		self[list] = _.filter(self[list], {_id: userId});
 
-		return this.save(callback);
+		return self.save(callback);
 	};
 
 
