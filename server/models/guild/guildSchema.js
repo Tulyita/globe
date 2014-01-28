@@ -6,6 +6,7 @@ var Schema = mongoose.Schema;
 var nameDisplayDoc = require('./../schemas/nameDisplayDoc');
 var memberDoc = require('./memberDoc');
 var isName = require('../../validators/isName');
+var isGuildDesc = require('../../validators/isGuildDesc');
 
 var nameSchema = new Schema(nameDisplayDoc);
 var memberSchema = new Schema(memberDoc);
@@ -20,6 +21,10 @@ var GuildSchema = new Schema({
 		type: String,
 		enum: ['invite', 'ask', 'open'],
 		default: 'invite'
+	},
+	desc: {
+		type: String,
+		validate: isGuildDesc
 	},
 	createdDate: {
 		type: Date,

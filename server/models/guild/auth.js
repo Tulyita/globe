@@ -6,6 +6,17 @@ module.exports = function(schema) {
 
 
 	/**
+	 * Find member by their userId
+	 * @param {ObjectId} userId
+	 * @returns {*}
+	 */
+	schema.methods.getMember = function(userId) {
+		var matches = _.where(this.members, {_id: userId});
+		return matches[0];
+	};
+
+
+	/**
 	 * Returns true if userId matches a member
 	 * @param {ObjectId} userId
 	 * @returns {boolean}
@@ -21,12 +32,7 @@ module.exports = function(schema) {
 	 * @returns {boolean}
 	 */
 	schema.methods.isGuildMod = function(userId) {
-		var matches = _.where(this.members, {_id: userId});
-		if(matches.length === 0) {
-			return false;
-		}
-		var member = matches[0];
-		return member.mod;
+		return _.where(this.members, {_id: userId, mod: true}) > 0;
 	};
 
 
@@ -68,6 +74,49 @@ module.exports = function(schema) {
 	schema.methods.isRequester = function(userId) {
 		return _.where(this.joinRequests, {_id: userId}).length > 0;
 	};
+
+
+
+
+
+
+
+	/*schema.static.isGuildMod = function(guildId, userId, callback) {
+	 this.findOne({_id: guildId, 'members._id': userId, mod: true}, {_id: 1}, function(err, doc) {
+	 return callback(null, !!doc);
+	 });
+	 };*/
+
+	/*schema.static.isOwner = function(guildId, userId, callback) {
+	 this.findOne({_id: guildId, 'owners._id': userId}, {_id: 1}, function(err, doc) {
+	 return callback(null, !!doc);
+	 });
+	 };*/
+
+	/*schema.static.isInvited = function(guildId, userId, callback) {
+	 this.findOne({_id: guildId, 'invitations._id': userId}, {_id: 1}, function(err, doc) {
+	 return callback(null, !!doc);
+	 });
+	 };*/
+
+	/*schema.static.isKicked = function(guildId, userId, callback) {
+	 this.findOne({_id: guildId, 'kicks._id': userId}, {_id: 1}, function(err, doc) {
+	 return callback(null, !!doc);
+	 });
+	 };*/
+
+	/*schema.static.isMember = function(guildId, userId, callback) {
+	 this.findOne({_id: guildId, 'members._id': userId}, {_id: 1}, function(err, doc) {
+	 return callback(null, !!doc);
+	 });
+	 };*/
+
+	 /*schema.static.isRequester = function(guildId, userId, callback) {
+	 this.findOne({_id: guildId, 'joinRequests._id': userId}, {_id: 1}, function(err, doc) {
+	 return callback(null, !!doc);
+	 });
+	 };*/
+
 };
 
 
