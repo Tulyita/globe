@@ -54,7 +54,7 @@ module.exports = function(schema) {
 	schema.methods.addMember = function(userId, callback) {
 		var self = this;
 
-		self.addUserToList('members', function(err) {
+		self.addUserToList('members', userId, function(err) {
 			if(err) {
 				return callback(err);
 			}
@@ -141,7 +141,7 @@ module.exports = function(schema) {
 	 * @param userId
 	 * @param callback
 	 */
-	schema.methods.acceptJoinRequest = function(userId, callback) {
+	schema.methods.acceptApplication = function(userId, callback) {
 	 var self = this;
 	 self.addMember(userId, function(err) {
 		 if(err) {

@@ -10,10 +10,11 @@ var User = require('../../../../server/models/user');
 
 describe('routes/guilds/applicant', function() {
 
-	var userId, guild;
+	var userId, ownerId, guild;
 
 	beforeEach(function(done) {
 		userId = mongoose.Types.ObjectId();
+		ownerId = mongoose.Types.ObjectId();
 		Guild.create({_id: 'racers'}, function(err, _guild_) {
 			guild = _guild_;
 			User.create({_id: userId, name: 'aaaa', site: 'j', group: 'u', siteUserId: '123'}, function(err2) {
@@ -56,48 +57,28 @@ describe('routes/guilds/applicant', function() {
 	////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
 
-	/*describe('post', function() {
+	describe('post', function() {
 
-		it('should call guild.removeJoinRequest, then guild.addMember', function() {
-			var guild = {
-				removeJoinRequest: sinon.stub().yields(null),
-				addMember: sinon.stub(),
-				isOwner: sinon.stub().withArgs('1').returns(true)
+		it('should accept an applicant', function(done) {
+			var req = {
+				session: {
+					_id: ownerId
+				},
+				params: {
+					guildId: 'racer',
+					userId: userId
+				},
+				query: {
+					action: 'accept'
+				},
+				guild: guild
 			};
-			var data = {userId: '2'};
-			var session = {_id: '1'};
-			var callback = sinon.stub();
-			guildRoutes.acceptJoinRequest(guild, data, session, callback);
-			expect(guild.removeJoinRequest.args[0][0]).toEqual({_id: '2'});
-			expect(guild.addMember.args[0]).toEqual(['2', callback]);
+			applicant.post(req, {apiOut: function(err, res) {
+				expect(res).toEqual(null);
+				done(err);
+			}});
 		});
-
-		it('should yield an error if guild.removeJoinRequest yields an error', function() {
-			var guild = {
-				removeJoinRequest: sinon.stub().yields('an error'),
-				addMember: sinon.stub(),
-				isOwner: sinon.stub().withArgs('1').returns(true)
-			};
-			var data = {userId: '2'};
-			var session = {_id: '1'};
-			var callback = sinon.stub();
-			guildRoutes.acceptJoinRequest(guild, data, session, callback);
-			expect(callback.args[0]).toEqual(['an error']);
-		});
-
-		it('should yield an error if you are not the owner', function() {
-			var guild = {
-				removeJoinRequest: sinon.stub().returns('an error'),
-				addMember: sinon.stub(),
-				isOwner: sinon.stub().withArgs('1').returns(false)
-			};
-			var data = {userId: '2'};
-			var session = {_id: '1'};
-			var callback = sinon.stub();
-			guildRoutes.acceptJoinRequest(guild, data, session, callback);
-			expect(callback.args[0]).toEqual(['You are not an owner of this guild.']);
-		});
-	});*/
+	});
 
 
 	//////////////////////////////////////////////////////////////////////////////
