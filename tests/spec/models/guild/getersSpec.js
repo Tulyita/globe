@@ -50,11 +50,11 @@ describe('guild/auth', function() {
 
 		it('should return true if user is in members array', function() {
 			guild.members = [user1];
-			expect(guild.isMember(user1._id)).toBe(true);
+			expect(guild.getMember(user1._id).toObject()._id).toEqual(user1._id);
 		});
 
 		it('should return false if user is not in members array', function() {
-			expect(guild.isMember(user1._id)).toBe(false);
+			expect(guild.getMember(user1._id)).toBeFalsy();
 		});
 	});
 
@@ -68,11 +68,11 @@ describe('guild/auth', function() {
 		it('should return true if user is in members array and user.mod is true', function() {
 			user1.mod = true;
 			guild.members = [user1];
-			expect(guild.isGuildMod(user1._id)).toBe(true);
+			expect(guild.getGuildMod(user1._id).toObject()._id).toEqual(user1._id);
 		});
 
 		it('should return false if user is not in members array', function() {
-			expect(guild.isGuildMod(user1._id)).toBe(false);
+			expect(guild.getGuildMod(user1._id)).toBeFalsy();
 		});
 	});
 
@@ -85,11 +85,11 @@ describe('guild/auth', function() {
 
 		it('should return true if user is in owners array', function() {
 			guild.owners = [user1];
-			expect(guild.isOwner(user1._id)).toBe(true);
+			expect(guild.getOwner(user1._id).toObject()).toEqual(user1);
 		});
 
 		it('should return false if user is not in owners array', function() {
-			expect(guild.isOwner(user1._id)).toBe(false);
+			expect(guild.getOwner(user1._id)).toBeFalsy();
 		});
 	});
 
@@ -102,11 +102,11 @@ describe('guild/auth', function() {
 
 		it('should return true if user is in invitations array', function() {
 			guild.invitations = [user1];
-			expect(guild.isInvited(user1._id)).toBe(true);
+			expect(guild.getInvitation(user1._id).toObject()).toEqual(user1);
 		});
 
 		it('should return false if user is not in invitations array', function() {
-			expect(guild.isInvited(user1._id)).toBe(false);
+			expect(guild.getInvitation(user1._id)).toBeFalsy();
 		});
 	});
 
@@ -118,12 +118,12 @@ describe('guild/auth', function() {
 	describe('isRequester', function() {
 
 		it('should return true if user is in joinRequests array', function() {
-			guild.joinRequests = [user1];
-			expect(guild.isRequester(user1._id)).toBe(true);
+			guild.applicants = [user1];
+			expect(guild.getApplicant(user1._id).toObject()).toEqual(user1);
 		});
 
 		it('should return false if user is not in joinRequests array', function() {
-			expect(guild.isRequester(user1._id)).toBe(false);
+			expect(guild.getApplicant(user1._id)).toBeFalsy();
 		});
 	});
 
@@ -135,11 +135,11 @@ describe('guild/auth', function() {
 	describe('isKicked', function() {
 		it('should return true if user is in kicks array', function() {
 			guild.kicks = [user1];
-			expect(guild.isKicked(user1._id)).toBe(true);
+			expect(guild.getKick(user1._id).toObject()).toEqual(user1);
 		});
 
 		it('should return false if user is not in kicks array', function() {
-			expect(guild.isKicked(user1._id)).toBe(false);
+			expect(guild.getKick(user1._id)).toBeFalsy();
 		});
 	});
 });

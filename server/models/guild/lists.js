@@ -9,21 +9,6 @@ module.exports = function(schema) {
 
 
 	/**
-	 *
-	 * @param {string} listName
-	 * @param {ObjectId} userId
-	 * @returns {Object} user
-	 */
-	schema.methods.getUserFrom = function(listName, userId) {
-		var arr = this[listName];
-		var matches = _.where(arr, function(member) {
-			return String(member._id) === String(userId);
-		});
-		return matches[0];
-	};
-
-
-	/**
 	 * Remove all of the members from this guild
 	 * @param {Function} callback
 	 */
@@ -102,7 +87,9 @@ module.exports = function(schema) {
 	 */
 	schema.methods.addUserToList = function(list, userId, callback) {
 		var self = this;
-		self[list] = _.filter(self[list], {_id: userId});
+		self[list] = _.filter(self[list], function(user) {
+			return String(user._id) !== String(userId);
+		});
 
 		User.findById(userId, function(err, user) {
 			if(err) {
@@ -129,7 +116,9 @@ module.exports = function(schema) {
 	 */
 	schema.methods.removeUserFromList = function(list, userId, callback) {
 		var self = this;
-		self[list] = _.filter(self[list], {_id: userId});
+		self[list] = _.filter(self[list], function(user) {
+			return String(user._id) !== String(userId);
+		});
 
 		return self.save(callback);
 	};

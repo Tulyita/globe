@@ -2,7 +2,7 @@
 
 module.exports = function(globe) {
 
-	require('./routes/guildRoutes')(globe);
+	require('./guildRoutes')(globe);
 
 	var avatars = require('./routes/avatars');
 	var bans = require('./routes/bans');

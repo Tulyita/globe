@@ -34,7 +34,7 @@ describe('guild', function() {
 			obj.gpLife = 3;
 			obj.owners = [];
 			obj.members = [];
-			obj.joinRequests = [];
+			obj.applicants = [];
 			obj.invitations = [];
 
 			Guild.create(obj, function(err, guild) {
@@ -51,7 +51,7 @@ describe('guild', function() {
 				expect(guild.gpLife).toBe(3);
 				expect(guild.owners.toObject()).toEqual([]);
 				expect(guild.members.toObject()).toEqual([]);
-				expect(guild.joinRequests.toObject()).toEqual([]);
+				expect(guild.applicants.toObject()).toEqual([]);
 				expect(guild.invitations.toObject()).toEqual([]);
 
 				done();
@@ -81,7 +81,7 @@ describe('guild', function() {
 			obj.gpLife = {haxxor: true};
 			obj.owners = {haxxor: true};
 			obj.members = {haxxor: true};
-			obj.joinRequests = {haxxor: true};
+			obj.applicants = {haxxor: true};
 			obj.invitations = {haxxor: true};
 
 			Guild.create(obj, function(err, guild) {
@@ -96,7 +96,7 @@ describe('guild', function() {
 				expect(guild.gpLife).toBe(0);
 				expect(guild.owners.toObject()).toEqual([]);
 				expect(guild.members.toObject()).toEqual([]);
-				expect(guild.joinRequests.toObject()).toEqual([]);
+				expect(guild.applicants.toObject()).toEqual([]);
 				expect(guild.invitations.toObject()).toEqual([]);
 
 				done(err);

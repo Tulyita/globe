@@ -3,6 +3,6 @@
 module.exports = {
 
 	get: function(req, res) {
-		res.apiOut(req.guild.applicants);
+		res.apiOut(null, req.guild.applicants);
 	}
 };

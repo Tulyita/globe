@@ -5,13 +5,18 @@ var _ = require('lodash');
 module.exports = {
 
 
-	get: function(req, res) {
-		var kick = _.where(req.guild.kicks, {_id: req.params.userId})[0];
-		return res.apiOut(null, kick);
+	put: function(req, res) {
+		req.guild.addUserToList('kicks', req.params.userId, function(err) {
+			if(err) {
+				return res.apiOut(err);
+			}
+			return res.apiOut(null, req.guild.getUserFrom('kicks', req.params.userId));
+		});
 	},
 
 
-	post: function(req, res) {
-		return req.guild.addUserToList('kicks', req.params.userId, res.apiOut);
+	get: function(req, res) {
+		var kick = req.guild.getUserFrom('kicks', req.params.userId);
+		return res.apiOut(null, kick);
 	}
 };

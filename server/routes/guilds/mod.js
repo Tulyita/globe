@@ -1,17 +1,17 @@
 'use strict';
 
+var _ = require('lodash');
+
+
 module.exports = {
 
 
 	put: function(req, res) {
 		var member = req.guild.getMember(req.params.userId);
-		if(!member) {
-			return callback('Member "'+req.params.userId+'" not found.');
-		}
-
 		member.mod = true;
-
-		return req.guild.save(res.apiOut);
+		req.guild.save(function(err) {
+			return res.apiOut(err, member);
+		});
 	},
 
 
@@ -23,12 +23,12 @@ module.exports = {
 
 	del: function(req, res) {
 		var member = req.guild.getMember(req.params.userId);
-		if(!member) {
-			return callback('Member "'+req.params.userId+'" not found.');
-		}
-
 		member.mod = false;
-
-		return req.guild.save(res.apiOut);
+		return req.guild.save(function(err) {
+			if(err) {
+				return res.apiOut(err);
+			}
+			return res.status(204).send();
+		});
 	}
 };

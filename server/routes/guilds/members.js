@@ -1,9 +1,7 @@
-var Guild = require('../../models/guild');
-
 module.exports = {
 
 	get: function(req, res) {
-		Guild.findById(req.param.guildId, res.apiOut);
+		res.apiOut(null, req.guild.members);
 	}
 
 };

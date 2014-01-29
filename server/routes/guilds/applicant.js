@@ -32,11 +32,17 @@ module.exports = {
 
 
 	get: function(req, res) {
-		return res.apiOut(null, _.where(req.guild.applicants, {_id: req.params.userId}));
+		var user = req.guild.getUserFrom('applicants', req.params.userId);
+		return res.apiOut(null, user);
 	},
 
 
 	del: function(req, res) {
-		return req.guild.removeUserFromList('applicants', req.params.userId, res.apiOut);
+		return req.guild.removeUserFromList('applicants', req.params.userId, function(err) {
+			if(err) {
+				return res.apiOut(err);
+			}
+			return res.status(204).send();
+		});
 	}
 };

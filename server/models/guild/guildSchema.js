@@ -70,7 +70,7 @@ GuildSchema.statics.ASK = 'ask';
 GuildSchema.statics.OPEN = 'open';
 
 
-require('./auth')(GuildSchema);
+require('./geters')(GuildSchema);
 require('./lists')(GuildSchema);
 require('./gp')(GuildSchema);
 

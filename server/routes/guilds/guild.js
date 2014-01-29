@@ -3,7 +3,6 @@
 var _ = require('lodash');
 var mongoose = require('mongoose');
 var Guild = require('../../models/guild');
-var Groups = require('../../config/groups');
 
 module.exports = {
 
@@ -18,28 +17,24 @@ module.exports = {
 
 
 	get: function(req, res) {
-		return Guild.findById(req.body.guildId, {}, res.apiOut);
+		res.apiOut(null, req.guild);
 	},
 
 
 	del: function(req, res) {
-		return req.guild.removeAllMembers(function(err) {
+		req.guild.removeAllMembers(function(err) {
 			if(err) {
 				return res.apiOut(err);
 			}
 
-			return req.guild.remove(res.apiOut);
+			return req.guild.remove(function(err) {
+				if(err) {
+					res.apiOut(err);
+				}
+
+				return res.status(204).send();
+			});
 		});
 	}
 
 };
-
-
-var actions = {
-
-	incGp: function(data, session, callback) {
-		Guild.incGp(data.guildId, data.userId, callback);
-	},
-};
-
-module.exports = fns;
