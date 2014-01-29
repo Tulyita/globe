@@ -3,13 +3,54 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var nameDisplayDoc = require('./../schemas/nameDisplayDoc');
-var memberDoc = require('./memberDoc');
+var nameDisplayDoc = require('./nameDisplayDoc');
 var isName = require('../../validators/isName');
 var isGuildDesc = require('../../validators/isGuildDesc');
+var isSite = require('../../validators/isSite');
+var isGroup = require('../../validators/isGroup');
 
 var nameSchema = new Schema(nameDisplayDoc);
-var memberSchema = new Schema(memberDoc);
+
+var MemberSchema = new Schema({
+	_id: {
+		type: mongoose.Schema.Types.ObjectId,
+		required: true
+	},
+	name: {
+		type: String,
+		validate: isName,
+		required: true
+	},
+	site: {
+		type: String,
+		validate: isSite,
+		required: true
+	},
+	group: {
+		type: String,
+		validate: isGroup,
+		required: true
+	},
+	mod: {
+		type: Boolean,
+		default: false
+	},
+	gpDay: {
+		type: Number,
+		min: 0,
+		default: 0
+	},
+	gpWeek: {
+		type: Number,
+		min: 0,
+		default: 0
+	},
+	gpLife: {
+		type: Number,
+		min: 0,
+		default: 0
+	}
+});
 
 var GuildSchema = new Schema({
 	_id: {
@@ -59,7 +100,7 @@ var GuildSchema = new Schema({
 		default: 0
 	},
 	owners: [nameSchema],
-	members: [memberSchema],
+	members: [MemberSchema],
 	kicks: [nameSchema],
 	applicants: [nameSchema],
 	invitations: [nameSchema]
@@ -70,11 +111,8 @@ GuildSchema.statics.ASK = 'ask';
 GuildSchema.statics.OPEN = 'open';
 
 
-require('./geters')(GuildSchema);
-require('./lists')(GuildSchema);
-require('./gp')(GuildSchema);
-
-
+require('./guildGeters')(GuildSchema);
+require('./guildMethods')(GuildSchema);
 
 
 

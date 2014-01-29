@@ -8,7 +8,7 @@ var User = require('../../../../server/models/user');
 var Guild = require('../../../../server/models/guild');
 
 
-describe('guild/lists', function() {
+describe('guildMethods', function() {
 
 
 	///////////////////////////////////////////////////////////
@@ -144,6 +144,55 @@ describe('guild/lists', function() {
 					expect(user.guild).toBe('cats');
 					done(err);
 				});
+			});
+		});
+	});
+
+
+	describe('incGp', function() {
+
+		var guild, userId;
+
+		beforeEach(function(done) {
+			userId = mongoose.Types.ObjectId();
+
+			var user = {
+				_id: userId,
+				name: 'aaaa',
+				site: 'j',
+				group: 'u',
+				siteUserId: 'abc'
+			};
+
+			User.create(user, function() {
+				Guild.create({_id: 'cats', members: [user]}, function(err, _guild_) {
+					guild = _guild_;
+					done(err);
+				});
+			});
+		});
+
+		afterEach(function() {
+			mockgoose.reset();
+		});
+
+		it('should inc guild level gp counters', function(done) {
+			guild.incGp('baduserid', 5, function(err) {
+				expect(guild.gp).toBe(5);
+				expect(guild.gpDay).toBe(5);
+				expect(guild.gpWeek).toBe(5);
+				expect(guild.gpLife).toBe(5);
+				done(err);
+			});
+		});
+
+		it('should inc user level gp counters', function(done) {
+			guild.incGp(userId, 6, function(err) {
+				expect(err).toBeFalsy();
+				expect(guild.members[0].gpDay).toBe(6);
+				expect(guild.members[0].gpWeek).toBe(6);
+				expect(guild.members[0].gpLife).toBe(6);
+				done(err);
 			});
 		});
 	});
