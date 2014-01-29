@@ -18,44 +18,44 @@ module.exports = function(globe) {
 	// middleware
 	var applicantExists = require('middleware/applicantExists');
 	var checkUser = require('middleware/checkUser');
-	var checkGuildMod = require('./routes/guilds/middleware/checkGuildMod');
-	var checkOwner = require('./routes/guilds/middleware/checkOwner');
-	var checkOwnerOrSelf = require('./routes/guilds/middleware/checkOwnerOrSelf');
-	var checkSelf = require('./routes/guilds/middleware/checkSelf');
+	var checkGuildMod = require('./routes/guilds/middleware/isGuildMod');
+	var checkOwner = require('./routes/guilds/middleware/isOwner');
+	var checkOwnerOrSelf = require('./routes/guilds/middleware/isOwnerOrSelf');
+	var checkSelf = require('./routes/guilds/middleware/isSelf');
 	var invitationExists = require('./routes/guilds/middleware/invitationExists');
 	var loadGuild = require('./routes/guilds/middleware/loadGuild');
-	var modExists = require('./routes/guilds/middleware/modExists');
+	var modExists = require('./routes/guilds/middleware/guildModExists');
 
 	// routes
 	globe.get('/guilds', guilds.get);
 	globe.put('/guilds/:guildId', checkUser, guild.put);
 	globe.get('/guilds/:guildId', loadGuild, guild.get);
-	globe.del('/guilds/:guildId', loadGuild, checkOwner, guild.del);
+	globe.del('/guilds/:guildId', loadGuild, isOwner, guild.del);
 
 	globe.get('/guilds/:guildId/members', loadGuild, members.get);
 	globe.get('/guilds/:guildId/members/:userId', loadGuild, member.get);
 
 	globe.get('/guilds/:guildId/kicks', loadGuild, kicks.get);
 	globe.get('/guilds/:guildId/kicks/:userId', loadGuild, kick.get);
-	globe.put('/guilds/:guildId/kicks/:userId', loadGuild, checkGuildMod, kick.put);
+	globe.put('/guilds/:guildId/kicks/:userId', loadGuild, isGuildMod, kick.put);
 
 	globe.get('/guilds/:guildId/applicants', loadGuild, applicants.get);
-	globe.put('/guilds/:guildId/applicants/:userId', loadGuild, checkSelf, applicant.put);
-	globe.post('/guilds/:guildId/applicants/:userId', loadGuild, checkOwner, applicantExists, applicant.post);
+	globe.put('/guilds/:guildId/applicants/:userId', loadGuild, isSelf, applicant.put);
+	globe.post('/guilds/:guildId/applicants/:userId', loadGuild, isOwner, applicantExists, applicant.post);
 	globe.get('/guilds/:guildId/applicants/:userId', loadGuild, applicantExists, applicant.get);
-	globe.del('/guilds/:guildId/applicants/:userId', loadGuild, checkOwnerOrSelf, applicantExists, applicant.del);
+	globe.del('/guilds/:guildId/applicants/:userId', loadGuild, isOwnerOrSelf, applicantExists, applicant.del);
 
 	globe.get('/guilds/:guildId/invitations', loadGuild, invitations.get);
-	globe.put('/guilds/:guildId/invitations/:userId', loadGuild, checkOwner, invitation.put);
+	globe.put('/guilds/:guildId/invitations/:userId', loadGuild, isOwner, invitation.put);
 	globe.get('/guilds/:guildId/invitations/:userId', loadGuild, invitationExists, invitation.get);
-	globe.post('/guilds/:guildId/invitations/:userId', loadGuild, checkSelf, invitationExists, invitation.post);
-	globe.del('/guilds/:guildId/invitations/:userId', loadGuild, checkOwnerOrSelf, invitationExists, invitation.del);
+	globe.post('/guilds/:guildId/invitations/:userId', loadGuild, isSelf, invitationExists, invitation.post);
+	globe.del('/guilds/:guildId/invitations/:userId', loadGuild, isOwnerOrSelf, invitationExists, invitation.del);
 
 	globe.get('/guilds/:guildId/settings', loadGuild, settings.get);
-	globe.post('/guilds/:guildId/settings', loadGuild, checkOwner, settings.post);
+	globe.post('/guilds/:guildId/settings', loadGuild, isOwner, settings.post);
 
 	globe.get('/guilds/:guildId/mods', loadGuild, mods.get);
-	globe.put('/guilds/:guildId/mods/:userId', loadGuild, checkOwner, mod.put);
-	globe.get('/guilds/:guildId/mods/:userId', loadGuild, modExists, mod.get);
-	globe.del('/guilds/:guildId/mods/:userId', loadGuild, checkOwner, modExists, mod.del);
+	globe.put('/guilds/:guildId/mods/:userId', loadGuild, isOwner, mod.put);
+	globe.get('/guilds/:guildId/mods/:userId', loadGuild, guildModExists, mod.get);
+	globe.del('/guilds/:guildId/mods/:userId', loadGuild, isOwner, guildModExists, mod.del);
 };
