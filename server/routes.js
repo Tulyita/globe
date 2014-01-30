@@ -10,6 +10,7 @@ module.exports = function(globe) {
 	var avatars = require('./routes/avatars');
 	var ban = require('./routes/ban');
 	var bans = require('./routes/bans');
+	var friend = require('./routes/friend');
 	var friends = require('./routes/friends');
 	var messages = require('./routes/messages');
 	var reports = require('./routes/messages');
@@ -28,6 +29,7 @@ module.exports = function(globe) {
 	var rateLimit = require('./middleware/rateLimit');
 	var continueSession = require('./middleware/continueSession');
 	var loadUser = require('./middleware/loadUser');
+	var loadMyself = require('./middleware/loadMyself');
 
 	// routes
 	globe.get('/avatars/:filename', avatars.get);
@@ -36,8 +38,10 @@ module.exports = function(globe) {
 	globe.get('/bans/:userId', loadUser, ban.get);
 	globe.post('/bans/:userId', continueSession, checkMod, rateLimit('post:bans'), loadUser, ban.post);
 
-	globe.get('/friends', continueSession, friends.get);
-	globe.post('/friends', continueSession, friends.post);
+	globe.get('/friends', continueSession, loadMyself, friends.get);
+	globe.get('/friends/:userId', continueSession, loadMyself, friend.get);
+	globe.put('/friends/:userId', continueSession, loadMyself, loadUser, friend.put);
+	globe.del('/friends/:userId', continueSession, loadMyself, friend.del);
 
 	globe.get('/messages', continueSession, messages.get);
 	globe.post('/messages', continueSession, rateLimit('post:messages'), messages.post);

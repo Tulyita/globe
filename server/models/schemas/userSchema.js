@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('lodash');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var isGroup = require('../../validators/isGroup');
@@ -63,5 +64,19 @@ var UserSchema = new Schema({
 		type: [new Schema(banDoc)]
 	}
 });
+
+
+UserSchema.methods.getFriend = function(userId) {
+	return _.where(this.friends, {id: String(userId)})[0];
+};
+
+UserSchema.methods.removeFriend = function(userId) {
+	this.friends = _.filter(this.friends, function(user) {
+		return user.id !== String(userId);
+	});
+	return this.friends;
+};
+
+
 
 module.exports = UserSchema;
