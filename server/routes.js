@@ -8,6 +8,7 @@ module.exports = function(globe) {
 
 	// endpoints
 	var avatars = require('./routes/avatars');
+	var ban = require('./routes/ban');
 	var bans = require('./routes/bans');
 	var friends = require('./routes/friends');
 	var messages = require('./routes/messages');
@@ -32,7 +33,8 @@ module.exports = function(globe) {
 	globe.get('/avatars/:filename', avatars.get);
 
 	globe.get('/bans', bans.get);
-	globe.post('/bans', continueSession, checkMod, rateLimit('post:bans'), bans.post);
+	globe.get('/bans/:userId', loadUser, ban.get);
+	globe.post('/bans/:userId', continueSession, checkMod, rateLimit('post:bans'), loadUser, ban.post);
 
 	globe.get('/friends', continueSession, friends.get);
 	globe.post('/friends', continueSession, friends.post);
