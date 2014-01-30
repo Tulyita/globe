@@ -1,43 +1,40 @@
-(function() {
-	'use strict';
+'use strict';
 
-	// initialize
-	var express = require('express');
-	var globe = express();
-
-
-	// mongoose connect
-	var mongoose = require('mongoose');
-	require('./fns/mongoose/findByIdAndSave').attach(mongoose);
-	require('./fns/mongoose/findOneAndSave').attach(mongoose);
-	require('./fns/mongoose/validatedUpdate').attach(mongoose);
-	mongoose.connect(process.env.MONGO_URI);
+// initialize
+var express = require('express');
+var globe = express();
 
 
-	// redis connect
-	var redis = require('./fns/redisSession');
-	redis.connect(process.env.REDIS_URI);
+// mongoose connect
+var mongoose = require('mongoose');
+require('./fns/mongoose/findByIdAndSave').attach(mongoose);
+require('./fns/mongoose/findOneAndSave').attach(mongoose);
+require('./fns/mongoose/validatedUpdate').attach(mongoose);
+mongoose.connect(process.env.MONGO_URI);
 
 
-	// middleware
-	require('./middleware')(globe);
+// redis connect
+var redis = require('./fns/redisSession');
+redis.connect(process.env.REDIS_URI);
 
 
-	// routes
-	require('./routes')(globe);
+// middleware
+require('./middleware')(globe);
 
 
-	// last ditch error handler
-	process.on('uncaughtException', function (err) {
-		console.log('unhandled error', err, err.stack);
-	});
+// routes
+require('./routes')(globe);
 
 
-	// listen for requests
-	globe.listen(process.env.PORT || 9001);
+// last ditch error handler
+process.on('uncaughtException', function (err) {
+	console.log('unhandled error', err, err.stack);
+});
 
 
-	// export globe for possible extending
-	module.exports = globe;
+// listen for requests
+globe.listen(process.env.PORT || 9001);
 
-}());
+
+// export globe for possible extending
+module.exports = globe;
