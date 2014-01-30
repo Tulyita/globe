@@ -21,7 +21,10 @@ module.exports = {
 	del: function(req, res) {
 		req.user.group = groups.USER;
 		return req.user.save(function(err) {
-			res.apiOut(err, req.user);
+			if(err) {
+				return res.apiOut(err);
+			}
+			return res.send(204, '');
 		});
 	}
 };
