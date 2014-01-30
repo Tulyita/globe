@@ -3,7 +3,7 @@
 var groups = require('../config/groups');
 
 module.exports = function(req, res, next) {
-	if (req.session && req.session._id && (req.user.group === groups.MOD || req.user.group === groups.ADMIN)) {
+	if (req.session && req.session._id && req.user.group === groups.ADMIN) {
 		next();
 	}
 	else {
