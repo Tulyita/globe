@@ -12,8 +12,8 @@ module.exports = {
 			if(err) {
 				return res.apiOut(err);
 			}
-			if(count > 2) {
-				return res.apiOut('Moderators can have at most 2 apprentices');
+			if(count >= 1) {
+				return res.apiOut('Moderators can have at most 1 apprentice');
 			}
 
 			req.user.group = groups.APPRENTICE;
@@ -22,7 +22,7 @@ module.exports = {
 					return res.apiOut(err);
 				}
 
-				return Apprentice.create({keeper: req.session._id, apprentice: req.params.userId}, function(err) {
+				return Apprentice.create({keeper: req.session._id, apprentice: req.user._id}, function(err) {
 					res.apiOut(err, req.user);
 				});
 			});
