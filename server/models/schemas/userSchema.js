@@ -65,6 +65,14 @@ var UserSchema = new Schema({
 	}
 });
 
+UserSchema.static.publicFields = {
+	_id: 1,
+	name: 1,
+	group: 1,
+	registerDate: 1,
+	loginDate: 1,
+	guild: 1
+};
 
 UserSchema.methods.getFriend = function(userId) {
 	return _.where(this.friends, {id: String(userId)})[0];

@@ -1,32 +1,23 @@
-(function() {
-	'use strict';
+'use strict';
 
-	var UserGoose = require('../models/user');
+var User = require('../models/user');
+var paginate = require('mongoose-paginate');
 
-	/**
-	 * Return the user associated with an existing session
-	 */
-	module.exports = {
 
-		get: function(req, res) {
+module.exports = {
 
-			var userId = req.param('userId') || req.session._id;
+	get: function(req, res) {
 
-			if(!userId) {
-				return res.apiOut('No userId provided');
+		var page = req.param('page') || 0;
+		var count = req.param('count') || 10;
+
+		User.paginate({}, User.publicFields, page, count, function(error, pageCount, paginatedResults) {
+			if (error) {
+				console.error(error);
+			} else {
+				console.log('Pages:', pageCount);
+				console.log(paginatedResults);
 			}
-
-			return UserGoose.findById(userId, function(err, user) {
-				if(err) {
-					return res.apiOut(err);
-				}
-				if(!user) {
-					return res.apiOut({code: 200, message: 'no user found with user id "'+userId+'".'});
-				}
-				return res.apiOut(null, user);
-			});
-		}
-	};
-
-
-}());
+		});
+	}
+};

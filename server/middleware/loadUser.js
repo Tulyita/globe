@@ -14,7 +14,7 @@ module.exports = function(query) {
 
 		query._id = req.params.userId;
 
-		User.findOne(query, function(err, user) {
+		User.findOne(query, User.publicFields, function(err, user) {
 			if(err) {
 				return res.apiOut(err);
 			}

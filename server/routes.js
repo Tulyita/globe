@@ -16,6 +16,7 @@ module.exports = function(globe) {
 	var reports = require('./routes/messages');
 	var tests = require('./routes/tests');
 	var sessions = require('./routes/sessions');
+	var user = require('./routes/user');
 	var users = require('./routes/users');
 	var moderator = require('./routes/moderator');
 	var moderators = require('./routes/moderators');
@@ -56,6 +57,7 @@ module.exports = function(globe) {
 	globe.get('/sessions', sessions.get);
 
 	globe.get('/users', users.get);
+	globe.get('/users/:userId', loadUser, users.get);
 
 	globe.get('/moderators', moderators.get);
 	globe.get('/moderators/:userId', loadUser(groups.MOD), moderator.get);
