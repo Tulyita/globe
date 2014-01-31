@@ -108,8 +108,6 @@ module.exports = function (grunt) {
 	]);
 
 	grunt.registerTask('serve', [
-		'jasmine_node',
-		'jshint',
 		'develop',
 		'watch'
 	]);

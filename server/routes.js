@@ -15,7 +15,7 @@ module.exports = function(globe) {
 	var messages = require('./routes/messages');
 	var reports = require('./routes/messages');
 	var tests = require('./routes/tests');
-	var tokens = require('./routes/tokens');
+	var sessions = require('./routes/sessions');
 	var users = require('./routes/users');
 	var moderator = require('./routes/moderator');
 	var moderators = require('./routes/moderators');
@@ -51,8 +51,9 @@ module.exports = function(globe) {
 
 	globe.get('/tests', tests.get);
 
-	globe.get('/tokens', rateLimit('get:tokens'), tokens.get);
-	globe.del('/tokens', tokens.del);
+	globe.post('/sessions', sessions.post);
+	globe.del('/sessions', sessions.del);
+	globe.get('/sessions', sessions.get);
 
 	globe.get('/users', users.get);
 

@@ -20,10 +20,12 @@ avatars.get = function(req, res) {
 			return res.apiOut(err);
 		}
 		if(!user) {
-			return res.apiOut('user not found.');
+			return res.apiOut('user not found');
 		}
 
-		return gm(user.avatar).toBuffer(function(err, buffer) {
+		var avatar = user.avatar || 'https://guestville.jiggmin.com/avatar.php';
+
+		return gm(avatar).toBuffer(function(err, buffer) {
 			if(err) {
 				return res.apiOut(err);
 			}

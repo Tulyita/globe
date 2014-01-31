@@ -10,7 +10,7 @@ var jigg = {
 
 	authenticate: function(data, callback) {
 
-		request.post('https://jiggmin.com/-use-login-token.php', {form: {token: data.jiggToken}}, function(err, response, body) {
+		request.post('https://jiggmin.com/-use-login-token.php', {form: {token: data.token}}, function(err, response, body) {
 			if(err) {
 				return callback(err);
 			}
@@ -35,6 +35,11 @@ var jigg = {
 				group: jigg.powerToGroup(body.power),
 				beta: body.beta
 			};
+
+			// remove empty string which messes with validation
+			if(!verified.avatar) {
+				delete verified.avatar;
+			}
 
 			return callback(err, verified);
 		});

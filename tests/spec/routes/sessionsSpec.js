@@ -2,7 +2,7 @@
 
 var mongoose = require('mongoose');
 var sinon = require('sinon');
-var tokens = require('../../../server/routes/tokens');
+var sessions = require('../../../server/routes/sessions');
 var User = require('../../../server/models/user');
 var IpBan = require('../../../server/models/ipBan');
 var session = require('../../../server/fns/redisSession');
@@ -10,29 +10,29 @@ var authServices = require('../../../server/fns/auth/authServices');
 var findOneAndSave = require('../../../server/fns/mongoose/findOneAndSave');
 findOneAndSave.attach(mongoose);
 
-describe('tokensGet', function() {
+describe('sessionsGet', function() {
 
 
 	//////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 
-	describe('get', function() {
+	describe('post', function() {
 
 		beforeEach(function() {
-			sinon.stub(tokens, 'checkIpBan');
+			sinon.stub(sessions, 'checkIpBan');
 			sinon.stub(authServices, 'authenticate');
-			sinon.stub(tokens, 'saveUser');
-			sinon.stub(tokens, 'processUser');
-			sinon.stub(tokens, 'startSession');
+			sinon.stub(sessions, 'saveUser');
+			sinon.stub(sessions, 'processUser');
+			sinon.stub(sessions, 'startSession');
 		});
 
 		afterEach(function() {
-			tokens.checkIpBan.restore();
+			sessions.checkIpBan.restore();
 			authServices.authenticate.restore();
-			tokens.saveUser.restore();
-			tokens.processUser.restore();
-			tokens.startSession.restore();
+			sessions.saveUser.restore();
+			sessions.processUser.restore();
+			sessions.startSession.restore();
 		});
 
 		it('should run through a bunch of functions', function() {
@@ -40,19 +40,19 @@ describe('tokensGet', function() {
 			var authReply = {name: 'bob', site: 'j', siteUserId: '123', group: 'u'};
 			var user = {_id: mongoose.Types.ObjectId(), name: 'bob', site: 'j', siteUserId: '123', group: 'u', bans: []};
 
-			tokens.checkIpBan
+			sessions.checkIpBan
 				.withArgs('184.106.201.44')
 				.yields(null, 0);
 			authServices.authenticate
 				.withArgs(authInfo)
 				.yields(null, authReply);
-			tokens.saveUser
+			sessions.saveUser
 				.withArgs(authReply)
 				.yields(null, user);
-			tokens.processUser
+			sessions.processUser
 				.withArgs(user)
 				.yields(null);
-			tokens.startSession
+			sessions.startSession
 				.yields(null, 'bestSessionEver49');
 
 			var req = {
@@ -66,12 +66,12 @@ describe('tokensGet', function() {
 				apiOut: sinon.stub()
 			};
 
-			tokens.get(req, res);
+			sessions.post(req, res);
 
-			expect(tokens.checkIpBan.callCount).toBe(1);
+			expect(sessions.checkIpBan.callCount).toBe(1);
 			expect(authServices.authenticate.callCount).toBe(1);
-			expect(tokens.saveUser.callCount).toBe(1);
-			expect(tokens.startSession.callCount).toBe(1);
+			expect(sessions.saveUser.callCount).toBe(1);
+			expect(sessions.startSession.callCount).toBe(1);
 			expect(res.apiOut.args[0]).toEqual([null, {token: 'bestSessionEver49'}]);
 		});
 	});
@@ -95,13 +95,13 @@ describe('tokensGet', function() {
 
 		it('should yield null if ip has fewer than 3 bans', function() {
 			var callback = sinon.stub();
-			tokens.checkIpBan('niceip', callback);
+			sessions.checkIpBan('niceip', callback);
 			expect(callback.args[0]).toEqual([null]);
 		});
 
 		it('it should return an error if 3 bans are found', function() {
 			var callback = sinon.stub();
-			tokens.checkIpBan('badip', callback);
+			sessions.checkIpBan('badip', callback);
 			expect(callback.args[0]).toEqual(['This ip address has been temporarily blocked due to frequent abuse.']);
 		});
 	});
@@ -131,7 +131,7 @@ describe('tokensGet', function() {
 				group: 'u'
 			};
 			var callback = sinon.stub();
-			tokens.saveUser(verified, callback);
+			sessions.saveUser(verified, callback);
 			expect(callback.args[0]).toEqual([null, {_id: 'asd', name: 'Bill', site: 'j', group: 'u'}]);
 		});
 
@@ -146,7 +146,7 @@ describe('tokensGet', function() {
 				group: 'u'
 			};
 			var callback = sinon.stub();
-			tokens.saveUser(verified, callback);
+			sessions.saveUser(verified, callback);
 			expect(callback.args[0]).toEqual(['mongo error']);
 		});
 	});
@@ -159,20 +159,20 @@ describe('tokensGet', function() {
 	describe('processUser', function() {
 
 		beforeEach(function() {
-			sinon.stub(tokens, 'findActiveBan');
+			sinon.stub(sessions, 'findActiveBan');
 		});
 
 		afterEach(function() {
-			tokens.findActiveBan.restore();
+			sessions.findActiveBan.restore();
 		});
 
 		it('should not alter user if there are no active bans', function() {
-			tokens.findActiveBan.withArgs([]).returns(null);
+			sessions.findActiveBan.withArgs([]).returns(null);
 			var user = {
 				bans: []
 			};
 			var callback = sinon.stub();
-			tokens.processUser(user, callback);
+			sessions.processUser(user, callback);
 			expect(callback.args[0]).toEqual([null]);
 			expect(user.silencedUntil).toBe(undefined);
 		});
@@ -180,12 +180,12 @@ describe('tokensGet', function() {
 		it('should set silencedUntil on user if there is an active silence', function() {
 			var expireDate = new Date(1);
 			var ban = {type: 'silence', expireDate: expireDate, reason: 'spam'};
-			tokens.findActiveBan.withArgs([ban]).returns(ban);
+			sessions.findActiveBan.withArgs([ban]).returns(ban);
 			var user = {
 				bans: [ban]
 			};
 			var callback = sinon.stub();
-			tokens.processUser(user, callback);
+			sessions.processUser(user, callback);
 			expect(callback.args[0]).toEqual([null]);
 			expect(user.silencedUntil).toEqual(new Date(1));
 		});
@@ -193,12 +193,12 @@ describe('tokensGet', function() {
 		it('should yield an error if the user is banned', function() {
 			var expireDate = new Date(1);
 			var ban = {type: 'ban', expireDate: expireDate, reason: 'spam'};
-			tokens.findActiveBan.withArgs([ban]).returns(ban);
+			sessions.findActiveBan.withArgs([ban]).returns(ban);
 			var user = {
 				bans: [ban]
 			};
 			var callback = sinon.stub();
-			tokens.processUser(user, callback);
+			sessions.processUser(user, callback);
 			expect(callback.args[0]).toEqual(['This account has been banned until Wed Dec 31 1969 19:00:00 GMT-0500 (EST). Reason: spam']);
 		});
 	});
@@ -225,7 +225,7 @@ describe('tokensGet', function() {
 			var expectedSessionData = {_id: userId, name: 'bob', site: 'j', group: 'u', silencedUntil: new Date(1), guild: 'best guild'};
 			var callback = sinon.stub();
 			session.make.withArgs(userId, expectedSessionData).yields(null, 'OK', token);
-			tokens.startSession(user, callback);
+			sessions.startSession(user, callback);
 			expect(callback.args[0]).toEqual([null, token]);
 		});
 
@@ -235,7 +235,7 @@ describe('tokensGet', function() {
 			var expectedSessionData = {_id: userId, name: 'bob', site: 'j', group: 'u', silencedUntil: new Date(1), guild: 'best guild'};
 			var callback = sinon.stub();
 			session.make.withArgs(userId, expectedSessionData).yields('redis error');
-			tokens.startSession(user, callback);
+			sessions.startSession(user, callback);
 			expect(callback.args[0]).toEqual(['redis error']);
 		});
 	});
@@ -248,7 +248,7 @@ describe('tokensGet', function() {
 	describe('findActiveBan', function() {
 
 		it('should return null if given an empty array', function() {
-			var ban = tokens.findActiveBan([]);
+			var ban = sessions.findActiveBan([]);
 			expect(ban).toBe(null);
 		});
 
@@ -257,7 +257,7 @@ describe('tokensGet', function() {
 				{type: 'ban', expireDate: new Date( new Date().getTime()+10000 )},
 				{type: 'silence', expireDate: new Date( new Date().getTime()+20000 )}
 			];
-			var ban = tokens.findActiveBan(bans);
+			var ban = sessions.findActiveBan(bans);
 			expect(ban.type).toBe('ban');
 		});
 
@@ -266,7 +266,7 @@ describe('tokensGet', function() {
 				{type: 'ban', expireDate: new Date( new Date().getTime()-10000 )},
 				{type: 'silence', expireDate: new Date( new Date().getTime()-20000 )}
 			];
-			var ban = tokens.findActiveBan(bans);
+			var ban = sessions.findActiveBan(bans);
 			expect(ban).toBe(null);
 		});
 
@@ -276,7 +276,7 @@ describe('tokensGet', function() {
 				{type: 'silence', expireDate: new Date( new Date().getTime()+20000 )},
 				{type: 'ban', expireDate: new Date( new Date().getTime()-20000 )}
 			];
-			var ban = tokens.findActiveBan(bans);
+			var ban = sessions.findActiveBan(bans);
 			expect(ban.type).toBe('silence');
 		});
 	});
@@ -312,7 +312,7 @@ describe('tokensGet', function() {
 			var res = {
 				apiOut: sinon.stub()
 			};
-			tokens.del(req, res);
+			sessions.del(req, res);
 			expect(res.apiOut.args[0]).toEqual([null]);
 		});
 	});
