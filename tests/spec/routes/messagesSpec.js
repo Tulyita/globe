@@ -101,7 +101,7 @@ describe('messagesPost', function() {
 				session: me,
 				connection: {remoteAddress: '12.52.251.0'}
 			};
-			var message = msgs.formMessage(req);
+			var message = msgs._formMessage(req);
 			expect(message).toEqual({body: 'hi', fromUser: me, ip: '12.52.251.0', date: message.date, _id: message._id});
 		});
 	});
@@ -118,11 +118,11 @@ describe('messagesPost', function() {
 				date: new Date()
 			};
 
-			msgs.saveMessage(toUserId, message, function(err) {
+			msgs._saveMessage(toUserId, message, function(err) {
 				expect(err).toBeFalsy();
 
 				message._id = mongoose.Types.ObjectId();
-				msgs.saveMessage(toUserId, message, function(err) {
+				msgs._saveMessage(toUserId, message, function(err) {
 					expect(err).toBeFalsy();
 
 					User.findById(toUserId, function(err, user) {

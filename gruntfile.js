@@ -73,6 +73,7 @@ module.exports = function (grunt) {
 
 
 		// shell commands
+		// jasmine-node tests/e2e --autotest --watch server --captureExceptions
 		shell: {
 			jasmineOnce: {
 				command: 'jasmine-node tests/spec --forceexit',
