@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
+var redisSession = require('../fns/redisSession');
 var User = require('../models/user');
 var IpBan = require('../models/ipBan');
 var isBans = require('../validators/isBans');
@@ -66,6 +67,24 @@ var determineDuration = function(bans) {
 };
 
 
+/**
+ * edit or create new values in the user's session
+ * @param {ObjectId} userId
+ * @param {Object} ban
+ * @param {Function} callback
+ */
+var updateSession = function(userId, ban, callback) {
+	var session = {};
+	if(ban.type === 'ban') {
+		session.bannedUntil = ban.expireDate;
+	}
+	if(ban.type === 'silence') {
+		session.silencedUntil = ban.expireDate;
+	}
+	redisSession.update(userId, session, callback);
+};
+
+
 
 module.exports = {
 
@@ -73,6 +92,7 @@ module.exports = {
 	_saveIpBan: saveIpBan,
 	_pruneOldBans: pruneOldBans,
 	_determineDuration: determineDuration,
+	_updateSession: updateSession,
 
 
 	/**
@@ -104,7 +124,12 @@ module.exports = {
 					return res.apiOut(err);
 				}
 
-				return res.apiOut(null, newBan);
+				return updateSession(req.params.userId, newBan, function(err) {
+					if(err) {
+						return res.apiOut(err);
+					}
+					return res.apiOut(null, newBan);
+				});
 			});
 		});
 	},

@@ -95,6 +95,16 @@ describe('bans', function() {
 	//////////////////////////////////////////////////////////////////////////////////
 	describe('post', function() {
 
+		var redisSession = require('../../../server/fns/redisSession');
+
+		beforeEach(function() {
+			sinon.stub(redisSession, 'update').yields(null);
+		});
+
+		afterEach(function() {
+			redisSession.update.restore();
+		});
+
 		it('should save a ban to mongo', function(done) {
 			var req = {
 				params: {

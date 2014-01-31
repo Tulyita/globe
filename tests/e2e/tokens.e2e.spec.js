@@ -20,6 +20,6 @@ describe('/tokens', function() {
 				expect(data.token).toBeTruthy();
 				done(error);
 			});
-		});
+		}, 10000);
 	});
 });

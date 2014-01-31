@@ -135,4 +135,65 @@ describe('redisSession', function() {
 	});
 
 
+	describe('update', function() {
+
+		it('should change an existing session', function(done) {
+			var token = 'abc-123';
+			client.set('abc', JSON.stringify({token: token, name:'Billy'}), function(err, result) {
+				expect(err).toBeFalsy();
+				expect(result).toBe('OK');
+
+				redisSession.update('abc', {name: 'Zap', hats: 1}, function(err, result) {
+					expect(err).toBe(null);
+					expect(result).toBe('OK');
+
+					client.get('abc', function(err, doc) {
+						expect(err).toBeFalsy();
+						expect(JSON.parse(doc)).toEqual({token: token, name: 'Zap', hats: 1});
+						done();
+					});
+				});
+			});
+		});
+
+		it('should broadcast session changes', function(done) {
+
+			var redisClient = require('../../../server/fns/redisConnect')('', function(err) {
+				if(err) return done(err);
+
+				var token = 'abc-123';
+
+				redisClient.subscribe('sessionUpdate');
+				redisClient.on('message', function(channel, message) {
+					expect(channel).toBe('sessionUpdate');
+					expect(message).toBe('abc');
+					redisClient.unsubscribe('sessionUpdate');
+					done();
+				});
+
+				client.set('abc', JSON.stringify({token: token, name:'Billy'}), function(err, result) {
+					expect(err).toBeFalsy();
+					expect(result).toBe('OK');
+
+					redisSession.update('abc', {name: 'Zap', hats: 1}, function(err, result) {
+						expect(err).toBe(null);
+						expect(result).toBe('OK');
+					});
+				});
+			});
+		});
+
+		it('should fail silently if the session does not exist', function(done) {
+			redisSession.update('zzz', {name: 'Zap', hats: 1}, function(err, result) {
+				expect(err).toBe(null);
+				expect(result).toBeFalsy();
+
+				client.get('zzz', function(err, doc) {
+					expect(err).toBeFalsy();
+					expect(doc).toBeFalsy();
+					done();
+				});
+			});
+		});
+	});
 });

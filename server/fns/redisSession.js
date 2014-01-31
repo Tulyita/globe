@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('lodash');
 var redis = require('redis');
 var createRandomString = require('../fns/createRandomString');
 var redisConnect = require('../fns/redisConnect');
@@ -58,12 +59,40 @@ redisSession.set = function(token, data, callback) {
 
 
 /**
+ * Update a session with new values
+ * @param userId
+ * @param data
+ * @param callback
+ */
+redisSession.update = function(userId, data, callback) {
+	redisSession._get(userId+'-bla', function(err, result) {
+		if(err === 'no session found with this token') {
+			return callback(null, null);
+		}
+		if(err) {
+			return callback(err);
+		}
+
+		_.assign(result, data);
+		return redisSession.set(userId+'-bla', result, function(err, result) {
+			if(err) {
+				return callback(err);
+			}
+
+			client.publish('sessionUpdate', userId);
+			return callback(null, result);
+		});
+	});
+};
+
+
+/**
  * Get data from a session
  * @param {string} token
  * @param {Function} callback
  * @returns {void}
  */
-redisSession.get = function(token, callback) {
+redisSession._get = function(token, callback) {
 	var userId = token.split('-')[0];
 
 	client.get(userId, function(err, result) {
@@ -75,10 +104,25 @@ redisSession.get = function(token, callback) {
 		}
 
 		var obj = JSON.parse(result);
-		if(obj.token !== token) {
-			return callback('not the right token');
-		}
 
+		return callback(null, obj);
+	});
+};
+
+
+/**
+ * Only return a session if the token matches
+ * @param token
+ * @param callback
+ */
+redisSession.get = function(token, callback) {
+	redisSession._get(token, function(err, obj) {
+		if(err) {
+			return callback(err);
+		}
+		if(obj.token !== token) {
+			return callback('Token does not match');
+		}
 		return callback(null, obj);
 	});
 };
