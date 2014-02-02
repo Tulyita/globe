@@ -15,7 +15,8 @@ module.exports = function(globe) {
 	var friend = require('./routes/friend');
 	var friends = require('./routes/friends');
 	var messages = require('./routes/messages');
-	var reports = require('./routes/messages');
+	var report = require('./routes/report');
+	var reports = require('./routes/reports');
 	var tests = require('./routes/tests');
 	var sessions = require('./routes/sessions');
 	var user = require('./routes/user');
@@ -52,6 +53,8 @@ module.exports = function(globe) {
 	globe.get('/conversations', continueSession, loadMyself, conversations.get);
 	globe.get('/conversations/:userId', continueSession, loadMyself, conversation.get);
 
+	globe.get('/reports/:reportId', continueSession, checkMod, report.get);
+	globe.post('/reports/:reportId', continueSession, checkMod, report.post);
 	globe.get('/reports', continueSession, checkMod, reports.get);
 	globe.post('/reports', continueSession, checkLogin, rateLimit('post:reports'), reports.post);
 
