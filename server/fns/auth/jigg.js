@@ -15,7 +15,7 @@ var jigg = {
 				return callback(err);
 			}
 			if(!body) {
-				return('no reply from Jiggmin.com');
+				return callback('no reply from Jiggmin.com');
 			}
 
 			body = JSON.parse(body);

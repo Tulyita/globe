@@ -26,6 +26,12 @@ describe('messages', function() {
 					site: 'j',
 					group: 'u'
 				},
+				toUser: {
+					_id: mongoose.Types.ObjectId(),
+					name: 'alphonse',
+					site: 'a',
+					group: 'p'
+				},
 				body: 'hello',
 				date: new Date()
 			}];

@@ -11,6 +11,11 @@ var MessageDoc = {
 		validate: isNameDisplay,
 		required: true
 	},
+	toUser: {
+		type: nameDisplayDoc,
+		validate: isNameDisplay,
+		required: true
+	},
 	body: {
 		type: String,
 		validate: isMessageBody,

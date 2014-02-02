@@ -10,6 +10,8 @@ module.exports = function(globe) {
 	var avatars = require('./routes/avatars');
 	var ban = require('./routes/ban');
 	var bans = require('./routes/bans');
+	var conversation = require('./routes/conversation');
+	var conversations = require('./routes/conversations');
 	var friend = require('./routes/friend');
 	var friends = require('./routes/friends');
 	var messages = require('./routes/messages');
@@ -46,6 +48,9 @@ module.exports = function(globe) {
 
 	globe.get('/messages', continueSession, messages.get);
 	globe.post('/messages', continueSession, rateLimit('post:messages'), messages.post);
+
+	globe.get('/conversations', continueSession, loadMyself, conversations.get);
+	globe.get('/conversations/:userId', continueSession, loadMyself, conversation.get);
 
 	globe.get('/reports', continueSession, checkMod, reports.get);
 	globe.post('/reports', continueSession, checkLogin, rateLimit('post:reports'), reports.post);

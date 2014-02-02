@@ -54,7 +54,7 @@ describe('jigg', function() {
 				.yields(null, 'HTTP response', JSON.stringify({user_name: 'aaaa', user_id: 434, avatar: 'http://jiggmin.com/avatar.jpg', power: 1, beta: true}));
 
 			var data = {
-				jiggToken: '123'
+				token: '123'
 			};
 			var callback = sinon.stub();
 			jigg.authenticate(data, callback);
@@ -67,7 +67,7 @@ describe('jigg', function() {
 				.yields(null, 'HTTP response', JSON.stringify({error: 'oh my'}));
 
 			var data = {
-				jiggToken: '44'
+				token: '44'
 			};
 			var callback = sinon.stub();
 			jigg.authenticate(data, callback);
@@ -80,7 +80,7 @@ describe('jigg', function() {
 				.yields('http error');
 
 			var data = {
-				jiggToken: '44'
+				token: '44'
 			};
 			var callback = sinon.stub();
 			jigg.authenticate(data, callback);
@@ -93,7 +93,7 @@ describe('jigg', function() {
 				.yields(null, 'HTTP response', JSON.stringify({banned: true, user_name: 'aaaa', user_id: 434, avatar: 'http://jiggmin.com/avatar.jpg', power: 1, beta: true}));
 
 			var data = {
-				jiggToken: '44'
+				token: '44'
 			};
 			var callback = sinon.stub();
 			jigg.authenticate(data, callback);

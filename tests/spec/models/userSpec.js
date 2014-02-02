@@ -41,6 +41,12 @@ describe('user', function() {
 						site: 'j',
 						group: 'u'
 					},
+					toUser: {
+						_id: mongoose.Types.ObjectId(),
+						name: 'sue',
+						site: 'k',
+						group: 'm'
+					},
 					date: new Date(3),
 					body: 'hi'
 				}],

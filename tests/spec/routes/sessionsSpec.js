@@ -10,7 +10,7 @@ var authServices = require('../../../server/fns/auth/authServices');
 var findOneAndSave = require('../../../server/fns/mongoose/findOneAndSave');
 findOneAndSave.attach(mongoose);
 
-describe('sessionsGet', function() {
+describe('sessions', function() {
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ describe('sessionsGet', function() {
 			expect(authServices.authenticate.callCount).toBe(1);
 			expect(sessions.saveUser.callCount).toBe(1);
 			expect(sessions.startSession.callCount).toBe(1);
-			expect(res.apiOut.args[0]).toEqual([null, {token: 'bestSessionEver49'}]);
+			expect(res.apiOut.args[0][1].token).toEqual('bestSessionEver49');
 		});
 	});
 
