@@ -39,12 +39,12 @@ module.exports = function(globe) {
 	globe.get('/avatars/:filename', avatars.get);
 
 	globe.get('/bans', bans.get);
-	globe.get('/bans/:userId', loadUser, ban.get);
-	globe.post('/bans/:userId', continueSession, checkMod, rateLimit('post:bans'), loadUser, ban.post);
+	globe.get('/bans/:userId', loadUser(), ban.get);
+	globe.post('/bans/:userId', continueSession, checkMod, rateLimit('post:bans'), loadUser(), ban.post);
 
 	globe.get('/friends', continueSession, loadMyself, friends.get);
 	globe.get('/friends/:userId', continueSession, loadMyself, friend.get);
-	globe.put('/friends/:userId', continueSession, loadMyself, loadUser, friend.put);
+	globe.put('/friends/:userId', continueSession, loadMyself, loadUser(), friend.put);
 	globe.del('/friends/:userId', continueSession, loadMyself, friend.del);
 
 	globe.get('/messages', continueSession, messages.get);

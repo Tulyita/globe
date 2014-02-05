@@ -69,6 +69,7 @@ UserSchema.static.publicFields = {
 	_id: 1,
 	name: 1,
 	group: 1,
+	site: 1,
 	registerDate: 1,
 	loginDate: 1,
 	guild: 1
