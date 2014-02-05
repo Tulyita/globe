@@ -13,9 +13,9 @@ var avatars = {};
  */
 avatars.get = function(req, res) {
 
-	var vals = avatars.parseValues(req.params.filename);
+	var values = avatars.parseValues(req.params.filename);
 
-	User.findById(vals.userId, {avatar: true}, function(err, user) {
+	User.findById(values.userId, {avatar: true}, function(err, user) {
 		if(err) {
 			return res.apiOut(err);
 		}
@@ -30,8 +30,11 @@ avatars.get = function(req, res) {
 				return res.apiOut(err);
 			}
 
-			return avatars.resizeImage(buffer, vals.width, vals.height, function(err, buffer) {
-				res.writeHead(200, {'Content-Type': 'image/gif' });
+			return avatars.resizeImage(buffer, values.width, values.height, function(err, buffer) {
+				res.writeHead(200, {
+					'Cache-Control': 'public,max-age=86400',
+					'Content-Type': 'image/gif'
+				});
 				return res.end(buffer, 'binary');
 			});
 		});

@@ -52,7 +52,7 @@ module.exports = function (grunt) {
 		develop: {
 			server: {
 				file: 'server/testServer.js',
-				nodeArgs: ['--debug']
+				nodeArgs: ['--debug=5859']
 			}
 		},
 
