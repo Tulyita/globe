@@ -20,11 +20,11 @@ module.exports = function (grunt) {
 
 		// Watches files for changes and runs tasks based on the changed files
 		watch: {
-			allJs: {
-				files: ['server/**/*.js', 'tests/**/*.js'],
-				tasks: ['jasmine_node', 'jshint'],
-				options: {nospawn: false}
-			},
+			//allJs: {
+				//files: ['server/**/*.js', 'tests/**/*.js'],
+				//tasks: ['jasmine_node', 'jshint'],
+				//options: {nospawn: false}
+			//},
 			serverJs: {
 				files: ['server/**/*.js'],
 				tasks: ['develop'],

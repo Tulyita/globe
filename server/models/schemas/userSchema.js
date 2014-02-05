@@ -74,6 +74,17 @@ UserSchema.static.publicFields = {
 	guild: 1
 };
 
+UserSchema.methods.publicData = function() {
+	var obj = {};
+	var self = this;
+	_.each(UserSchema.static.publicFields, function(val, field) {
+		if(val === 1) {
+			obj[field] = self[field];
+		}
+	});
+	return obj;
+};
+
 UserSchema.methods.getFriend = function(userId) {
 	return _.where(this.friends, {id: String(userId)})[0];
 };
