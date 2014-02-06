@@ -47,7 +47,7 @@ module.exports = function(globe) {
 	globe.put('/friends/:userId', continueSession, loadMyself, loadUser(), friend.put);
 	globe.del('/friends/:userId', continueSession, loadMyself, friend.del);
 
-	globe.get('/messages', continueSession, messages.get);
+	globe.get('/messages', continueSession, loadMyself, messages.get);
 	globe.post('/messages', continueSession, rateLimit('post:messages'), loadMyself, loadUser(null, '_id name group site messages'), messages.post);
 
 	globe.get('/conversations', continueSession, loadMyself, conversations.get);

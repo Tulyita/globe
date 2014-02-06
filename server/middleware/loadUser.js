@@ -13,6 +13,8 @@ module.exports = function(query, fields) {
 
 	return function(req, res, next) {
 
+		query._id = req.param('userId');
+
 		User.findOne(query, fields, function(err, user) {
 			if(err) {
 				return res.apiOut(err);
@@ -24,7 +26,5 @@ module.exports = function(query, fields) {
 			req.user = user;
 			return next();
 		});
-		query._id = req.param('userId');
-
 	};
 };

@@ -10,7 +10,7 @@ module.exports = {
 
 		// create an array of only the most recent message in each conversation
 		var arr = _.map(convos, function(convo) {
-			return convo[convo.length-1];
+			return convo.slice(convo.length-1, convo.length);
 		});
 
 		// sort by recentness
