@@ -3,17 +3,17 @@
 var User = require('../models/user');
 var _ = require('lodash');
 
-module.exports = function(query) {
+module.exports = function(query, fields) {
 	query = query || {};
+	fields = fields || User.publicFields;
 
 	if(_.isString(query)) {
 		query = {group: query};
 	}
 
 	return function(req, res, next) {
-		query._id = req.params.userId;
 
-		User.findOne(query, User.publicFields, function(err, user) {
+		User.findOne(query, fields, function(err, user) {
 			if(err) {
 				return res.apiOut(err);
 			}
@@ -24,6 +24,7 @@ module.exports = function(query) {
 			req.user = user;
 			return next();
 		});
+		query._id = req.param('userId');
 
 	};
 };

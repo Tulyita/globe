@@ -7,7 +7,6 @@ module.exports = {
 
 	get: function(req, res) {
 
-		console.log('session', req.session);
 		var user = req.user;
 		var obj = user.publicData();
 		obj.actions = {

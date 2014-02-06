@@ -7,22 +7,38 @@ var mongoose = require('mongoose');
 
 
 var formMessage = function(req) {
-	var message = _.pick(req.body, 'body');
-	message.fromUser = _.pick(req.session, '_id', 'name', 'site', 'group');
-	message.ip = req.connection.remoteAddress;
-	message.date = new Date();
-	message._id = mongoose.Types.ObjectId();
+	var message = {
+		_id: mongoose.Types.ObjectId(),
+		body: req.body.body,
+		toUser: _.pick(req.user, '_id', 'name', 'group', 'site'),
+		fromUser: _.pick(req.myself, '_id', 'name', 'group', 'site'),
+		ip: req.ip,
+		date: new Date()
+	};
+
 	return message;
 };
 
 
-var saveMessage = function(toUserId, message, callback) {
-	if(!isMessage(message)) {
-		return callback('Not a valid message.');
-	}
+var saveMessage = function(toUser, fromUser, message, callback) {
 
-	return User.update({_id: toUserId}, {$push: {messages: message}}, callback);
+	toUser.messages.push(message);
+	toUser.save(function(err) {
+		if(err) {
+			return callback(err);
+		}
+
+		fromUser.messages.push(message);
+		fromUser.save(function(err) {
+			if(err) {
+				return callback(err);
+			}
+			return callback(null);
+		});
+	});
 };
+
+
 
 
 module.exports = {
@@ -33,20 +49,15 @@ module.exports = {
 
 
 	get: function(req, res) {
-		User.findById(req.session._id, {messages: 1}, {}, function(err, user) {
-			if(err) {
-				return res.apiOut(err);
-			}
-			if(!user) {
-				return res.apiOut('User not found.');
-			}
-			return res.apiOut(null, user.messages);
-		});
+		return res.apiOut(null, req.myself.messages);
 	},
 
+
 	post: function(req, res) {
+
 		var message = formMessage(req);
-		saveMessage(req.body.toUserId, message, function(err) {
+
+		saveMessage(req.user, req.myself, message, function(err) {
 			if(err) {
 				return res.apiOut(err);
 			}
