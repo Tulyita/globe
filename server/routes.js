@@ -7,6 +7,8 @@ module.exports = function(globe) {
 	var groups = require('./config/groups');
 
 	// endpoints
+	var apprentice = require('./routes/apprentice');
+	var apprentices = require('./routes/apprentices');
 	var avatars = require('./routes/avatars');
 	var ban = require('./routes/ban');
 	var bans = require('./routes/bans');
@@ -15,16 +17,14 @@ module.exports = function(globe) {
 	var friend = require('./routes/friend');
 	var friends = require('./routes/friends');
 	var messages = require('./routes/messages');
-	var report = require('./routes/report');
-	var reports = require('./routes/reports');
-	var tests = require('./routes/tests');
-	var sessions = require('./routes/sessions');
-	var user = require('./routes/user');
-	var users = require('./routes/users');
 	var moderator = require('./routes/moderator');
 	var moderators = require('./routes/moderators');
-	var apprentice = require('./routes/apprentice');
-	var apprentices = require('./routes/apprentices');
+	var report = require('./routes/report');
+	var reports = require('./routes/reports');
+	var sessions = require('./routes/sessions');
+	var tests = require('./routes/tests');
+	var user = require('./routes/user');
+	var users = require('./routes/users');
 
 	// middleware
 	var checkAdmin = require('./middleware/checkAdmin');
@@ -47,6 +47,7 @@ module.exports = function(globe) {
 	globe.put('/friends/:userId', continueSession, loadMyself, loadUser(), friend.put);
 	globe.del('/friends/:userId', continueSession, loadMyself, friend.del);
 
+	globe.get('/messages/unread/count', continueSession, loadMyself, messages.getUnreadCount);
 	globe.get('/messages', continueSession, loadMyself, messages.get);
 	globe.post('/messages', continueSession, rateLimit('post:messages'), loadMyself, loadUser(null, '_id name group site messages'), messages.post);
 

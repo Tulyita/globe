@@ -4,6 +4,7 @@ var User = require('../models/user');
 var isMessage = require('../validators/isMessage');
 var _ = require('lodash');
 var mongoose = require('mongoose');
+var convoFns = require('../fns/convoFns');
 
 
 var formMessage = function(req) {
@@ -52,7 +53,7 @@ module.exports = {
 
 
 	get: function(req, res) {
-		return res.apiOut(null, req.myself.messages);
+		return res.apiOut(null, convoFns.copyPublicData(req.myself.messages));
 	},
 
 
@@ -66,5 +67,16 @@ module.exports = {
 			}
 			return res.apiOut(null, message);
 		});
+	},
+
+
+	getUnreadCount: function(req, res) {
+		var count = 0;
+		_.each(req.myself.messages, function(message) {
+			if(!message.read) {
+				count++;
+			}
+		});
+		return res.apiOut(null, count);
 	}
 };

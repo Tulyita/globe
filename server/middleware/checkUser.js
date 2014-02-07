@@ -7,6 +7,6 @@ module.exports = function(req, res, next) {
 		return next();
 	}
 	else {
-		return res.apiOut({code: 401, message: 'You are not authorized to view this page'}, null);
+		return res.apiOut('Guests are not authorized to view this page', null);
 	}
 };

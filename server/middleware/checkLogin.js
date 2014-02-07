@@ -6,7 +6,7 @@
 			return next();
 		}
 		else {
-			return res.apiOut({code: 401, message: 'You are not authorized to view this page'}, null);
+			return res.apiOut({code: 401, message: 'This page requires a valid session'}, null);
 		}
 	}
 

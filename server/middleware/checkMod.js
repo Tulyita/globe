@@ -7,7 +7,7 @@ module.exports = function(req, res, next) {
 		next();
 	}
 	else {
-		var err = {code: 401, message: 'You are not authorized to view this page'};
+		var err = 'Only mods and admins view this page';
 		res.apiOut(err, null);
 	}
 };
