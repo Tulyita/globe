@@ -28,6 +28,10 @@ var MessageDoc = {
 	date: {
 		type: Date,
 		default: Date
+	},
+	read: {
+		type: Boolean,
+		default: false
 	}
 };
 

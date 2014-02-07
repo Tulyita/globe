@@ -13,6 +13,7 @@ var formMessage = function(req) {
 		toUser: _.pick(req.user, '_id', 'name', 'group', 'site'),
 		fromUser: _.pick(req.myself, '_id', 'name', 'group', 'site'),
 		ip: req.ip,
+		read: false,
 		date: new Date()
 	};
 
@@ -22,12 +23,14 @@ var formMessage = function(req) {
 
 var saveMessage = function(toUser, fromUser, message, callback) {
 
+	message.read = false;
 	toUser.messages.push(message);
 	toUser.save(function(err) {
 		if(err) {
 			return callback(err);
 		}
 
+		message.read = true;
 		fromUser.messages.push(message);
 		fromUser.save(function(err) {
 			if(err) {

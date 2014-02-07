@@ -1,6 +1,6 @@
 'use strict';
 
-var formConversations = require('../../../server/fns/formConversations');
+var formConversations = require('../../../server/fns/convoFns');
 var mongoose = require('mongoose');
 
 
@@ -8,10 +8,10 @@ describe('formConversations', function() {
 
 
 	it('should return an empty object if given a falsy value or empty array', function() {
-		expect(formConversations('', false)).toEqual({});
-		expect(formConversations('', [])).toEqual({});
-		expect(formConversations('', {})).toEqual({});
-		expect(formConversations('', null)).toEqual({});
+		expect(convoFns('', false)).toEqual({});
+		expect(convoFns('', [])).toEqual({});
+		expect(convoFns('', {})).toEqual({});
+		expect(convoFns('', null)).toEqual({});
 	});
 
 
@@ -62,7 +62,7 @@ describe('formConversations', function() {
 			}
 		];
 
-		var convos = formConversations(myUserId, messages);
+		var convos = convoFns(myUserId, messages);
 
 		expect(convos[bobUserId].length).toBe(3);
 		expect(convos[bobUserId][0].body).toBe('message 1 to bob');

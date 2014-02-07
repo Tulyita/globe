@@ -1,18 +1,23 @@
 'use strict';
 
 var _ = require('lodash');
-var formConversations = require('../fns/formConversations');
+var convoFns = require('../fns/convoFns');
+
 
 module.exports = {
 
 	get: function(req, res) {
-		var convos = formConversations(req.myself._id, req.myself.messages);
-		var convo = convos[req.params.userId];
+		var convo = convoFns.formConvo(req.session._id, req.params.userId, req.myself.messages);
 
 		if(!convo) {
 			return res.apiOut({code: 404, message: 'Conversation not found'});
 		}
 
-		return res.apiOut(null, convo);
+		var publicConvo = convoFns.copyPublicData(convo);
+
+		convoFns.markConvoRead(convo);
+		req.myself.save();
+
+		return res.apiOut(null, publicConvo);
 	}
 };
