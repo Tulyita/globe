@@ -5,6 +5,10 @@ var express = require('express');
 var globe = express();
 
 
+// settings
+globe.set('trust proxy', true);
+
+
 // mongoose connect
 var mongoose = require('mongoose');
 require('./fns/mongoose/findByIdAndSave').attach(mongoose);
