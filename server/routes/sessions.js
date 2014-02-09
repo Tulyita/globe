@@ -34,7 +34,7 @@ sessions.post = function(req, res) {
 				return res.apiOut(err);
 			}
 
-			return sessions.saveUser(verified, function(err, user) {
+			return sessions.saveUser(verified, req.ip, function(err, user) {
 				if(err) {
 					return res.apiOut(err);
 				}
@@ -107,10 +107,12 @@ sessions.checkIpBan = function(ip, callback) {
 
 /**
  * Save new user to mongo, or update an existing one
- * @param verified
- * @param callback
+ * @param {Object} verified
+ * @param {string} ip
+ * @param {Function} callback
  */
-sessions.saveUser = function(verified, callback) {
+sessions.saveUser = function(verified, ip, callback) {
+	verified.ip = ip;
 	User.findOneAndSave({site: verified.site, siteUserId: verified.siteUserId}, verified, function(err, user) {
 		if(err) {
 			return callback(err);
