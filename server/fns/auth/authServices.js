@@ -11,9 +11,11 @@ var authServices = {};
 /**
  * Validate a login from a remote site
  * @param {Object} data
+ * @param {string} ip
  * @param {Function} callback
  */
-authServices.authenticate = function(data, callback) {
+authServices.authenticate = function(data, ip, callback) {
+	data.ip = ip;
 
 	// find the right authenticator
 	var auth = authServices.siteToAuth(data.site);

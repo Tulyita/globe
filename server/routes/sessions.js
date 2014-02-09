@@ -29,7 +29,7 @@ sessions.post = function(req, res) {
 			return res.apiOut(err);
 		}
 
-		return authServices.authenticate(req.body, function(err, verified) {
+		return authServices.authenticate(req.body, req.ip, function(err, verified) {
 			if(err) {
 				return res.apiOut(err);
 			}
