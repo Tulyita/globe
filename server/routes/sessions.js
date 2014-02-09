@@ -137,6 +137,9 @@ sessions.processUser = function(user, callback) {
 			user.silencedUntil = ban.expireDate;
 		}
 	}
+	if(process.env.NODE_ENV === 'staging' && !user.beta) {
+		return callback('This server can only be accessed by beta testers.');
+	}
 	return callback(null);
 };
 
