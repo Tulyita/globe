@@ -66,10 +66,7 @@ sessions.post = function(req, res) {
  * @param res
  */
 sessions.del = function(req, res) {
-	if(!req.session._id || !req.body.token) {
-		return res.apiOut('No token to delete', null);
-	}
-	var token = req.body.token;
+	var token = req.session.token || req.params.token;
 	return session.destroy(token, res.apiOut);
 };
 

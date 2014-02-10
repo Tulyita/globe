@@ -62,7 +62,7 @@ module.exports = function(globe) {
 	globe.get('/tests', tests.get);
 
 	globe.post('/sessions', sessions.post);
-	globe.del('/sessions', sessions.del);
+	globe.del('/sessions/:token', continueSession, sessions.del);
 	globe.get('/sessions', sessions.get);
 
 	globe.get('/users', users.get);
