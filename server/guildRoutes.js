@@ -25,6 +25,7 @@ module.exports = function(globe) {
 	var checkServer = require('./middleware/checkServer');
 	var rateLimit = require('./middleware/rateLimit');
 	var continueSession = require('./middleware/continueSession');
+	var loadMyself = require('./middleware/loadMyself');
 
 	var applicantExists = require('./routes/guilds/middleware/applicantExists');
 	var guildModExists = require('./routes/guilds/middleware/guildModExists');
@@ -39,7 +40,7 @@ module.exports = function(globe) {
 
 	// routes
 	globe.get('/guilds', guilds.get);
-	globe.put('/guilds/:guildId', continueSession, rateLimit('put:guild'), checkUser, guild.put);
+	globe.put('/guilds/:guildId', continueSession, rateLimit('put:guild'), checkUser, loadMyself, guild.put);
 	globe.get('/guilds/:guildId', loadGuild, guild.get);
 	globe.del('/guilds/:guildId', loadGuild, continueSession, isOwner, guild.del);
 	globe.post('/guilds/:guildId/gp', loadGuild, checkServer, guildGp.post);
@@ -47,6 +48,7 @@ module.exports = function(globe) {
 
 	globe.get('/guilds/:guildId/members', loadGuild, members.get);
 	globe.get('/guilds/:guildId/members/:userId', loadGuild, memberExists, member.get);
+	globe.put('/guilds/:guildId/members/:userId', loadGuild, continueSession, isSelf, checkUser, member.put);
 	globe.post('/guilds/:guildId/members/:userId/gp', loadGuild, memberExists, checkServer, userGp.post);
 	globe.get('/guilds/:guildId/members/:userId/gp', loadGuild, memberExists, userGp.get);
 

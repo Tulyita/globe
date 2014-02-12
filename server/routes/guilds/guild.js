@@ -9,12 +9,17 @@ module.exports = {
 
 
 	put: function(req, res) {
-		var guildData = {_id: req.params.guildId};
+		if(req.myself.guild) {
+			return(res.apiOut('You are already a member of guild "'+req.myself.guild+'"'));
+		}
+
+		var guildData = {_id: req.params.guildId, desc: req.body.desc};
 		guildData.owners = [_.pick(req.session, '_id', 'name', 'site', 'group')];
 		guildData.members = [_.pick(req.session, '_id', 'name', 'site', 'group')];
 		guildData.members[0].mod = true;
 		guildData.banner = {};
 
+		// create the guild
 		Guild.create(guildData, function(err, guild) {
 			if(err) {
 				return res.apiOut(err);
@@ -23,11 +28,20 @@ module.exports = {
 				return res.apiOut(null, guild);
 			}
 
-			saveBanner(guild, req.files.bannerImg, function(err) {
+			// set myself as a member of this guild
+			req.myself.guild = guild._id;
+			req.myself.save(function(err) {
 				if(err) {
 					return res.apiOut(err);
 				}
-				return res.apiOut(null, guild);
+
+				//save the banner
+				saveBanner(guild, req.files.bannerImg, function(err) {
+					if(err) {
+						return res.apiOut(err);
+					}
+					return res.apiOut(null, guild);
+				});
 			});
 		});
 	},

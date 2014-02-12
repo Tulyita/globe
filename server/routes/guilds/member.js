@@ -12,6 +12,17 @@ module.exports = {
 		}
 
 		return res.apiOut(null, member);
+	},
+
+
+	put: function(req, res) {
+		if(req.guild.join !== Guild.OPEN) {
+			return res.apiOut('This guild is not accepting open joins');
+		}
+
+		return req.guild.addMember(req.params.userId, function(err) {
+			return res.apiOut(err, req.guild.getMember(req.params.userId));
+		});
 	}
 
 };

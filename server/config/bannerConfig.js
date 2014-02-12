@@ -2,7 +2,7 @@ module.exports = {
 	variants: {
 		guildBanner: {
 			resize: {
-				large: "200x50"
+				large: "300x50"
 			},
 			keepNames: true
 		}

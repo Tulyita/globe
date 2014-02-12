@@ -41,17 +41,33 @@ module.exports = function(schema) {
 	schema.methods.addMember = function(userId, callback) {
 		var self = this;
 
-		self.addUserToList('members', userId, function(err) {
+		// load the user
+		User.findById(userId, {guild: 1}, function(err, user) {
 			if(err) {
 				return callback(err);
 			}
+			if(!user) {
+				return callback('Could not find user');
+			}
+			if(user.guild) {
+				return callback('You are already a member of guild "'+user.guild+'"');
+			}
 
-			return User.update({_id: userId}, {$set: {guild: self._id}}, function(err) {
+			// set the user's guild
+			user.guild = self._id;
+			user.save(function(err) {
 				if(err) {
 					return callback(err);
 				}
 
-				return callback(null, this);
+				// add user to this guild's member list
+				self.addUserToList('members', userId, function(err) {
+					if(err) {
+						return callback(err);
+					}
+
+					return callback(null, this);
+				});
 			});
 		});
 	};
@@ -65,17 +81,33 @@ module.exports = function(schema) {
 	schema.methods.removeMember = function(userId, callback) {
 		var self = this;
 
+		// remove user from the member list
 		self.removeUserFromList('members', userId, function(err) {
 			if(err) {
 				return callback(err);
 			}
 
-			return User.update({_id: userId, guild: self._id}, {$unset: {guild: ''}}, function(err) {
+			// load the user
+			User.findById(userId, {guild: 1}, function(err, user) {
 				if(err) {
 					return callback(err);
 				}
+				if(!user) {
+					return callback('Could not find user');
+				}
+				if(user.guild !== self._id) {
+					return callback('User is not a member of this guild');
+				}
 
-				return callback(null, this);
+				// unset the user's guild
+				delete user.guild;
+				user.save(function(err) {
+					if(err) {
+						return callback(err);
+					}
+
+					return callback(null, self);
+				});
 			});
 		});
 	};

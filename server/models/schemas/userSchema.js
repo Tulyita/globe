@@ -75,6 +75,7 @@ UserSchema.static.publicFields = {
 	guild: 1
 };
 
+
 UserSchema.methods.publicData = function() {
 	var obj = {};
 	var self = this;
@@ -86,9 +87,11 @@ UserSchema.methods.publicData = function() {
 	return obj;
 };
 
+
 UserSchema.methods.getFriend = function(userId) {
 	return _.where(this.friends, {id: String(userId)})[0];
 };
+
 
 UserSchema.methods.removeFriend = function(userId) {
 	this.friends = _.filter(this.friends, function(user) {
