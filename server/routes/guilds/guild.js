@@ -9,14 +9,8 @@ module.exports = {
 
 
 	put: function(req, res) {
-		if(req.myself.guild) {
-			return(res.apiOut('You are already a member of guild "'+req.myself.guild+'"'));
-		}
-
 		var guildData = {_id: req.params.guildId, desc: req.body.desc};
 		guildData.owners = [_.pick(req.session, '_id', 'name', 'site', 'group')];
-		guildData.members = [_.pick(req.session, '_id', 'name', 'site', 'group')];
-		guildData.members[0].mod = true;
 		guildData.banner = {};
 
 		// create the guild
@@ -24,18 +18,19 @@ module.exports = {
 			if(err) {
 				return res.apiOut(err);
 			}
-			if(!req.files || !req.files.bannerImg) {
-				return res.apiOut(null, guild);
-			}
 
 			// set myself as a member of this guild
-			req.myself.guild = guild._id;
-			req.myself.save(function(err) {
+			guild.addMember(req.myself._id, function(err) {
 				if(err) {
 					return res.apiOut(err);
 				}
 
-				//save the banner
+				// --> don't save a banner
+				if(!req.files || !req.files.bannerImg) {
+					return res.apiOut(null, guild);
+				}
+
+				// --> save a banner
 				saveBanner(guild, req.files.bannerImg, function(err) {
 					if(err) {
 						return res.apiOut(err);

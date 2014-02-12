@@ -49,11 +49,18 @@ module.exports = function(schema) {
 			if(!user) {
 				return callback('Could not find user');
 			}
-			if(user.guild) {
-				return callback('You are already a member of guild "'+user.guild+'"');
+
+			// -> async branch to remove user from old guild
+			if(user.guild && user.guild !== self._id) {
+				var Guild = require('../guild'); // import guild here to avoid circular dependency
+				Guild.findById(user.guild, function(err, oldGuild) {
+					if(oldGuild) {
+						oldGuild.removeMember(userId, function(){});
+					}
+				});
 			}
 
-			// set the user's guild
+			// --> set the user's guild
 			user.guild = self._id;
 			user.save(function(err) {
 				if(err) {
