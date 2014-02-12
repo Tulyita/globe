@@ -24,7 +24,8 @@
     "hiredis": "~0.1.16",
     "gm": "~1.14.2",
     "ratelimiter": "~1.0.0",
-    "mongoose-paginate": "~1.2.0"
+    "mongoose-paginate": "~1.2.0",
+    "imager": "~0.2.4"
   },
   "devDependencies": {
     "jasmine-node": "~1.12.0",

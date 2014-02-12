@@ -1,18 +1,35 @@
 'use strict';
 
 var _ = require('lodash');
-var mongoose = require('mongoose');
 var Guild = require('../../models/guild');
+var saveBanner = require('../../fns/saveBanner');
+
 
 module.exports = {
 
 
 	put: function(req, res) {
-		var guild = {_id: req.params.guildId};
-		guild.owners = [_.pick(req.session, '_id', 'name', 'site', 'group')];
-		guild.members = [_.pick(req.session, '_id', 'name', 'site', 'group')];
-		guild.members[0].mod = true;
-		return Guild.create(guild, res.apiOut);
+		var guildData = {_id: req.params.guildId};
+		guildData.owners = [_.pick(req.session, '_id', 'name', 'site', 'group')];
+		guildData.members = [_.pick(req.session, '_id', 'name', 'site', 'group')];
+		guildData.members[0].mod = true;
+		guildData.banner = {};
+
+		Guild.create(guildData, function(err, guild) {
+			if(err) {
+				return res.apiOut(err);
+			}
+			if(!req.files || !req.files.bannerImg) {
+				return res.apiOut(null, guild);
+			}
+
+			saveBanner(guild, req.files.bannerImg, function(err) {
+				if(err) {
+					return res.apiOut(err);
+				}
+				return res.apiOut(null, guild);
+			});
+		});
 	},
 
 

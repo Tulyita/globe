@@ -4,6 +4,7 @@ module.exports = function(globe) {
 	// endpoints
 	var applicant = require('./routes/guilds/applicant');
 	var applicants = require('./routes/guilds/applicants');
+	var banner = require('./routes/guilds/banner');
 	var guild = require('./routes/guilds/guild');
 	var guildGp = require('./routes/guilds/guildGp');
 	var guilds = require('./routes/guilds/guilds');
@@ -67,6 +68,9 @@ module.exports = function(globe) {
 
 	globe.get('/guilds/:guildId/settings', loadGuild, settings.get);
 	globe.post('/guilds/:guildId/settings', loadGuild, continueSession, isOwner, settings.post);
+
+	globe.get('/guilds/:guildId/banner', loadGuild, settings.get);
+	globe.put('/guilds/:guildId/banner', loadGuild, continueSession, isOwner, banner.put);
 
 	globe.get('/guilds/:guildId/mods', loadGuild, mods.get);
 	globe.put('/guilds/:guildId/mods/:userId', loadGuild, continueSession, isOwner, mod.put);

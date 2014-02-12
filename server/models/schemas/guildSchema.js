@@ -75,9 +75,13 @@ var GuildSchema = new Schema({
 		type: Date,
 		default: Date
 	},
-	hasBanner: {
-		type: Boolean,
-		default: false
+	banner: {
+		file: {
+			type: String
+		},
+		updated: {
+			type: Date
+		}
 	},
 	gp: {
 		type: Number,
