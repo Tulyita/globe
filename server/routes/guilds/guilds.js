@@ -33,7 +33,7 @@ module.exports = {
 			if (err) {
 				return res.apiOut(err);
 			}
-			return res.apiOut(null, {pageCount: pageCount, results: results});
+			return res.apiOut(null, {pageCount: pageCount, results: results, page: page});
 		}, {sortBy: sort});
 	}
 };
