@@ -4,8 +4,15 @@ var _ = require('lodash');
 var async = require('async');
 var User = require('../user');
 var isNameDisplay = require('../../validators/isNameDisplay');
+var paginate = require('../../fns/mongoose/paginate');
 
 module.exports = function(schema) {
+
+
+	/**
+	 * adds pagination
+	 */
+	schema.statics.paginate = paginate;
 
 
 

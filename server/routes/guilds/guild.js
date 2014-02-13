@@ -9,7 +9,7 @@ module.exports = {
 
 
 	put: function(req, res) {
-		var guildData = {_id: req.params.guildId, desc: req.body.desc};
+		var guildData = {_id: req.params.guildId, desc: req.body.desc, join: req.body.join};
 		guildData.owners = [_.pick(req.session, '_id', 'name', 'site', 'group')];
 		guildData.banner = {};
 
