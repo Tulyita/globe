@@ -3,11 +3,12 @@
 var groups = require('../config/groups');
 
 module.exports = function(req, res, next) {
-	if (req.session && req.session._id && (req.user.group === groups.MOD || req.user.group === groups.ADMIN)) {
+	var session = req.session;
+	if (session && session._id && (session.group === groups.MOD || session.group === groups.ADMIN)) {
 		next();
 	}
 	else {
-		var err = 'Only mods and admins view this page';
+		var err = 'Only mods and admins use this resource';
 		res.apiOut(err, null);
 	}
 };
