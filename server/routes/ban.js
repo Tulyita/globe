@@ -106,7 +106,7 @@ module.exports = {
 		var ip = req.user.ip;
 
 		var newBan = _.pick(req.body, 'type', 'privateInfo', 'publicInfo', 'reason');
-		newBan.expireDate = new Date() + determineDuration(bans);
+		newBan.expireDate = new Date(new Date().getTime() + determineDuration(bans));
 		newBan.mod = _.pick(req.session, '_id', 'name', 'site', 'group');
 		newBan.ip = ip;
 
@@ -137,12 +137,26 @@ module.exports = {
 
 	/**
 	 * Output a user's bans
-	 * @param req
-	 * @param res
-	 * @returns {*}
 	 */
 	get: function(req, res) {
 		res.apiOut(null, req.user.bans);
+	},
+
+
+	/**
+	 * Delete a user's ban
+	 */
+	del: function(req, res) {
+		req.user.bans = _.filter(req.user.bans, function(ban) {
+			return String(ban._id) !== String(req.params.banId);
+		});
+		req.user.save(function(err) {
+			if(err) {
+				return res.apiOut(err);
+			}
+
+			return res.apiOut(null, {code: 204, response: ''})
+		});
 	}
 
 };

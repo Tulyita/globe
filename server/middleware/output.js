@@ -17,8 +17,8 @@
 				response = {error: err};
 			}
 			else {
-				code = 200;
-				response = result;
+				code = result.code || 200;
+				response = result.response || result;
 			}
 
 			var strResponse = JSON.stringify(response, null, 2);

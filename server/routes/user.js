@@ -1,5 +1,6 @@
 'use strict';
 
+var banFns = require('../fns/banFns');
 var permissions = require('../fns/permissions');
 
 
@@ -9,6 +10,7 @@ module.exports = {
 
 		var user = req.user;
 		var obj = user.publicData();
+
 		obj.actions = {
 			message: permissions.iCanMessage(req.session, user),
 			apprentice: permissions.iCanApprentice(req.session, user),
@@ -19,6 +21,10 @@ module.exports = {
 			deBan: permissions.iCanDeBan(req.session, user),
 			report: permissions.iCanReport(req.session, user)
 		};
+
+		if(obj.actions.deBan) {
+			obj.ban = banFns.findActiveBan(user.bans);
+		}
 
 		res.apiOut(null, obj);
 	}

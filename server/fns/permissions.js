@@ -1,5 +1,6 @@
 'use strict';
 
+var banFns = require('./banFns');
 var groups = require('../config/groups');
 
 
@@ -29,11 +30,13 @@ module.exports = {
 	},
 
 	iCanBan: function(me, user) {
-		return (me.group === groups.MOD || me.group === groups.ADMIN) && String(user._id) !== String(me._id) && (!user.bannedUntil || user.bannedUntil < new Date());
+		var ban = banFns.findActiveBan(user.bans);
+		return Boolean((me.group === groups.MOD || me.group === groups.ADMIN) && String(user._id) !== String(me._id) && !ban);
 	},
 
 	iCanDeBan: function(me, user) {
-		return (me.group === groups.MOD || me.group === groups.ADMIN) && String(user._id) !== String(me._id) && user.bannedUntil > new Date();
+		var ban = banFns.findActiveBan(user.bans);
+		return Boolean((me.group === groups.MOD || me.group === groups.ADMIN) && String(user._id) !== String(me._id) && ban);
 	},
 
 	iCanReport: function(me, user) {
