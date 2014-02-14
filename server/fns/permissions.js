@@ -41,6 +41,18 @@ module.exports = {
 
 	iCanReport: function(me, user) {
 		return me.group === groups.APPRENTICE && String(user._id) !== String(me._id);
+	},
+
+	iCanGuildMod: function(me, user, guild) {
+		var inSameGuild = me.guild === user.guild;
+		var isMyself = String(me._id) === String(user._id);
+		var iAmOwner = !!guild.getOwner(me._id);
+		var theyAreGuildMod = !!guild.getGuildMod(user._id);
+		return inSameGuild && !isMyself && iAmOwner && !theyAreGuildMod;
+	},
+
+	iCanDeGuildMod: function(me, user, guild) {
+		return Boolean(me.guild === user.guild && String(user._id) !== String(me._id) && guild.getOwner(me._id) && guild.getGuildMod(user._id) && !guild.getOwner(user._id));
 	}
 
 };
