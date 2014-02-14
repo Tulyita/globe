@@ -23,7 +23,7 @@ module.exports = {
 				}
 
 				return Apprentice.create({keeper: req.session._id, apprentice: req.user._id}, function(err) {
-					res.apiOut(err, req.user);
+					res.apiOut(err, req.user.publicData());
 				});
 			});
 		});
@@ -31,7 +31,7 @@ module.exports = {
 
 
 	get: function(req, res) {
-		return res.apiOut(null, req.user);
+		return res.apiOut(null, req.user.publicData());
 	},
 
 
@@ -44,6 +44,10 @@ module.exports = {
 			}
 
 			return Apprentice.remove({apprentice: req.user._id}, function(err) {
+				if(err) {
+					return res.apiOut(err);
+				}
+
 				res.send(204, null);
 			});
 		});

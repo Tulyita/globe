@@ -8,13 +8,13 @@ module.exports = {
 	put: function(req, res) {
 		req.user.group = groups.MOD;
 		return req.user.save(function(err) {
-			res.apiOut(err, req.user);
+			res.apiOut(err, req.user.publicData());
 		});
 	},
 
 
 	get: function(req, res) {
-		return res.apiOut(null, req.user);
+		return res.apiOut(null, req.user.publicData());
 	},
 
 
