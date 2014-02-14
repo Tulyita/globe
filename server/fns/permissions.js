@@ -29,11 +29,11 @@ module.exports = {
 	},
 
 	iCanBan: function(me, user) {
-		return (me.group === groups.MOD || me.group === groups.ADMIN) && String(user._id) !== String(me._id);
+		return (me.group === groups.MOD || me.group === groups.ADMIN) && String(user._id) !== String(me._id) && (!user.bannedUntil || user.bannedUntil < new Date());
 	},
 
 	iCanDeBan: function(me, user) {
-		return (me.group === groups.MOD || me.group === groups.ADMIN) && String(user._id) !== String(me._id);
+		return (me.group === groups.MOD || me.group === groups.ADMIN) && String(user._id) !== String(me._id) && user.bannedUntil > new Date();
 	},
 
 	iCanReport: function(me, user) {
