@@ -26,6 +26,7 @@ module.exports = function(globe) {
 	var rateLimit = require('./middleware/rateLimit');
 	var continueSession = require('./middleware/continueSession');
 	var loadMyself = require('./middleware/loadMyself');
+	var loadUser = require('./middleware/loadUser');
 
 	var applicantExists = require('./routes/guilds/middleware/applicantExists');
 	var guildModExists = require('./routes/guilds/middleware/guildModExists');
@@ -54,8 +55,8 @@ module.exports = function(globe) {
 
 	globe.get('/guilds/:guildId/kicks', loadGuild, kicks.get);
 	globe.get('/guilds/:guildId/kicks/:userId', loadGuild, kick.get);
-	globe.put('/guilds/:guildId/kicks/:userId', loadGuild, continueSession, isGuildMod, kick.put);
-	globe.del('/guilds/:guildId/kicks/:userId', loadGuild, continueSession, isGuildMod, kick.del);
+	globe.put('/guilds/:guildId/kicks/:userId', continueSession, loadGuild, loadUser(), loadMyself, isGuildMod, kick.put);
+	globe.del('/guilds/:guildId/kicks/:userId', continueSession, loadGuild, loadUser(), loadMyself, isGuildMod, kick.del);
 
 	globe.get('/guilds/:guildId/applicants', loadGuild, applicants.get);
 	globe.put('/guilds/:guildId/applicants/:userId', loadGuild, continueSession, rateLimit('put:applicant'), isSelf, applicant.put);
@@ -76,8 +77,8 @@ module.exports = function(globe) {
 	globe.put('/guilds/:guildId/banner', loadGuild, continueSession, isOwner, banner.put);
 
 	globe.get('/guilds/:guildId/mods', loadGuild, mods.get);
-	globe.put('/guilds/:guildId/mods/:userId', loadGuild, continueSession, isOwner, mod.put);
+	globe.put('/guilds/:guildId/mods/:userId', loadGuild, continueSession, loadUser(), loadMyself, isOwner, mod.put);
 	globe.get('/guilds/:guildId/mods/:userId', loadGuild, guildModExists, mod.get);
-	globe.del('/guilds/:guildId/mods/:userId', loadGuild, continueSession, isOwner, guildModExists, mod.del);
+	globe.del('/guilds/:guildId/mods/:userId', loadGuild, continueSession, loadUser(), loadMyself, isOwner, guildModExists, mod.del);
 
 };
