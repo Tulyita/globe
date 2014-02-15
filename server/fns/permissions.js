@@ -4,6 +4,25 @@ var banFns = require('./banFns');
 var groups = require('../config/groups');
 
 
+var check = {
+	inSameGuild: function(user1, user2) {
+		return user1.guild === user2.guild;
+	},
+	isSameUser: function(user1, user2) {
+		return String(user1._id) === String(user2._id);
+	},
+	isOwner: function(user, guild) {
+		return !!guild.getOwner(user._id);
+	},
+	isGuildMod: function(user, guild) {
+		return !!guild.getGuildMod(user._id) || !!guild.getOwner(user._id);
+	},
+	isKicked: function(user, guild) {
+		return !!guild.getKick(user._id);
+	}
+};
+
+
 module.exports = {
 
 	iCanMessage: function(me, user) {
@@ -44,15 +63,33 @@ module.exports = {
 	},
 
 	iCanGuildMod: function(me, user, guild) {
-		var inSameGuild = me.guild === user.guild;
-		var isMyself = String(me._id) === String(user._id);
-		var iAmOwner = !!guild.getOwner(me._id);
-		var theyAreGuildMod = !!guild.getGuildMod(user._id);
-		return inSameGuild && !isMyself && iAmOwner && !theyAreGuildMod;
+		return (
+			check.inSameGuild(me, user) &&
+			!check.isSameUser(me, user) &&
+			check.isOwner(me, guild) &&
+			!check.isGuildMod(user, guild)
+		);
 	},
 
 	iCanDeGuildMod: function(me, user, guild) {
 		return Boolean(me.guild === user.guild && String(user._id) !== String(me._id) && guild.getOwner(me._id) && guild.getGuildMod(user._id) && !guild.getOwner(user._id));
+	},
+
+	iCanKick: function(me, user, guild) {
+		return (
+			!check.isSameUser(me, user) &&
+			check.isGuildMod(me, guild) &&
+			!check.isKicked(user, guild) &&
+			check.inSameGuild(me, user)
+		);
+	},
+
+	iCanDeKick: function(me, user, guild) {
+		return (
+			!check.isSameUser(me, user) &&
+			check.isGuildMod(me, guild) &&
+			check.isKicked(user, guild)
+		);
 	}
 
 };

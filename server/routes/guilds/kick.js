@@ -18,5 +18,15 @@ module.exports = {
 	get: function(req, res) {
 		var kick = req.guild.getUserFrom('kicks', req.params.userId);
 		return res.apiOut(null, kick);
+	},
+
+
+	del: function(req, res) {
+		req.guild.removeUserFromList('kicks', req.params.userId, function(err) {
+			if(err) {
+				return res.apiOut(err);
+			}
+			return res.apiOut(null, {code: 204, response: ''});
+		});
 	}
 };

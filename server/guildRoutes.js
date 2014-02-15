@@ -55,6 +55,7 @@ module.exports = function(globe) {
 	globe.get('/guilds/:guildId/kicks', loadGuild, kicks.get);
 	globe.get('/guilds/:guildId/kicks/:userId', loadGuild, kick.get);
 	globe.put('/guilds/:guildId/kicks/:userId', loadGuild, continueSession, isGuildMod, kick.put);
+	globe.del('/guilds/:guildId/kicks/:userId', loadGuild, continueSession, isGuildMod, kick.del);
 
 	globe.get('/guilds/:guildId/applicants', loadGuild, applicants.get);
 	globe.put('/guilds/:guildId/applicants/:userId', loadGuild, continueSession, rateLimit('put:applicant'), isSelf, applicant.put);
