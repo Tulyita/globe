@@ -28,11 +28,13 @@ module.exports = {
 			obj.ban = banFns.findActiveBan(user.bans);
 		}
 
-		if(user.guild && user.guild === me.guild) {
+		if(user.guild) {
 			return Guild.findById(user.guild, function(err, guild) {
 				if(guild) {
 					obj.actions.guildMod = permissions.iCanGuildMod(me, user, guild);
 					obj.actions.deGuildMod = permissions.iCanDeGuildMod(me, user, guild);
+					obj.actions.kick = permissions.iCanKick(me, user, guild);
+					obj.actions.deKick = permissions.iCanDeKick(me, user, guild);
 				}
 				res.apiOut(null, obj);
 			});
