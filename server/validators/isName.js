@@ -3,6 +3,9 @@
 var _ = require('lodash');
 
 var isName = function(val) {
+	if(val === undefined) {
+		return true;
+	}
 	if(!_.isString(val)) {
 		return false;
 	}

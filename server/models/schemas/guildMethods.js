@@ -114,7 +114,7 @@ module.exports = function(schema) {
 				}
 
 				// unset the user's guild
-				delete user.guild;
+				user.guild = undefined;
 				user.save(function(err) {
 					if(err) {
 						return callback(err);

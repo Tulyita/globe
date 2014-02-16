@@ -16,7 +16,14 @@ module.exports = {
 			if(err) {
 				return res.apiOut(err);
 			}
-			return res.apiOut(null, req.guild.getUserFrom('kicks', req.params.userId));
+
+			req.guild.removeMember(req.params.userId, function(err) {
+				if(err) {
+					return res.apiOut(err);
+				}
+
+				return res.apiOut(null, req.guild.getUserFrom('kicks', req.params.userId));
+			});
 		});
 	},
 
