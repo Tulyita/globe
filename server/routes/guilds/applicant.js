@@ -1,7 +1,5 @@
 'use strict';
 
-var redisSession = require('../../fns/redisSession');
-
 
 module.exports = {
 
@@ -21,13 +19,7 @@ module.exports = {
 					return res.apiOut(err);
 				}
 
-				redisSession.update(req.params.userId, {guild: req.params.guildId}, function(err) {
-					if(err) {
-						return res.apiOut(err);
-					}
-
-					return res.apiOut(null, req.guild.getUserFrom('members', req.params.userId));
-				});
+				return res.apiOut(null, req.guild.getUserFrom('members', req.params.userId));
 			});
 		}
 

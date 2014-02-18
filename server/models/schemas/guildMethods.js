@@ -5,6 +5,7 @@ var async = require('async');
 var User = require('../user');
 var isNameDisplay = require('../../validators/isNameDisplay');
 var paginate = require('../../fns/mongoose/paginate');
+var redisSession = require('../../fns/redisSession');
 
 module.exports = function(schema) {
 
@@ -57,7 +58,7 @@ module.exports = function(schema) {
 				return callback('Could not find user');
 			}
 
-			// -> async branch to remove user from old guild
+			// --> async branch to remove user from old guild
 			if(user.guild && user.guild !== self._id) {
 				var Guild = require('../guild'); // import guild here to avoid circular dependency
 				Guild.findById(user.guild, function(err, oldGuild) {
@@ -67,7 +68,10 @@ module.exports = function(schema) {
 				});
 			}
 
-			// --> set the user's guild
+			// --> async branch to update user's session
+			redisSession.update(userId, {guild: self._id}, function() {});
+
+			// --> set the user's guild in mongo
 			user.guild = self._id;
 			user.save(function(err) {
 				if(err) {
@@ -112,6 +116,9 @@ module.exports = function(schema) {
 				if(user.guild !== self._id) {
 					return callback('User is not a member of this guild');
 				}
+
+				// --> async branch to unset user's guild in their session
+				redisSession.update(req.params.userId, {guild: ''}, function(){});
 
 				// unset the user's guild
 				user.guild = undefined;
