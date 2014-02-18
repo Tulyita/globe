@@ -1,5 +1,8 @@
 'use strict';
 
+var redisSession = require('../../fns/redisSession');
+
+
 module.exports = {
 
 
@@ -11,11 +14,20 @@ module.exports = {
 
 
 	post: function(req, res) {
-		var action = req.query.action || 'create';
+		if(req.query.action === 'accept') {
 
-		if(action === 'accept') {
 			return req.guild.acceptInvitation(req.params.userId, function(err) {
-				return res.apiOut(err, req.guild.getUserFrom('invitations', req.params.userId));
+				if(err) {
+					return res.apiOut(err);
+				}
+
+				redisSession.update(req.params.userId, {guild: req.params.guildId}, function(err) {
+					if(err) {
+						return res.apiOut(err);
+					}
+
+					return res.apiOut(null, req.guild.getUserFrom('members', req.params.userId));
+				});
 			});
 		}
 

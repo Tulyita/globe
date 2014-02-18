@@ -1,5 +1,6 @@
 'use strict';
 
+var redisSession = require('../../fns/redisSession');
 var Guild = require('../../models/guild');
 
 module.exports = {
@@ -21,7 +22,34 @@ module.exports = {
 		}
 
 		return req.guild.addMember(req.params.userId, function(err) {
-			return res.apiOut(err, req.guild.getMember(req.params.userId));
+			if(err) {
+				return res.apiOut(err);
+			}
+
+			redisSession.update(req.params.userId, {guild: req.params.guildId}, function(err) {
+				if(err) {
+					return res.apiOut(err);
+				}
+
+				return res.apiOut(null, req.guild.getMember(req.params.userId));
+			});
+		});
+	},
+
+
+	del: function(req, res) {
+		return req.guild.removeMember(req.params.userId, function(err) {
+			if(err) {
+				return res.apiOut(err);
+			}
+
+			redisSession.update(req.params.userId, {guild: ''}, function(err) {
+				if(err) {
+					return res.apiOut(err);
+				}
+
+				return res.apiOut(null, {code: 204, response: ''})
+			});
 		});
 	}
 
