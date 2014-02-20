@@ -30,6 +30,7 @@ module.exports = function(globe) {
 	var checkAdmin = require('./middleware/checkAdmin');
 	var checkMod = require('./middleware/checkMod');
 	var checkLogin = require('./middleware/checkLogin');
+	var checkServer = require('./middleware/checkServer');
 	var rateLimit = require('./middleware/rateLimit');
 	var continueSession = require('./middleware/continueSession');
 	var loadUser = require('./middleware/loadUser');
@@ -58,7 +59,7 @@ module.exports = function(globe) {
 	globe.get('/reports/:reportId', continueSession, checkMod, report.get);
 	globe.post('/reports/:reportId', continueSession, checkMod, report.post);
 	globe.get('/reports', continueSession, checkMod, reports.get);
-	globe.post('/reports', continueSession, checkLogin, rateLimit('post:reports'), reports.post);
+	globe.post('/reports', continueSession, checkServer, loadUser(), rateLimit('post:reports'), reports.post);
 
 	globe.get('/tests', tests.get);
 
