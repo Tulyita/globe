@@ -27,6 +27,12 @@ var ReportSchema = new Schema({
 	seen: {
 		type: Boolean,
 		default: false
+	},
+	note: {
+		type: String
+	},
+	app: {
+		type: String
 	}
 });
 
