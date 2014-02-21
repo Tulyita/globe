@@ -6,7 +6,7 @@ var isNameDisplay = require('../../validators/isNameDisplay');
 var ReportSchema = new Schema({
 	type: {
 		type: String,
-		enum: ['message', 'chat', 'card']
+		enum: ['convo', 'chat', 'card']
 	},
 	privateData: {
 		type: mongoose.Schema.Types.Mixed

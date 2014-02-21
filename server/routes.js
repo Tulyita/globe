@@ -55,6 +55,7 @@ module.exports = function(globe) {
 
 	globe.get('/conversations', continueSession, loadMyself, conversations.get);
 	globe.get('/conversations/:userId', continueSession, loadMyself, conversation.get);
+	globe.post('/conversations/:userId', continueSession, loadMyself, conversation.post);
 
 	globe.get('/reports/:reportId', continueSession, checkMod, report.get);
 	globe.post('/reports/:reportId', continueSession, checkMod, report.post);

@@ -15,7 +15,7 @@ module.exports = {
 		});
 
 		// sort by recentness
-		arr =	_.sortBy(arr, 'date');
+		arr = _.sortBy(arr, 'date').reverse();
 
 		// output
 		res.apiOut(null, arr);
