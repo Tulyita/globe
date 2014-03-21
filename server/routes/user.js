@@ -17,8 +17,9 @@ module.exports = {
 		// add bans if they were requested
 		if(req.param('bans')) {
 			obj.bans = _.map(user.bans, function(ban) {
-				return _.pick(ban, 'type', 'mod', 'expireDate', 'date', 'reason', 'publicInfo');
+				return _.pick(ban, '_id', 'type', 'mod', 'expireDate', 'date', 'reason', 'publicInfo');
 			});
+			obj.ban = banFns.findActiveBan(obj.bans);
 		}
 
 		// just return the data if you are not logged in
@@ -42,11 +43,6 @@ module.exports = {
 				deBan: permissions.iCanDeBan(me, user),
 				report: permissions.iCanReport(me, user)
 			};
-
-			if(permissions.iCanSeeBans(me, user)) {
-				obj.ban = banFns.findActiveBan(user.bans);
-				obj.bans = user.bans;
-			}
 
 			if(user.guild) {
 				return Guild.findById(user.guild, function(err, guild) {
