@@ -8,7 +8,7 @@ module.exports = function(req, res, next) {
 		next();
 	}
 	else {
-		var err = 'Only mods and admins use this resource';
+		var err = {code: 403, message: 'Only mods and admins can use this resource'};
 		res.apiOut(err, null);
 	}
 };
