@@ -133,7 +133,7 @@ sessions.processUser = function(user, callback) {
 	var ban = sessions.findActiveBan(user.bans);
 	if(ban) {
 		if(ban.type === 'ban') {
-			return callback({code: 403, ban: ban, message: 'This account has been banned until ' + ban.expireDate + '. Reason: ' + ban.reason});
+			return callback({code: 403, _id: user._id, ban: ban, message: 'This account has been banned until ' + ban.expireDate + '. Reason: ' + ban.reason});
 		}
 		if(ban.type === 'silence') {
 			user.silencedUntil = ban.expireDate;

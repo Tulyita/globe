@@ -69,7 +69,7 @@ module.exports = function(globe) {
 	globe.get('/sessions', sessions.get);
 
 	globe.get('/users', users.get);
-	globe.get('/users/:userId', continueSession, loadMyself, loadUser(), user.get);
+	globe.get('/users/:userId', continueSession, loadUser(), user.get);
 
 	globe.get('/moderators', moderators.get);
 	globe.get('/moderators/:userId', loadUser(groups.MOD), moderator.get);
