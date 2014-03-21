@@ -19,6 +19,18 @@ var check = {
 	},
 	isKicked: function(user, guild) {
 		return !!guild.getKick(user._id);
+	},
+	isMember: function(user) {
+		return user.group !== groups.GUEST;
+	},
+	isApprentice: function(user) {
+		return user.group === groups.APPRENTICE || user.group === groups.MOD || user.group === groups.ADMIN;
+	},
+	isMod: function(user) {
+		return user.group === groups.MOD || user.group === groups.ADMIN;
+	},
+	isAdmin: function(user) {
+		return user.group === groups.ADMIN;
 	}
 };
 
@@ -29,33 +41,33 @@ module.exports = {
 		var silenced = me.silencedUntil || 0;
 		var banned = me.bannedUntil || 0;
 		var date = new Date();
-		return silenced < date && banned < date && me.group !== groups.GUEST && String(user._id) !== String(me._id);
+		return silenced < date && banned < date && check.isMember(me) && check.isSameUser(me, user);
 	},
 
 	iCanApprentice: function(me, user) {
-		return (me.group === groups.MOD || me.group === groups.ADMIN) && user.group === groups.USER;
+		return check.isMod(me) && user.group === groups.USER;
 	},
 
 	iCanDeApprentice: function(me, user) {
-		return (me.group === groups.MOD || me.group === groups.ADMIN) && user.group === groups.APPRENTICE;
+		return check.isMod(me) && user.group === groups.APPRENTICE;
 	},
 
 	iCanMod: function(me, user) {
-		return me.group === groups.ADMIN && user.group === groups.APPRENTICE;
+		return check.isAdmin(me) && user.group === groups.APPRENTICE;
 	},
 
 	iCanDeMod: function(me, user) {
-		return me.group === groups.ADMIN && user.group === groups.MOD && String(user._id) !== String(me._id);
+		return check.isAdmin(me) && user.group === groups.MOD && !check.isSameUser(me, user);
 	},
 
 	iCanBan: function(me, user) {
 		var ban = banFns.findActiveBan(user.bans);
-		return Boolean((me.group === groups.MOD || me.group === groups.ADMIN) && String(user._id) !== String(me._id) && !ban);
+		return Boolean(check.isMod(me) && !check.isSameUser(me, user) && !ban);
 	},
 
 	iCanDeBan: function(me, user) {
 		var ban = banFns.findActiveBan(user.bans);
-		return Boolean((me.group === groups.MOD || me.group === groups.ADMIN) && String(user._id) !== String(me._id) && ban);
+		return Boolean(check.isMod(me) && !check.isSameUser(me, user) && ban);
 	},
 
 	iCanReport: function(me, user) {
@@ -72,7 +84,13 @@ module.exports = {
 	},
 
 	iCanDeGuildMod: function(me, user, guild) {
-		return Boolean(me.guild === user.guild && String(user._id) !== String(me._id) && guild.getOwner(me._id) && guild.getGuildMod(user._id) && !guild.getOwner(user._id));
+		return Boolean(
+			me.guild === user.guild &&
+			!check.isSameUser(me, user) &&
+			guild.getOwner(me._id) &&
+			guild.getGuildMod(user._id) &&
+			!guild.getOwner(user._id)
+		);
 	},
 
 	iCanKick: function(me, user, guild) {
@@ -89,6 +107,13 @@ module.exports = {
 			!check.isSameUser(me, user) &&
 			check.isGuildMod(me, guild) &&
 			check.isKicked(user, guild)
+		);
+	},
+
+	iCanSeeBans: function(me, user) {
+		return Boolean(
+			check.isMod(me) ||
+			check.isSameUser(me, user)
 		);
 	}
 

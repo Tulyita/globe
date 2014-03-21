@@ -24,8 +24,9 @@ module.exports = {
 			report: permissions.iCanReport(me, user)
 		};
 
-		if(obj.actions.deBan) {
+		if(permissions.iCanSeeBans(me, user)) {
 			obj.ban = banFns.findActiveBan(user.bans);
+			obj.bans = user.bans;
 		}
 
 		if(user.guild) {

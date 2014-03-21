@@ -79,7 +79,10 @@ sessions.del = function(req, res) {
 sessions.get = function(req, res) {
 	var token = req.headers['session-token'];
 	session.get(token, function(err, result) {
-		res.apiOut(err, result);
+		if(err) {
+			return res.apiOut({code: 401, message: err});
+		}
+		res.apiOut(null, result);
 	});
 };
 
@@ -130,14 +133,14 @@ sessions.processUser = function(user, callback) {
 	var ban = sessions.findActiveBan(user.bans);
 	if(ban) {
 		if(ban.type === 'ban') {
-			return callback('This account has been banned until ' + ban.expireDate + '. Reason: ' + ban.reason);
+			return callback({code: 403, ban: ban, message: 'This account has been banned until ' + ban.expireDate + '. Reason: ' + ban.reason});
 		}
 		if(ban.type === 'silence') {
 			user.silencedUntil = ban.expireDate;
 		}
 	}
 	if(process.env.NODE_ENV === 'staging' && !user.beta) {
-		return callback('This server can only be accessed by beta testers.');
+		return callback({code: 403, message: 'This server can only be accessed by beta testers.'});
 	}
 	return callback(null);
 };
