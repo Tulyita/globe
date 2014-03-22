@@ -155,7 +155,15 @@ module.exports = {
 				return res.apiOut(err);
 			}
 
-			return res.apiOut(null, {code: 204, response: ''})
+			redisSession.update(req.user._id, {bannedUntil: 0, silencedUntil: 0}, function(err) {
+				if(err) {
+					return res.apiOut(err);
+				}
+
+				return res.apiOut(null, {code: 204, response: ''})
+			});
+
+
 		});
 	}
 

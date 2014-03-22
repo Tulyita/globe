@@ -12,17 +12,16 @@ module.exports = {
 
 
 	post: function(req, res) {
+		var seen = req.param('seen');
+
 		Report.findById(req.params.reportId, function(err, report) {
 			if(err) {
 				return res.apiOut(err);
 			}
 
-			report.seen = true;
+			report.seen = seen;
 			report.save(function(err) {
-				if(err) {
-					return res.apiOut(err);
-				}
-				res.apiOut(null, report);
+				res.apiOut(err, report);
 			});
 		});
 	}
