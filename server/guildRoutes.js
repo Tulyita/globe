@@ -50,6 +50,7 @@ module.exports = function(globe) {
 	globe.get('/guilds/:guildId/members', loadGuild, members.get);
 	globe.get('/guilds/:guildId/members/:userId', loadGuild, memberExists, member.get);
 	globe.put('/guilds/:guildId/members/:userId', loadGuild, continueSession, isSelf, checkUser, member.put);
+	globe.del('/guilds/:guildId/members/:userId', loadGuild, continueSession, isSelf, checkUser, member.del);
 	globe.post('/guilds/:guildId/members/:userId/gp', loadGuild, memberExists, checkServer, userGp.post);
 	globe.get('/guilds/:guildId/members/:userId/gp', loadGuild, memberExists, userGp.get);
 

@@ -118,7 +118,7 @@ module.exports = function(schema) {
 				}
 
 				// --> async branch to unset user's guild in their session
-				redisSession.update(req.params.userId, {guild: ''}, function(){});
+				redisSession.update(userId, {guild: ''}, function(){});
 
 				// unset the user's guild
 				user.guild = undefined;
