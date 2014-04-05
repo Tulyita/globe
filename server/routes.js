@@ -19,6 +19,7 @@ module.exports = function(globe) {
 	var messages = require('./routes/messages');
 	var moderator = require('./routes/moderator');
 	var moderators = require('./routes/moderators');
+	var modLogs = require('./routes/modLogs');
 	var report = require('./routes/report');
 	var reports = require('./routes/reports');
 	var sessions = require('./routes/sessions');
@@ -75,6 +76,9 @@ module.exports = function(globe) {
 	globe.get('/moderators/:userId', loadUser(groups.MOD), moderator.get);
 	globe.put('/moderators/:userId', continueSession, checkAdmin, rateLimit('put:moderator'), loadUser(groups.APPRENTICE), moderator.put);
 	globe.del('/moderators/:userId', continueSession, checkAdmin, loadUser(groups.MOD), moderator.del);
+
+	globe.get('/mod-logs', modLogs.getList);
+	globe.get('/mod-logs/:modLogId', modLogs.get);
 
 	globe.get('/apprentices', apprentices.get);
 	globe.get('/apprentices/:userId', loadUser(groups.APPRENTICE), apprentice.get);
