@@ -5,8 +5,13 @@ var Schema = mongoose.Schema;
 var nameDisplayDoc = require('./schemas/nameDisplayDoc');
 
 var modLogSchema = new Schema({
-	mod: nameDisplayDoc,
-	user: nameDisplayDoc,
+	type: String,
+	mod: {
+		type: nameDisplayDoc
+	},
+	user: {
+		type: nameDisplayDoc
+	},
 	data: mongoose.Schema.Types.Mixed,
 	date: {
 		type: Date,
@@ -15,4 +20,4 @@ var modLogSchema = new Schema({
 });
 
 var ModLog = mongoose.model('ModLog', modLogSchema);
-module.expords = ModLog;
+module.exports = ModLog;

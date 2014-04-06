@@ -4,6 +4,7 @@ var _ = require('lodash');
 var redisSession = require('../fns/redisSession');
 var User = require('../models/user');
 var IpBan = require('../models/ipBan');
+var ModLog = require('../models/ModLog');
 var isBans = require('../validators/isBans');
 var isIp = require('../validators/isIp');
 
@@ -128,7 +129,16 @@ module.exports = {
 					if(err) {
 						return res.apiOut(err);
 					}
-					return res.apiOut(null, newBan);
+
+					ModLog.create({
+						type: req.body.type,
+						mod: _.pick(req.session, '_id', 'name', 'site', 'group'),
+						user: _.pick(req.user, '_id', 'name', 'site', 'group'),
+						data: {reason: req.body.reason}
+					}, function(err) {
+						return res.apiOut(err, newBan);
+					});
+
 				});
 			});
 		});
@@ -160,7 +170,14 @@ module.exports = {
 					return res.apiOut(err);
 				}
 
-				return res.apiOut(null, {code: 204, response: ''})
+				ModLog.create({
+					type: 'ban-lift',
+					mod: _.pick(req.session, '_id', 'name', 'site', 'group'),
+					user: _.pick(req.user, '_id', 'name', 'site', 'group'),
+					data: {banId: req.params.banId}
+				}, function(err) {
+					return res.apiOut(err, {code: 204, response: ''});
+				});
 			});
 
 

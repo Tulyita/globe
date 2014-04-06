@@ -1,6 +1,6 @@
 'use strict';
 
-var ModLog = require('../models/modLog');
+var ModLog = require('../models/ModLog');
 var paginate = require('../fns/paginate');
 
 
