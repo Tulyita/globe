@@ -37,7 +37,7 @@ process.on('uncaughtException', function (err) {
 
 
 // listen for requests
-globe.listen(process.env.PORT || 9001);
+globe.listen(process.env.PORT || 9002);
 
 
 // export globe for possible extending
