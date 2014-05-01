@@ -2,10 +2,8 @@
 
 var _ = require('lodash');
 var redisSession = require('../fns/redisSession');
-var User = require('../models/user');
 var IpBan = require('../models/ipBan');
 var ModLog = require('../models/ModLog');
-var isBans = require('../validators/isBans');
 var isIp = require('../validators/isIp');
 
 
