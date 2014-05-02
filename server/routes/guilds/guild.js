@@ -40,6 +40,33 @@ module.exports = {
 			});
 		});
 	},
+    
+    
+    post: function(req, res) {
+        var guild = req.guild;
+        guild.desc = req.body.desc;
+        guild.join = req.body.join;
+        
+        guild.save(function(err) {
+            if(err) {
+                return res.apiOut(err);
+            }
+            
+            // --> don't save a banner
+            if(!req.files || !req.files.bannerImg) {
+                return res.apiOut(null, guild);
+            }
+
+            // --> save a banner
+            saveBanner(guild, req.files.bannerImg, function(err) {
+                if(err) {
+                    return res.apiOut(err);
+                }
+                return res.apiOut(null, guild);
+            });
+            
+        });
+    },
 
 
 	get: function(req, res) {

@@ -93,7 +93,7 @@ module.exports = function (grunt) {
 					stdout: true
 				}
 			},
-			deployProduction: {
+			deployLive: {
 				command: 'modulus deploy --project-name globe',
 				options: {
 					stdout: true
@@ -120,7 +120,7 @@ module.exports = function (grunt) {
 		'shell:deploy'
 	]);
 
-	grunt.registerTask('deployProduction', [
-		'shell:deployProduction'
+	grunt.registerTask('deployLive', [
+		'shell:deployLive'
 	]);
 };
