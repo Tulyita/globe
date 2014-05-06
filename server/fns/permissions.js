@@ -41,7 +41,7 @@ module.exports = {
 		var silenced = me.silencedUntil || 0;
 		var banned = me.bannedUntil || 0;
 		var date = new Date();
-		return silenced < date && banned < date && check.isMember(me) && check.isSameUser(me, user);
+		return silenced < date && banned < date && check.isMember(me) && !check.isSameUser(me, user);
 	},
 
 	iCanApprentice: function(me, user) {
