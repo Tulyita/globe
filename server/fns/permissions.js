@@ -73,6 +73,23 @@ module.exports = {
 	iCanReport: function(me, user) {
 		return me.group === groups.APPRENTICE && String(user._id) !== String(me._id);
 	},
+    
+    iCanGuildInvite: function(me, user, guild) {
+        return Boolean(
+            !user.guild &&
+            !check.inSameGuild(me, user) &&
+			!check.isSameUser(me, user) &&
+			guild.getOwner(me._id) &&
+            !guild.getInvitation(user._id)
+        );
+    },
+    
+    iCanDeGuildInvite: function(me, user, guild) {
+        return Boolean(
+            guild.getInvitation(user._id) &&
+			guild.getOwner(me._id)
+        );
+    },
 
 	iCanGuildMod: function(me, user, guild) {
 		return (

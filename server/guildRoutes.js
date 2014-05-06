@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = function(globe) {
 
 
@@ -8,8 +10,6 @@ module.exports = function(globe) {
 	var guild = require('./routes/guilds/guild');
 	var guildGp = require('./routes/guilds/guildGp');
 	var guilds = require('./routes/guilds/guilds');
-	var invitation = require('./routes/guilds/invitation');
-	var invitations = require('./routes/guilds/invitations');
 	var kick = require('./routes/guilds/kick');
 	var kicks = require('./routes/guilds/kicks');
 	var member = require('./routes/guilds/member');
@@ -30,7 +30,6 @@ module.exports = function(globe) {
 
 	var applicantExists = require('./routes/guilds/middleware/applicantExists');
 	var guildModExists = require('./routes/guilds/middleware/guildModExists');
-	var invitationExists = require('./routes/guilds/middleware/invitationExists');
 	var memberExists = require('./routes/guilds/middleware/memberExists');
 	var isGuildMod = require('./routes/guilds/middleware/isGuildMod');
 	var isOwner = require('./routes/guilds/middleware/isOwner');
@@ -40,6 +39,8 @@ module.exports = function(globe) {
 
 
 	// routes
+    require('./routes/guilds/invitations').init(globe);
+    
 	globe.get('/guilds', guilds.get);
 	globe.put('/guilds/:guildId', continueSession, rateLimit('put:guild'), checkUser, loadMyself, guild.put);
 	globe.get('/guilds/:guildId', loadGuild, guild.get);
@@ -65,12 +66,6 @@ module.exports = function(globe) {
 	globe.post('/guilds/:guildId/applicants/:userId', loadGuild, continueSession, isOwner, applicantExists, applicant.post);
 	globe.get('/guilds/:guildId/applicants/:userId', loadGuild, applicantExists, applicant.get);
 	globe.del('/guilds/:guildId/applicants/:userId', loadGuild, continueSession, isOwnerOrSelf, applicantExists, applicant.del);
-
-	globe.get('/guilds/:guildId/invitations', loadGuild, invitations.get);
-	globe.put('/guilds/:guildId/invitations/:userId', loadGuild, continueSession, rateLimit('put:invitation'), isOwner, invitation.put);
-	globe.get('/guilds/:guildId/invitations/:userId', loadGuild, invitationExists, invitation.get);
-	globe.post('/guilds/:guildId/invitations/:userId', loadGuild, continueSession, isSelf, invitationExists, invitation.post);
-	globe.del('/guilds/:guildId/invitations/:userId', loadGuild, continueSession, isOwnerOrSelf, invitationExists, invitation.del);
 
 	globe.get('/guilds/:guildId/settings', loadGuild, settings.get);
 	globe.post('/guilds/:guildId/settings', loadGuild, continueSession, isOwner, settings.post);

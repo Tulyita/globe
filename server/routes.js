@@ -24,20 +24,20 @@ module.exports = function(globe) {
 	var reports = require('./routes/reports');
 	var sessions = require('./routes/sessions');
 	var tests = require('./routes/tests');
-	var user = require('./routes/user');
-	var users = require('./routes/users');
 
 	// middleware
 	var checkAdmin = require('./middleware/checkAdmin');
 	var checkMod = require('./middleware/checkMod');
-	var checkLogin = require('./middleware/checkLogin');
 	var checkServer = require('./middleware/checkServer');
 	var rateLimit = require('./middleware/rateLimit');
 	var continueSession = require('./middleware/continueSession');
 	var loadUser = require('./middleware/loadUser');
 	var loadMyself = require('./middleware/loadMyself');
+    
 
 	// routes
+    require('./routes/users').init(globe);
+    
 	globe.get('/avatars/:filename', avatars.get);
 
 	globe.get('/bans', bans.get);
@@ -68,9 +68,6 @@ module.exports = function(globe) {
 	globe.post('/sessions', sessions.post);
 	globe.del('/sessions/:token', continueSession, sessions.del);
 	globe.get('/sessions', sessions.get);
-
-	globe.get('/users', users.get);
-	globe.get('/users/:userId', continueSession, loadUser(), user.get);
 
 	globe.get('/moderators', moderators.get);
 	globe.get('/moderators/:userId', loadUser(groups.MOD), moderator.get);
