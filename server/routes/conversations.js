@@ -16,6 +16,7 @@
             app.get('/conversations', continueSession, loadMyself, self.getList);
             app.get('/conversations/:userId', continueSession, loadMyself, self.get);
             app.post('/conversations/:userId', continueSession, loadMyself, self.post);
+            app.del('/conversations/:userId', continueSession, loadMyself, self.del);
         },
 
 
@@ -87,6 +88,27 @@
             }
 
             return res.apiOut('action "' + action + '" not found');
+        },
+        
+        
+        del: function(req, res) {
+            var targetUserId = req.params.userId;
+            var messages = req.myself.messages.toObject();
+            
+            // remove all messages to or from targetUserId
+            req.myself.messages = _.filter(messages, function(message) {
+                return String(message.fromUser._id) !== targetUserId && String(message.toUser._id) !== targetUserId;
+            });
+            
+            // save
+            req.myself.save(function(err) {
+                if(err) {
+                    return res.apiOut(err);
+                }
+                
+                // respond with deleted
+                return res.send(204, null);
+            });
         }
     };
 
