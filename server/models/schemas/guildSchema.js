@@ -107,7 +107,7 @@ var GuildSchema = new Schema({
 	members: [MemberSchema],
 	kicks: [nameSchema],
 	applicants: [nameSchema],
-	invitations: [nameSchema]
+	invites: [nameSchema]
 });
 
 GuildSchema.statics.INVITE = 'invite';

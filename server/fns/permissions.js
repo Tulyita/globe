@@ -80,13 +80,13 @@ module.exports = {
             !check.inSameGuild(me, user) &&
 			!check.isSameUser(me, user) &&
 			guild.getOwner(me._id) &&
-            !guild.getInvitation(user._id)
+            !guild.getInvite(user._id)
         );
     },
     
     iCanDeGuildInvite: function(me, user, guild) {
         return Boolean(
-            guild.getInvitation(user._id) &&
+            guild.getInvite(user._id) &&
 			guild.getOwner(me._id)
         );
     },

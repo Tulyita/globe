@@ -54,7 +54,7 @@ var UserSchema = new Schema({
 		type: String,
 		validate: isName
 	},
-    guildInvitations: {
+    guildInvites: {
         type: [String]
     },
 	messages: {

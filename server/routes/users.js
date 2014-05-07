@@ -21,7 +21,7 @@
         init: function(app) {
             app.get('/users', self.getList);
             app.get('/users/:userId', continueSession, loadUser(), self.getUser);
-            app.get('/users/:userId/invitations', continueSession, loadUser({}, 'guildInvitations'), self.getUserInvitations);
+            app.get('/users/:userId/invites', continueSession, loadUser({}, 'guildInvites'), self.getUserInvites);
         },
 
         
@@ -101,8 +101,8 @@
         /**
          * 
          */
-        getUserInvitations: function(req, res) {
-            res.apiOut(null, req.user.guildInvitations);
+        getUserInvites: function(req, res) {
+            res.apiOut(null, {invites: req.user.guildInvites});
         }
     };
 

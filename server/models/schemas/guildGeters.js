@@ -60,8 +60,8 @@ module.exports = function(schema) {
 	 * @param {ObjectId} userId
 	 * @returns {*}
 	 */
-	schema.methods.getInvitation = function(userId) {
-		return this.getUserFrom('invitations', userId);
+	schema.methods.getInvite = function(userId) {
+		return this.getUserFrom('invites', userId);
 	};
 
 

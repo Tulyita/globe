@@ -4,11 +4,11 @@ var mongoose = require('mongoose');
 var mockgoose = require('mockgoose');
 mockgoose(mongoose);
 
-var invitation = require('../../../../server/routes/guilds/invitation');
+var invites = require('../../../../server/routes/guilds/invites');
 var Guild = require('../../../../server/models/guild');
 var User = require('../../../../server/models/user');
 
-describe('routes/guilds/invitation', function() {
+describe('routes/guilds/invite', function() {
 
 	var userId, ownerId, invitedId, guild;
 
@@ -16,7 +16,7 @@ describe('routes/guilds/invitation', function() {
 		userId = mongoose.Types.ObjectId();
 		ownerId = mongoose.Types.ObjectId();
 		invitedId = mongoose.Types.ObjectId();
-		Guild.create({_id: 'racers', invitations: [{_id: invitedId, name: 'aaaa', site: 'j', group: 'u'}]}, function(err, _guild_) {
+		Guild.create({_id: 'racers', invites: [{_id: invitedId, name: 'aaaa', site: 'j', group: 'u'}]}, function(err, _guild_) {
 			guild = _guild_;
 			User.create({_id: invitedId, name: 'aaaa', site: 'j', group: 'u', siteUserId: '123'}, function(err2) {
 				User.create({_id: userId, name: 'bbbb', site: 'j', group: 'u', siteUserId: '124'}, function(err3) {
@@ -29,6 +29,47 @@ describe('routes/guilds/invitation', function() {
 	afterEach(function() {
 		mockgoose.reset();
 	});
+    
+    
+    
+    
+    
+    describe('routes/guilds/invites', function() {
+
+        var guild;
+
+        beforeEach(function(done) {
+            Guild.create({_id: 'racers', invites: [{_id: mongoose.Types.ObjectId(), name: 'aaaa', site: 'j', group: 'u'}]}, function(err, _guild_) {
+                guild = _guild_;
+                done(err);
+            });
+        });
+
+        afterEach(function() {
+            mockgoose.reset();
+        });
+
+        describe('get', function() {
+
+            it('should return a list of invites', function(done) {
+                var req = {
+                    params: {
+                        guildId: 'racers'
+                    },
+                    guild: guild
+                };
+                invites.get(req, {apiOut: function(err, res) {
+                    expect(res.length).toBe(1);
+                    expect(res[0].name).toBe('aaaa');
+                    done(err);
+                }});
+            });
+        });
+    });
+    
+    
+    
+    
 
 	//////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////
@@ -36,7 +77,7 @@ describe('routes/guilds/invitation', function() {
 
 	describe('put', function() {
 
-		it('should put an invitation', function(done) {
+		it('should put an invite', function(done) {
 			var req = {
 				session: {
 					userId: ownerId
@@ -47,9 +88,9 @@ describe('routes/guilds/invitation', function() {
 				},
 				guild: guild
 			};
-			invitation.put(req, {apiOut: function(err, res) {
+			invites.put(req, {apiOut: function(err, res) {
 				expect(res._id).toEqual(userId);
-				expect(guild.invitations[1]._id).toEqual(userId);
+				expect(guild.invites[1]._id).toEqual(userId);
 				done(err);
 			}});
 		});
@@ -62,7 +103,7 @@ describe('routes/guilds/invitation', function() {
 
 	describe('post', function() {
 
-		it('should accept an invitation', function(done) {
+		it('should accept an invite', function(done) {
 			var req = {
 				params: {
 					guildId: 'racer',
@@ -73,9 +114,9 @@ describe('routes/guilds/invitation', function() {
 				},
 				guild: guild
 			};
-			invitation.post(req, {apiOut: function(err, res) {
+			invites.post(req, {apiOut: function(err, res) {
 				expect(res).toBeFalsy();
-				expect(guild.invitations.length).toEqual(0);
+				expect(guild.invites.length).toEqual(0);
 				done(err);
 			}});
 		});
@@ -88,7 +129,7 @@ describe('routes/guilds/invitation', function() {
 
 	describe('get', function() {
 
-		it('should get an invitation', function(done) {
+		it('should get an invite', function(done) {
 			var req = {
 				params: {
 					guildId: 'racer',
@@ -96,7 +137,7 @@ describe('routes/guilds/invitation', function() {
 				},
 				guild: guild
 			};
-			invitation.get(req, {apiOut: function(err, res) {
+			invites.get(req, {apiOut: function(err, res) {
 				expect(res._id).toEqual(invitedId);
 				done(err);
 			}});
@@ -110,7 +151,7 @@ describe('routes/guilds/invitation', function() {
 
 	describe('del', function() {
 
-		it('should delete an invitation', function(done) {
+		it('should delete an invite', function(done) {
 			var req = {
 				params: {
 					guildId: 'racer',
@@ -118,11 +159,11 @@ describe('routes/guilds/invitation', function() {
 				},
 				guild: guild
 			};
-			invitation.del(req, {status: function(code) {
+			invites.del(req, {status: function(code) {
 				expect(code).toEqual(204);
 				return {send: function(msg) {
 					expect(msg).toBeFalsy();
-					expect(guild.invitations.length).toBe(0);
+					expect(guild.invites.length).toBe(0);
 					done();
 				}};
 			}});

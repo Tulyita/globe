@@ -17,7 +17,7 @@ describe('guild/auth', function() {
 			members: [],
 			kicks: [],
 			joinRequests: [],
-			invitations: []
+			invites: []
 		}, function(err, _guild_){
 			guild = _guild_;
 			done(err);
@@ -100,13 +100,13 @@ describe('guild/auth', function() {
 
 	describe('isInvited', function() {
 
-		it('should return true if user is in invitations array', function() {
-			guild.invitations = [user1];
-			expect(guild.getInvitation(user1._id).toObject()).toEqual(user1);
+		it('should return true if user is in invites array', function() {
+			guild.invites = [user1];
+			expect(guild.getInvite(user1._id).toObject()).toEqual(user1);
 		});
 
-		it('should return false if user is not in invitations array', function() {
-			expect(guild.getInvitation(user1._id)).toBeFalsy();
+		it('should return false if user is not in invites array', function() {
+			expect(guild.getInvite(user1._id)).toBeFalsy();
 		});
 	});
 

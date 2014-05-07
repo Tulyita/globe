@@ -39,7 +39,7 @@ module.exports = function(globe) {
 
 
 	// routes
-    require('./routes/guilds/invitations').init(globe);
+    require('./routes/guilds/invites').init(globe);
     
 	globe.get('/guilds', guilds.get);
 	globe.put('/guilds/:guildId', continueSession, rateLimit('put:guild'), checkUser, loadMyself, guild.put);

@@ -143,6 +143,7 @@
          */
         schema.methods.addUserToList = function (list, userId, callback) {
             var self = this;
+            self[list] = self[list] || [];
             self[list] = _.filter(self[list], function (user) {
                 return String(user._id) !== String(userId);
             });
@@ -196,41 +197,41 @@
 
         
         /**
-         * Remove user from invitations and add them to members
+         * Remove user from invite and add them to members
          * @param {ObjectId} userId
          * @param {Function} callback
          */
-        schema.methods.acceptInvitation = function (userId, callback) {
+        schema.methods.acceptInvite = function (userId, callback) {
             var self = this;
             self.addMember(userId, function (err) {
                 if (err) {
                     return callback(err);
                 }
 
-                return self.removeInvitation(userId, callback);
+                return self.removeInvite(userId, callback);
             });
         };
 
         
 
         /**
-         * Remove user id from guild.invitations
-         * and remove guild id from user.guildInvitations
+         * Remove user id from guild.invite
+         * and remove guild id from user.guildInvites
          * @param {ObjectId} userId
          * @param {Function} callback
          */
-        schema.methods.removeInvitation = function (userId, callback) {
+        schema.methods.removeInvite = function (userId, callback) {
             var self = this;
 
             async.waterfall([
                 function(cb) {
-                    self.removeUserFromList('invitations', userId, cb);
+                    self.removeUserFromList('invites', userId, cb);
                 },
                 function(guild, count, cb) {
-                    User.findExistingById(userId, 'guildInvitations', cb);
+                    User.findExistingById(userId, 'guildInvites', cb);
                 },
                 function(user, cb) {
-                    _.pull(user.guildInvitations, self._id);
+                    user.guildInvites = _.pull(user.guildInvites.toObject(), self._id);
                     user.save(cb);
                 }
             ], callback);
@@ -239,24 +240,24 @@
         
         
         /**
-         * Add user id to guild.invitations
-         * add guild id to user.guildInvitations
+         * Add user id to guild.invite
+         * add guild id to user.guildInvites
          * @param {ObjectId} userId
          * @param {Function} callback
          */
-        schema.methods.addInvitation = function (userId, callback) {
+        schema.methods.addInvite = function (userId, callback) {
             var self = this;
             
             async.waterfall([
                 function(cb) {
-                    self.addUserToList('invitations', userId, cb);
+                    self.addUserToList('invites', userId, cb);
                 },
                 function(guild, count, cb) {
-                    User.findExistingById(userId, 'guildInvitations', cb);
+                    User.findExistingById(userId, 'guildInvites', cb);
                 },
                 function(user, cb) {
-                    user.guildInvitations.push(self._id);
-                    user.guildInvitations = _.unique(user.guildInvitations);
+                    user.guildInvites.push(self._id);
+                    user.guildInvites = _.unique(user.guildInvites);
                     user.save(cb);
                 }
             ], callback);

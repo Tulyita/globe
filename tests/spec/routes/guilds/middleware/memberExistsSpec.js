@@ -8,7 +8,7 @@ var sinon = require('sinon');
 var memberExists = require('../../../../../server/routes/guilds/middleware/memberExists');
 var Guild = require('../../../../../server/models/guild');
 
-describe('routes/guilds/invitation', function() {
+describe('routes/guilds/invite', function() {
 
 	var guild, userId;
 

@@ -35,7 +35,7 @@ describe('guild', function() {
 			obj.owners = [];
 			obj.members = [];
 			obj.applicants = [];
-			obj.invitations = [];
+			obj.invites = [];
 
 			Guild.create(obj, function(err, guild) {
 				expect(err).toBeFalsy();
@@ -52,7 +52,7 @@ describe('guild', function() {
 				expect(guild.owners.toObject()).toEqual([]);
 				expect(guild.members.toObject()).toEqual([]);
 				expect(guild.applicants.toObject()).toEqual([]);
-				expect(guild.invitations.toObject()).toEqual([]);
+				expect(guild.invites.toObject()).toEqual([]);
 
 				done();
 			});
@@ -82,7 +82,7 @@ describe('guild', function() {
 			obj.owners = {haxxor: true};
 			obj.members = {haxxor: true};
 			obj.applicants = {haxxor: true};
-			obj.invitations = {haxxor: true};
+			obj.invites = {haxxor: true};
 
 			Guild.create(obj, function(err, guild) {
 
@@ -97,7 +97,7 @@ describe('guild', function() {
 				expect(guild.owners.toObject()).toEqual([]);
 				expect(guild.members.toObject()).toEqual([]);
 				expect(guild.applicants.toObject()).toEqual([]);
-				expect(guild.invitations.toObject()).toEqual([]);
+				expect(guild.invites.toObject()).toEqual([]);
 
 				done(err);
 			});
