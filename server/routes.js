@@ -12,8 +12,6 @@ module.exports = function(globe) {
 	var avatars = require('./routes/avatars');
 	var ban = require('./routes/ban');
 	var bans = require('./routes/bans');
-	var conversation = require('./routes/conversation');
-	var conversations = require('./routes/conversations');
 	var friend = require('./routes/friend');
 	var friends = require('./routes/friends');
 	var moderator = require('./routes/moderator');
@@ -35,8 +33,9 @@ module.exports = function(globe) {
     
 
 	// routes
-    require('./routes/users').init(globe);
+    require('./routes/conversations').init(globe);
     require('./routes/messages').init(globe);
+    require('./routes/users').init(globe);
     
 	globe.get('/avatars/:filename', avatars.get);
 
@@ -49,10 +48,6 @@ module.exports = function(globe) {
 	globe.get('/friends/:userId', continueSession, loadMyself, friend.get);
 	globe.put('/friends/:userId', continueSession, loadMyself, loadUser(), friend.put);
 	globe.del('/friends/:userId', continueSession, loadMyself, friend.del);
-
-	globe.get('/conversations', continueSession, loadMyself, conversations.get);
-	globe.get('/conversations/:userId', continueSession, loadMyself, conversation.get);
-	globe.post('/conversations/:userId', continueSession, loadMyself, conversation.post);
 
 	globe.get('/reports/:reportId', continueSession, checkMod, report.get);
 	globe.post('/reports/:reportId', continueSession, checkMod, report.post);
