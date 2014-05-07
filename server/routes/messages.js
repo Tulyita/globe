@@ -53,7 +53,7 @@
         init: function(app) {
             app.get('/messages/unread/count', continueSession, loadMyself, self.getUnreadCount);
             app.get('/messages', continueSession, loadMyself, self.get);
-            app.post('/messages', continueSession, rateLimit('post:messages'), loadMyself, loadUser(null, '_id name group site messages'), self.post);
+            app.post('/messages', continueSession, rateLimit('post:messages', 10, 60000), loadMyself, loadUser(null, '_id name group site messages'), self.post);
         },
 
 
