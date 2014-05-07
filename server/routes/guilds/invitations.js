@@ -2,10 +2,8 @@
     
     'use strict';
 
-    var _ = require('lodash');
     var rateLimit = require('../../middleware/rateLimit');
     var continueSession = require('../../middleware/continueSession');
-    var loadUser = require('../../middleware/loadUser');
     var invitationExists = require('./middleware/invitationExists');
     var isOwner = require('./middleware/isOwner');
     var isOwnerOrSelf = require('./middleware/isOwnerOrSelf');
@@ -17,10 +15,10 @@
 
         init: function (app) {
             app.get('/guilds/:guildId/invitations', loadGuild, self.getList);
-            app.put('/guilds/:guildId/invitations/:userId', loadGuild, continueSession, rateLimit('put:invitation'), isOwner, loadUser('guildInvitations'), self.put);
+            app.put('/guilds/:guildId/invitations/:userId', loadGuild, continueSession, rateLimit('put:invitation'), isOwner, self.put);
             app.get('/guilds/:guildId/invitations/:userId', loadGuild, invitationExists, self.get);
-            app.post('/guilds/:guildId/invitations/:userId', loadGuild, continueSession, isSelf, invitationExists, loadUser('guildInvitations'), self.post);
-            app.del('/guilds/:guildId/invitations/:userId', loadGuild, continueSession, isOwnerOrSelf, invitationExists, loadUser('guildInvitations'), self.del);
+            app.post('/guilds/:guildId/invitations/:userId', loadGuild, continueSession, isSelf, invitationExists, self.post);
+            app.del('/guilds/:guildId/invitations/:userId', loadGuild, continueSession, isOwnerOrSelf, invitationExists, self.del);
         },
 
 
@@ -30,33 +28,13 @@
 
 
         put: function (req, res) {
-            req.guild.addUserToList('invitations', req.params.userId, function (err) {
-                if(err) {
-                    return res.apitOut(err);
-                }
-
-                req.user.guildInvitations.push(req.params.guildId);
-                req.user.guildInvitations = _.unique(req.user.guildInvitations);
-                req.user.save(function(err) {
-                    if(err) {
-                        return res.apiOut(err);
-                    }
-                    return res.apiOut(null, req.guild.getUserFrom('invitations', req.params.userId));
-                });
-            });
+            req.guild.addInvitation(req.params.userId, res.apiOut);
         },
 
 
         post: function (req, res) {
             if (req.query.action === 'accept') {
-
-                return req.guild.acceptInvitation(req.params.userId, function (err) {
-                    if (err) {
-                        return res.apiOut(err);
-                    }
-
-                    return res.apiOut(null, req.guild.getUserFrom('members', req.params.userId));
-                });
+                return req.guild.acceptInvitation(req.params.userId, res.apiOut);
             }
 
             return res.apiOut('Action not found.');
@@ -69,7 +47,7 @@
 
 
         del: function (req, res) {
-            return req.guild.removeUserFromList('invitations', req.params.userId, function (err) {
+            return req.guild.removeInvitation(req.params.userId, function (err) {
                 if (err) {
                     return res.apiOut(err);
                 }

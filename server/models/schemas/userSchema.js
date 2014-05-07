@@ -54,6 +54,9 @@ var UserSchema = new Schema({
 		type: String,
 		validate: isName
 	},
+    guildInvitations: {
+        type: [String]
+    },
 	messages: {
 		type: [new Schema(messageDoc)]
 	},
@@ -65,7 +68,8 @@ var UserSchema = new Schema({
 	}
 });
 
-UserSchema.static.publicFields = {
+
+UserSchema.statics.publicFields = {
 	_id: 1,
 	name: 1,
 	group: 1,
@@ -76,10 +80,26 @@ UserSchema.static.publicFields = {
 };
 
 
+UserSchema.statics.findExistingById = function(id, fields, callback) {
+    if(!callback) {
+        callback = fields;
+    }
+    this.findById(id, fields, function (err, user) {
+        if (err) {
+            return callback(err);
+        }
+        if (!user) {
+            return callback('User "' + id + '" not found.');
+        }
+        return callback(null, user);
+    });
+};
+
+
 UserSchema.methods.publicData = function() {
 	var obj = {};
 	var self = this;
-	_.each(UserSchema.static.publicFields, function(val, field) {
+	_.each(UserSchema.statics.publicFields, function(val, field) {
 		if(val === 1) {
 			obj[field] = self[field];
 		}
