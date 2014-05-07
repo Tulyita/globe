@@ -7,6 +7,7 @@ var paginate = function(data, callback) {
 
 
 	// import data
+    var model = data.model;
 	var page = data.page || 1;
 	var count = data.count || 10;
 	var find = data.find ? data.find : {};
@@ -44,7 +45,7 @@ var paginate = function(data, callback) {
 
 
 	// query for the data
-	data.model
+	model
 		.find(find)
 		.skip((page-1)*count)
 		.limit(count)
@@ -55,7 +56,7 @@ var paginate = function(data, callback) {
 			}
 
 			// query for the number of pages
-			data.model.count(find, function(err, totalItemCount) {
+			model.count(find, function(err, totalItemCount) {
 				if(err) {
 					return callback(err);
 				}
