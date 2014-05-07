@@ -2,9 +2,10 @@
     
     'use strict';
 
-	var rateLimit = require('../../middleware/rateLimit');
-	var continueSession = require('../../middleware/continueSession');
-    
+    var _ = require('lodash');
+    var rateLimit = require('../../middleware/rateLimit');
+    var continueSession = require('../../middleware/continueSession');
+    var loadUser = require('../../middleware/loadUser');
     var invitationExists = require('./middleware/invitationExists');
     var isOwner = require('./middleware/isOwner');
     var isOwnerOrSelf = require('./middleware/isOwnerOrSelf');
@@ -16,10 +17,10 @@
 
         init: function (app) {
             app.get('/guilds/:guildId/invitations', loadGuild, self.getList);
-            app.put('/guilds/:guildId/invitations/:userId', loadGuild, continueSession, rateLimit('put:invitation'), isOwner, self.put);
+            app.put('/guilds/:guildId/invitations/:userId', loadGuild, continueSession, rateLimit('put:invitation'), isOwner, loadUser('guildInvitations'), self.put);
             app.get('/guilds/:guildId/invitations/:userId', loadGuild, invitationExists, self.get);
-            app.post('/guilds/:guildId/invitations/:userId', loadGuild, continueSession, isSelf, invitationExists, self.post);
-            app.del('/guilds/:guildId/invitations/:userId', loadGuild, continueSession, isOwnerOrSelf, invitationExists, self.del);
+            app.post('/guilds/:guildId/invitations/:userId', loadGuild, continueSession, isSelf, invitationExists, loadUser('guildInvitations'), self.post);
+            app.del('/guilds/:guildId/invitations/:userId', loadGuild, continueSession, isOwnerOrSelf, invitationExists, loadUser('guildInvitations'), self.del);
         },
 
 
@@ -29,8 +30,19 @@
 
 
         put: function (req, res) {
-            return req.guild.addUserToList('invitations', req.params.userId, function (err) {
-                return res.apiOut(err, req.guild.getUserFrom('invitations', req.params.userId));
+            req.guild.addUserToList('invitations', req.params.userId, function (err) {
+                if(err) {
+                    return res.apitOut(err);
+                }
+
+                req.user.guildInvitations.push(req.params.guildId);
+                req.user.guildInvitations = _.unique(req.user.guildInvitations);
+                req.user.save(function(err) {
+                    if(err) {
+                        return res.apiOut(err);
+                    }
+                    return res.apiOut(null, req.guild.getUserFrom('invitations', req.params.userId));
+                });
             });
         },
 
