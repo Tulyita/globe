@@ -46,8 +46,8 @@
                 }
                 
                 var notifications = {
-                    unreadMessageCount: getUnreadCount(req.myself),
-                    invitationCount: req.myself.guildInvites.length,
+                    unreadCount: getUnreadCount(req.myself),
+                    inviteCount: req.myself.guildInvites.length,
                     applicantCount: applicantCount
                 };
                 res.apiOut(null, notifications);

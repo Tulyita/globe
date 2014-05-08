@@ -115,6 +115,23 @@ GuildSchema.statics.ASK = 'ask';
 GuildSchema.statics.OPEN = 'open';
 
 
+GuildSchema.statics.findExistingById = function(id, fields, callback) {
+    if(!callback) {
+        callback = fields;
+    }
+    this.findById(id, fields, function (err, doc) {
+        if (err) {
+            return callback(err);
+        }
+        if (!doc) {
+            return callback('Guild "' + id + '" not found.');
+        }
+        return callback(null, doc);
+    });
+};
+
+
+
 require('./guildGeters')(GuildSchema);
 require('./guildMethods')(GuildSchema);
 
