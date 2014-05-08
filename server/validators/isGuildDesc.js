@@ -3,6 +3,9 @@
 var _ = require('lodash');
 
 var isGuildDesc = function(val) {
+    if(_.isUndefined(val)) {
+        return true;
+    }
 	if(!_.isString(val)) {
 		return false;
 	}
