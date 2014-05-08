@@ -7,7 +7,6 @@ module.exports = function(globe) {
 	var applicant = require('./routes/guilds/applicant');
 	var applicants = require('./routes/guilds/applicants');
 	var banner = require('./routes/guilds/banner');
-	var guild = require('./routes/guilds/guild');
 	var guildGp = require('./routes/guilds/guildGp');
 	var guilds = require('./routes/guilds/guilds');
 	var kick = require('./routes/guilds/kick');
@@ -40,12 +39,8 @@ module.exports = function(globe) {
 
 	// routes
     require('./routes/guilds/invites').init(globe);
-    
-	globe.get('/guilds', guilds.get);
-	globe.put('/guilds/:guildId', continueSession, rateLimit('put:guild'), checkUser, loadMyself, guild.put);
-	globe.get('/guilds/:guildId', loadGuild, guild.get);
-	globe.del('/guilds/:guildId', loadGuild, continueSession, isOwner, guild.del);
-	globe.post('/guilds/:guildId', loadGuild, continueSession, isOwner, guild.post);
+    require('./routes/guilds/guilds').init(globe);
+	
 	globe.post('/guilds/:guildId/gp', loadGuild, checkServer, guildGp.post);
 	globe.get('/guilds/:guildId/gp', loadGuild, guildGp.get);
 

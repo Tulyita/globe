@@ -2,7 +2,6 @@ var nameDisplayDoc = require('./nameDisplayDoc');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var isNameDisplay = require('../../validators/isNameDisplay');
-var paginate = require('../../fns/mongoose/paginate');
 
 var ReportSchema = new Schema({
 	type: {
@@ -36,7 +35,5 @@ var ReportSchema = new Schema({
 		type: String
 	}
 });
-
-ReportSchema.statics.paginate = paginate;
 
 module.exports = ReportSchema;
