@@ -1,76 +1,69 @@
 'use strict';
 
-module.exports = function(globe) {
+module.exports = function (globe) {
 
 
-	// endpoints
-	var applicant = require('./routes/guilds/applicant');
-	var applicants = require('./routes/guilds/applicants');
-	var banner = require('./routes/guilds/banner');
-	var guildGp = require('./routes/guilds/guildGp');
-	var guilds = require('./routes/guilds/guilds');
-	var kick = require('./routes/guilds/kick');
-	var kicks = require('./routes/guilds/kicks');
-	var member = require('./routes/guilds/member');
-	var members = require('./routes/guilds/members');
-	var mod = require('./routes/guilds/mod');
-	var mods = require('./routes/guilds/mods');
-	var settings = require('./routes/guilds/settings');
-	var userGp = require('./routes/guilds/userGp');
+    // endpoints
+    var banner = require('./routes/guilds/banner');
+    var guildGp = require('./routes/guilds/guildGp');
+    var guilds = require('./routes/guilds/guilds');
+    var kick = require('./routes/guilds/kick');
+    var kicks = require('./routes/guilds/kicks');
+    var member = require('./routes/guilds/member');
+    var members = require('./routes/guilds/members');
+    var mod = require('./routes/guilds/mod');
+    var mods = require('./routes/guilds/mods');
+    var settings = require('./routes/guilds/settings');
+    var userGp = require('./routes/guilds/userGp');
 
 
-	// middleware
-	var checkUser = require('./middleware/checkUser');
-	var checkServer = require('./middleware/checkServer');
-	var rateLimit = require('./middleware/rateLimit');
-	var continueSession = require('./middleware/continueSession');
-	var loadMyself = require('./middleware/loadMyself');
-	var loadUser = require('./middleware/loadUser');
+    // middleware
+    var checkUser = require('./middleware/checkUser');
+    var checkServer = require('./middleware/checkServer');
+    var rateLimit = require('./middleware/rateLimit');
+    var continueSession = require('./middleware/continueSession');
+    var loadMyself = require('./middleware/loadMyself');
+    var loadUser = require('./middleware/loadUser');
 
-	var applicantExists = require('./routes/guilds/middleware/applicantExists');
-	var guildModExists = require('./routes/guilds/middleware/guildModExists');
-	var memberExists = require('./routes/guilds/middleware/memberExists');
-	var isGuildMod = require('./routes/guilds/middleware/isGuildMod');
-	var isOwner = require('./routes/guilds/middleware/isOwner');
-	var isOwnerOrSelf = require('./routes/guilds/middleware/isOwnerOrSelf');
-	var isSelf = require('./routes/guilds/middleware/isSelf');
-	var loadGuild = require('./routes/guilds/middleware/loadGuild');
+    var applicantExists = require('./routes/guilds/middleware/applicantExists');
+    var guildModExists = require('./routes/guilds/middleware/guildModExists');
+    var memberExists = require('./routes/guilds/middleware/memberExists');
+    var isGuildMod = require('./routes/guilds/middleware/isGuildMod');
+    var isOwner = require('./routes/guilds/middleware/isOwner');
+    var isOwnerOrSelf = require('./routes/guilds/middleware/isOwnerOrSelf');
+    var isSelf = require('./routes/guilds/middleware/isSelf');
+    var loadGuild = require('./routes/guilds/middleware/loadGuild');
 
 
-	// routes
+    // routes
     require('./routes/guilds/invites').init(globe);
     require('./routes/guilds/guilds').init(globe);
-	
-	globe.post('/guilds/:guildId/gp', loadGuild, checkServer, guildGp.post);
-	globe.get('/guilds/:guildId/gp', loadGuild, guildGp.get);
+    require('./routes/guilds/applicants').init(globe);
 
-	globe.get('/guilds/:guildId/members', loadGuild, members.get);
-	globe.get('/guilds/:guildId/members/:userId', loadGuild, memberExists, member.get);
-	globe.put('/guilds/:guildId/members/:userId', loadGuild, continueSession, isSelf, checkUser, member.put);
-	globe.del('/guilds/:guildId/members/:userId', loadGuild, continueSession, isSelf, checkUser, member.del);
-	globe.post('/guilds/:guildId/members/:userId/gp', loadGuild, memberExists, checkServer, userGp.post);
-	globe.get('/guilds/:guildId/members/:userId/gp', loadGuild, memberExists, userGp.get);
+    globe.post('/guilds/:guildId/gp', loadGuild, checkServer, guildGp.post);
+    globe.get('/guilds/:guildId/gp', loadGuild, guildGp.get);
 
-	globe.get('/guilds/:guildId/kicks', loadGuild, kicks.get);
-	globe.get('/guilds/:guildId/kicks/:userId', loadGuild, kick.get);
-	globe.put('/guilds/:guildId/kicks/:userId', continueSession, loadGuild, loadUser(), loadMyself, isGuildMod, kick.put);
-	globe.del('/guilds/:guildId/kicks/:userId', continueSession, loadGuild, loadUser(), loadMyself, isGuildMod, kick.del);
+    globe.get('/guilds/:guildId/members', loadGuild, members.get);
+    globe.get('/guilds/:guildId/members/:userId', loadGuild, memberExists, member.get);
+    globe.put('/guilds/:guildId/members/:userId', loadGuild, continueSession, isSelf, checkUser, member.put);
+    globe.del('/guilds/:guildId/members/:userId', loadGuild, continueSession, isSelf, checkUser, member.del);
+    globe.post('/guilds/:guildId/members/:userId/gp', loadGuild, memberExists, checkServer, userGp.post);
+    globe.get('/guilds/:guildId/members/:userId/gp', loadGuild, memberExists, userGp.get);
 
-	globe.get('/guilds/:guildId/applicants', loadGuild, applicants.get);
-	globe.put('/guilds/:guildId/applicants/:userId', loadGuild, continueSession, rateLimit('put:applicant'), isSelf, applicant.put);
-	globe.post('/guilds/:guildId/applicants/:userId', loadGuild, continueSession, isOwner, applicantExists, applicant.post);
-	globe.get('/guilds/:guildId/applicants/:userId', loadGuild, applicantExists, applicant.get);
-	globe.del('/guilds/:guildId/applicants/:userId', loadGuild, continueSession, isOwnerOrSelf, applicantExists, applicant.del);
+    globe.get('/guilds/:guildId/kicks', loadGuild, kicks.get);
+    globe.get('/guilds/:guildId/kicks/:userId', loadGuild, kick.get);
+    globe.put('/guilds/:guildId/kicks/:userId', continueSession, loadGuild, loadUser(), loadMyself, isGuildMod, kick.put);
+    globe.del('/guilds/:guildId/kicks/:userId', continueSession, loadGuild, loadUser(), loadMyself, isGuildMod, kick.del);
 
-	globe.get('/guilds/:guildId/settings', loadGuild, settings.get);
-	globe.post('/guilds/:guildId/settings', loadGuild, continueSession, isOwner, settings.post);
+    globe.get('/guilds/:guildId/settings', loadGuild, settings.get);
+    globe.post('/guilds/:guildId/settings', loadGuild, continueSession, isOwner, settings.post);
 
-	globe.get('/guilds/:guildId/banner', loadGuild, settings.get);
-	globe.put('/guilds/:guildId/banner', loadGuild, continueSession, isOwner, banner.put);
+    globe.get('/guilds/:guildId/banner', loadGuild, settings.get);
+    globe.put('/guilds/:guildId/banner', loadGuild, continueSession, isOwner, banner.put);
 
-	globe.get('/guilds/:guildId/mods', loadGuild, mods.get);
-	globe.put('/guilds/:guildId/mods/:userId', loadGuild, continueSession, loadUser(), loadMyself, isOwner, mod.put);
-	globe.get('/guilds/:guildId/mods/:userId', loadGuild, guildModExists, mod.get);
-	globe.del('/guilds/:guildId/mods/:userId', loadGuild, continueSession, loadUser(), loadMyself, isOwner, guildModExists, mod.del);
+    globe.get('/guilds/:guildId/mods', loadGuild, mods.get);
+    globe.put('/guilds/:guildId/mods/:userId', loadGuild, continueSession, loadUser(), loadMyself, isOwner, mod.put);
+    globe.get('/guilds/:guildId/mods/:userId', loadGuild, guildModExists, mod.get);
+    globe.del('/guilds/:guildId/mods/:userId', loadGuild, continueSession, loadUser(), loadMyself, isOwner, guildModExists, mod.del);
 
 };
