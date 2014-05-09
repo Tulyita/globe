@@ -13,5 +13,5 @@ module.exports = function(targetUri, forceHost) {
     return function(req, res, next) {
         req.headers.host = host;
         proxy.web(req, res, {target: targetUri, secure: secure});
-    }
+    };
 };
