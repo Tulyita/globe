@@ -7,13 +7,16 @@ var Imager = require('imager'),
 
 
 var saveBanner = function(guild, image, callback) {
-	image.name = createHashId(guild._id) + '.jpg';
+    
+    var filename = createHashId(guild._id) + '.jpg';
+    
+	image.name = filename;
 	image.type = 'image/jpg';
-	imager.upload([image], function(err, endpoint, filenames) {
+    
+	imager.upload([image], function(err) {
 		if(err) {
 			return callback(err);
 		}
-		var filename = filenames[0];
 
 		guild.banner = {
 			updated: new Date(),
