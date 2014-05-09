@@ -36,7 +36,7 @@
 
 
         post: function (req, res) {
-            if (req.query.action === 'accept') {
+            if (req.body.action === 'accept') {
 
                 return req.guild.acceptApplication(req.params.userId, function (err) {
                     if (err) {
