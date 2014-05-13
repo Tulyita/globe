@@ -6,7 +6,7 @@ var session = require('../fns/redisSession');
 module.exports = function(req, res, next) {
 
 	req.session = req.session || {};
-	var token = req.headers['session-token'];
+	var token = req.headers['session-token'] || req.params.token;
 
 	if(!token) {
 		return next();

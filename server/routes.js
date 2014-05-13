@@ -17,7 +17,6 @@ module.exports = function (globe) {
     var moderator = require('./routes/moderator');
     var moderators = require('./routes/moderators');
     var modLogs = require('./routes/modLogs');
-    var sessions = require('./routes/sessions');
     var tests = require('./routes/tests');
 
     // middleware
@@ -36,6 +35,7 @@ module.exports = function (globe) {
     require('./routes/users').init(globe);
     require('./routes/reports').init(globe);
     require('./routes/notifications').init(globe);
+    require('./routes/sessions').init(globe);
 
     globe.get('/avatars/:filename', avatars.get);
 
@@ -49,13 +49,7 @@ module.exports = function (globe) {
     globe.put('/friends/:userId', continueSession, loadMyself, loadUser(), friend.put);
     globe.del('/friends/:userId', continueSession, loadMyself, friend.del);
 
-
-
     globe.get('/tests', tests.get);
-
-    globe.post('/sessions', sessions.post);
-    globe.del('/sessions/:token', continueSession, sessions.del);
-    globe.get('/sessions', sessions.get);
 
     globe.get('/moderators', moderators.get);
     globe.get('/moderators/:userId', loadUser(groups.MOD), moderator.get);
