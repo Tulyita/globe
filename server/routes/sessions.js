@@ -49,6 +49,7 @@
      */
     var saveUser = function(verified, ip, callback) {
         verified.ip = ip;
+        verified.loginDate = new Date();
         User.findOneAndSave({site: verified.site, siteUserId: verified.siteUserId}, verified, function(err, user) {
             if(err) {
                 return callback(err);
