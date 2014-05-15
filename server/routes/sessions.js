@@ -90,6 +90,7 @@
      * @param callback
      */
     var startSession = function(user, callback) {
+        user._id = String(user._id);
         session.make(user._id, _.pick(user, '_id', 'name', 'site', 'group', 'silencedUntil', 'guild'), function(err, response, token) {
             if(err) {
                 return callback(err);
