@@ -34,9 +34,9 @@
                 page: req.body.page,
                 count: req.body.count,
                 find: req.body.find,
-                sort: req.body.sort,
+                sort: {gpWeek: -1},
                 allowFindBy: ['join'],
-                allowSortBy: ['_id', 'gpDay']
+                allowSortBy: ['_id', 'gpWeek']
             };
             
             paginate(data, res.apiOut);
