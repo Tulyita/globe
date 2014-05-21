@@ -1,11 +1,21 @@
 'use strict';
 
+var request = require('request');
 var gm = require('gm').subClass({
     imageMagick: true
 });
 var User = require('../models/user');
 
 var avatars = {};
+
+
+var sendImg = function(img, res) {
+    res.writeHead(200, {
+        'Cache-Control': 'public,max-age=86400',
+        'Content-Type': 'image/gif'
+    });
+    return res.end(img, 'binary');
+};
 
 
 /**
@@ -28,24 +38,36 @@ avatars.get = function (req, res) {
         }
 
         var avatar = user.avatar || 'https://guestville.jiggmin.com/avatar.php';
-
-        return gm(avatar).toBuffer(function (err, buffer) {
-            if (err) {
-                return res.apiOut(err);
-            }
-
-            return avatars.resizeImage(buffer, values.width, values.height, function (err, buffer) {
-                if (err) {
+        
+        
+        // --> let facebook do the resizing
+        if(avatar.indexOf('graph.facebook.com') !== -1) {
+            request.get(avatar + '?width=' + values.width + '&height=' + values.height, {encoding: null}, function(err, response, body) {
+                if(err) {
                     return res.apiOut(err);
                 }
                 
-                res.writeHead(200, {
-                    'Cache-Control': 'public,max-age=86400',
-                    'Content-Type': 'image/gif'
-                });
-                return res.end(buffer, 'binary');
+                sendImg(body, res);
             });
-        });
+        }
+
+        
+        // --> we do the resizing
+        else {
+            return gm(avatar).toBuffer(function (err, buffer) {
+                if (err) {
+                    return res.apiOut(err);
+                }
+
+                return avatars.resizeImage(buffer, values.width, values.height, function (err, buffer) {
+                    if (err) {
+                        return res.apiOut(err);
+                    }
+
+                    sendImg(buffer, res);
+                });
+            });
+        }
     });
 };
 
